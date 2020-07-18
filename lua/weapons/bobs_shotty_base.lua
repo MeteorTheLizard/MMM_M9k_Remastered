@@ -57,6 +57,7 @@ function SWEP:Reload()
 
 		timer.Create(TimerName,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
 			if not IsValid(self) or not IsValid(self.Owner) or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+				self:FinishReloading()
 				timer.Remove(TimerName)
 				return
 			end

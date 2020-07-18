@@ -77,6 +77,14 @@ function SWEP:PrimaryAttack()
 				EffectEnt:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 				EffectEnt.WasDropped = true -- MMM Compatibility
 
+				EffectEnt:SetOwner(self.Owner)
+
+				if CPPIExists then
+					EffectEnt:CPPISetOwner(self.Owner)
+				else
+					EffectEnt:SetNWEntity("my_owner",self.Owner) -- TinyCPPI Compatibility
+				end
+
 				SafeRemoveEntityDelayed(EffectEnt,5)
 
 				local Phys = EffectEnt:GetPhysicsObject()
@@ -87,6 +95,11 @@ function SWEP:PrimaryAttack()
 				timer.Simple(0.2,function()
 					if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
 						self:Remove()
+
+						local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
+						if #Weapons > 0 then
+							self.Owner:SelectWeapon(Weapons[1]:GetClass())
+						end
 					else
 						self:SetClip1(1)
 						self.Owner:RemoveAmmo(1,self.Primary.Ammo)

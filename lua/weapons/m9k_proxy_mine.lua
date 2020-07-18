@@ -69,6 +69,11 @@ function SWEP:PrimaryAttack()
 
 			if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
 				self:Remove()
+
+				local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
+				if #Weapons > 0 then
+					self.Owner:SelectWeapon(Weapons[1]:GetClass())
+				end
 			else
 				self.Owner:RemoveAmmo(1,self.Primary.Ammo)
 				self:SendWeaponAnim(ACT_VM_DRAW)
