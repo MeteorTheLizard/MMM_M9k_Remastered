@@ -27,6 +27,9 @@ Scopes have been reverted to the old age. (Which might be changed later on).
  * They only zoom in now and do not display a Scope Overlay.
  * Changed max zooms for every scoped base weapon from 2 to 3.
  * Can now 'unzoom' by pressing the Reload key.
+ 
+Not all Weapons have made it back.
+ * Some weapons such as the Orbital Strike Canon, Davy crockett, Harpoon, Knife, and more have been removed but MIGHT be re-added in the future. (I'm counting on the community here :) )
 
 Some models that used to have scopes no longer have scopes. This was done to streamline assault rifles and heavy weapons to fit their weapon base (Nobody used the scopes on them anyway).
 
