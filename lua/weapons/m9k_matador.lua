@@ -62,9 +62,13 @@ function SWEP:PrimaryAttack()
 		if CLIENT then return end
 
 		timer.Simple(0.2,function()
+			if not IsValid(self) or not IsValid(self.Owner) then return end
+
 			self:SendWeaponAnim(ACT_VM_RELOAD)
 
 			timer.Simple(0.5,function()
+				if not IsValid(self) or not IsValid(self.Owner) then return end
+
 				local EffectEnt = ents.Create("prop_physics")
 				EffectEnt:SetPos(self.Owner:GetShootPos() + (self.Owner:GetRight() * 15))
 
@@ -93,6 +97,8 @@ function SWEP:PrimaryAttack()
 				end
 
 				timer.Simple(0.2,function()
+					if not IsValid(self) or not IsValid(self.Owner) then return end
+
 					if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
 						self:Remove()
 
