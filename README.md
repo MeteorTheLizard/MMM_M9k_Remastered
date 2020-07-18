@@ -1,6 +1,6 @@
 # M9k Remastered
 
-Workshop Link: **To be created.**
+Workshop Link: https://steamcommunity.com/sharedfiles/filedetails/?id=2169649722
 
 This is a Remastered version of the 'Original' M9k weapons pack.
 It includes all original M9k extensions:
