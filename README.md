@@ -11,6 +11,8 @@ It includes all original M9k extensions:
 
 They have been merged together and heavily optimized. Some features were removed, some were changed, and some were added.
 
+**Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!**
+
 **Most noticeable changes:**
 
 Dynamic weapon accuracy (Similar to how weapons behave in CS:S or CS:GO)
