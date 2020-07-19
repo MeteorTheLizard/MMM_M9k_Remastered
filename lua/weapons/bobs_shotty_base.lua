@@ -34,6 +34,16 @@ function SWEP:Deploy()
 	return true
 end
 
+function SWEP:Holster()
+	if self.InsertingShell then
+		timer.Remove("ShotgunReload_" .. self:EntIndex())
+		self.InsertingShell = false
+		self:SetNextPrimaryFire(CurTime() + 1.25)
+	end
+
+	return true
+end
+
 function SWEP:PrimaryAttack()
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
 		self:EmitSound("Weapon_Pistol.Empty")
@@ -112,8 +122,7 @@ end
 
 function SWEP:FinishReloading()
 	if self.InsertingShell then
-		local TimerName = "ShotgunReload_" .. self:EntIndex()
-		timer.Remove(TimerName)
+		timer.Remove("ShotgunReload_" .. self:EntIndex())
 
 		timer.Simple(0.35,function()
 			if not IsValid(self) or not IsValid(self.Owner) then return end
