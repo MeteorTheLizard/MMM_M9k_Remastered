@@ -36,6 +36,21 @@ Some models that used to have scopes no longer have scopes. This was done to str
 **Hard to notice changes for non-developers:**
  * Every single script file has been optimized and modernized drastically. Around 70% of original code lines were removed since they basically do nothing or are not required anymore.
  * A massload of bugfixes, especially involving shotguns and weapons from the specialties pack.
+ 
+**Full list of missing weapons:**
+ * Damascus (Ninja sword)
+ * Davy crockett
+ * Fists
+ * Harpoon
+ * IED Detonator
+ * Knife
+ * m61 Frag Grenade
+ * Machete
+ * Nerve Gas
+ * Nitro
+ * Orbital Strike Canon
+ * Sticky Grenade
+ * Suicide bomb
 
 # Compatibility
 
