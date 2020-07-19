@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "Glock 18"
 
 SWEP.Slot = 1
-SWEP.SlotPos = 22
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_dmg_glock.mdl"
 SWEP.WorldModel = "models/weapons/w_dmg_glock.mdl"
 
-SWEP.Primary.Sound = Sound("Dmgfok_glock.Single")
+SWEP.Primary.Sound = "Dmgfok_glock.Single"
 SWEP.Primary.RPM = 650
 SWEP.Primary.ClipSize = 32
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1.3
 SWEP.Primary.KickDown = 0.3
 SWEP.Primary.KickHorizontal = 0.5

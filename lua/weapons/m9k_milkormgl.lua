@@ -3,7 +3,6 @@ SWEP.Category = "M9K Specialties"
 SWEP.PrintName = "Milkor Mk1"
 
 SWEP.Slot = 5
-SWEP.SlotPos = 30
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_milkor_mgl1.mdl"
 SWEP.WorldModel = "models/weapons/w_milkor_mgl1.mdl"
 
-SWEP.Primary.Sound = Sound("40mmGrenade.Single")
+SWEP.Primary.Sound = "40mmGrenade.Single"
 SWEP.Primary.RPM = 250
 SWEP.Primary.ClipSize = 6
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0
 SWEP.Primary.KickDown = 0
 SWEP.Primary.KickHorizontal = 0
@@ -32,6 +31,12 @@ local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
 
 function SWEP:PrimaryAttack()
+	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
+		self:EmitSound("Weapon_Pistol.Empty")
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+		return
+	end
+
 	if self.InsertingShell and not self.CanceledReloadSuccess then
 		self:FinishReloading()
 	elseif self:CanPrimaryAttack() and not self.InsertingShell then

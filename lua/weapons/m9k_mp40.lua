@@ -3,7 +3,6 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "MP40"
 
 SWEP.Slot = 2
-SWEP.SlotPos = 50
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_mp40smg.mdl"
 SWEP.WorldModel = "models/weapons/w_mp40smg.mdl"
 
-SWEP.Primary.Sound = Sound("mp40.Single")
+SWEP.Primary.Sound = "mp40.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 32
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.75
 SWEP.Primary.KickDown = 0.5
 SWEP.Primary.KickHorizontal = 0.75

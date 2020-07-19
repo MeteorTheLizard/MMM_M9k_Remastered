@@ -3,7 +3,6 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "Bizon PP19"
 
 SWEP.Slot = 2
-SWEP.SlotPos = 42
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_bizon19.mdl"
 SWEP.WorldModel = "models/weapons/w_pp19_bizon.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_P19.Single")
+SWEP.Primary.Sound = "Weapon_P19.Single"
 SWEP.Primary.RPM = 700
 SWEP.Primary.ClipSize = 64
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.7
 SWEP.Primary.KickDown = 0.4
 SWEP.Primary.KickHorizontal = 0.5

@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "HK USP"
 
 SWEP.Slot = 1
-SWEP.SlotPos = 34
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_pist_fokkususp.mdl"
 SWEP.WorldModel = "models/weapons/w_pist_fokkususp.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_fokkususp.Single")
+SWEP.Primary.Sound = "Weapon_fokkususp.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 15
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = 0.75
 SWEP.Primary.KickHorizontal = 1

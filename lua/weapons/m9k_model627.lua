@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "S&W Model 627"
 
 SWEP.Slot = 1
-SWEP.SlotPos = 29
 SWEP.HoldType = "revolver"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_swmodel_627.mdl"
 SWEP.WorldModel = "models/weapons/w_sw_model_627.mdl"
 
-SWEP.Primary.Sound = Sound("model_627perf.Single")
+SWEP.Primary.Sound = "model_627perf.Single"
 SWEP.Primary.RPM = 120
 SWEP.Primary.ClipSize = 6
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = 0.3
 SWEP.Primary.KickHorizontal = 0.7

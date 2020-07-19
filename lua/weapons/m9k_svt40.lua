@@ -2,8 +2,6 @@ SWEP.Base = "bobs_scoped_base"
 SWEP.Category = "M9K Sniper Rifles"
 SWEP.PrintName = "SVT 40"
 
-SWEP.Slot = 4
-SWEP.SlotPos = 48
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +10,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_snip_svt40.mdl"
 SWEP.WorldModel = "models/weapons/w_svt_40.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_SVT40.single")
+SWEP.Primary.Sound = "Weapon_SVT40.single"
 SWEP.Primary.RPM = 350
 SWEP.Primary.ClipSize = 10
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 2
 SWEP.Primary.KickDown = 1
 SWEP.Primary.KickHorizontal = 2

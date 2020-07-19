@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "M29 Satan"
 
 SWEP.Slot = 1
-SWEP.SlotPos = 25
 SWEP.HoldType = "revolver"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_pist_satan2.mdl"
 SWEP.WorldModel = "models/weapons/w_m29_satan.mdl"
 
-SWEP.Primary.Sound = Sound("weapon_satan1.single")
+SWEP.Primary.Sound = "weapon_satan1.single"
 SWEP.Primary.RPM = 115
 SWEP.Primary.ClipSize = 6
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 1
 SWEP.Primary.KickHorizontal = 4

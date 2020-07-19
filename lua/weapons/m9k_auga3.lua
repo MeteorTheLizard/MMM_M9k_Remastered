@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "Steyr AUG A3"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 26
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_auga3sa.mdl"
 SWEP.WorldModel = "models/weapons/w_auga3.mdl"
 
-SWEP.Primary.Sound = Sound("aug_a3.Single")
+SWEP.Primary.Sound = "aug_a3.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = .9
 SWEP.Primary.KickDown = .4
 SWEP.Primary.KickHorizontal = .7

@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "L85"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 32
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_rif_l85.mdl"
 SWEP.WorldModel = "models/weapons/w_l85a2.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_l85.Single")
+SWEP.Primary.Sound = "Weapon_l85.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = .7
 SWEP.Primary.KickDown = .91
 SWEP.Primary.KickHorizontal = .75

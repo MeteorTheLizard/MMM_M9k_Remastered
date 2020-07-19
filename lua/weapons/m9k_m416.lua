@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "HK 416"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 36
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,11 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_hk416rif.mdl"
 SWEP.WorldModel = "models/weapons/w_hk_416.mdl"
 
-SWEP.Primary.Sound = Sound("hk416weapon.UnsilSingle")
-SWEP.Primary.SilencedSound = Sound("hk416weapon.SilencedSingle")
+SWEP.Primary.Sound = "hk416weapon.UnsilSingle"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.75
 SWEP.Primary.KickDown = 0.4
 SWEP.Primary.KickHorizontal = 1

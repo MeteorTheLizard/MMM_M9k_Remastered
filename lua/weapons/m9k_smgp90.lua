@@ -3,7 +3,6 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "FN P90"
 
 SWEP.Slot = 2
-SWEP.SlotPos = 51
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_p90_smg.mdl"
 SWEP.WorldModel = "models/weapons/w_fn_p90.mdl"
 
-SWEP.Primary.Sound = Sound("P90_weapon.single")
+SWEP.Primary.Sound = "P90_weapon.single"
 SWEP.Primary.RPM = 800
 SWEP.Primary.ClipSize = 50
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.6
 SWEP.Primary.KickDown = 0.4
 SWEP.Primary.KickHorizontal = 0.5

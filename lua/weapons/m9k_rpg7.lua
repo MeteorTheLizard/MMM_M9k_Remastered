@@ -3,16 +3,15 @@ SWEP.Category = "M9K Specialties"
 SWEP.PrintName = "RPG-7"
 
 SWEP.Slot = 5
-SWEP.SlotPos = 34
 SWEP.HoldType = "rpg"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
-SWEP.ViewModel = "models/weapons/v_RL7.mdl"
+SWEP.ViewModel = "models/weapons/v_rl7.mdl"
 SWEP.WorldModel = "models/weapons/w_rl7.mdl"
 
-SWEP.Primary.Sound = Sound("RPGF.single")
+SWEP.Primary.Sound = "RPGF.single"
 SWEP.Primary.RPM = 30
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.DefaultClip = 1
@@ -27,14 +26,21 @@ SWEP.Primary.Spread = 0
 
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
+local VectorCache1 = Vector(0,0,1)
 
 function SWEP:PrimaryAttack()
+	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
+		self:EmitSound("Weapon_Pistol.Empty")
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+		return
+	end
+
 	if self:CanPrimaryAttack() then
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 		self:TakePrimaryAmmo(1)
 
 		local aim = self.Owner:GetAimVector()
-		local side = aim:Cross(Vector(0,0,1))
+		local side = aim:Cross(VectorCache1)
 		local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
 
 		if SERVER then

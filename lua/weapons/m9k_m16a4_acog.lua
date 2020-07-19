@@ -3,19 +3,18 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "M16A4 ACOG"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 35
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = true
-SWEP.ViewModel = "models/weapons/v_M16_acog.mdl"
+SWEP.ViewModel = "models/weapons/v_m16_acog.mdl"
 SWEP.WorldModel = "models/weapons/w_dmg_m16ag.mdl"
 
-SWEP.Primary.Sound = Sound("Dmgfok_M16A4.Single")
+SWEP.Primary.Sound = "Dmgfok_M16A4.Single"
 SWEP.Primary.RPM = 400
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = .4
 SWEP.Primary.KickHorizontal = .65

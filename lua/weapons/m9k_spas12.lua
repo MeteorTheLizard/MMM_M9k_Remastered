@@ -2,8 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "SPAS 12"
 
-SWEP.Slot = 3
-SWEP.SlotPos = 27
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
@@ -12,10 +10,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_spas12_shot.mdl"
 SWEP.WorldModel = "models/weapons/w_spas_12.mdl"
 
-SWEP.Primary.Sound = Sound("spas_12_shoty.Single")
+SWEP.Primary.Sound = "spas_12_shoty.Single"
 SWEP.Primary.RPM = 350
 SWEP.Primary.ClipSize = 8
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2
 SWEP.Primary.KickHorizontal = 0.7

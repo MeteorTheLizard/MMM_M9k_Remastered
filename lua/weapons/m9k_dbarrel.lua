@@ -2,8 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "Double Barrel Shotgun"
 
-SWEP.Slot = 3
-SWEP.SlotPos = 21
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
@@ -12,10 +10,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_doublebarrl.mdl"
 SWEP.WorldModel = "models/weapons/w_double_barrel_shotgun.mdl"
 
-SWEP.Primary.Sound = Sound("Double_Barrel.Single")
+SWEP.Primary.Sound = "Double_Barrel.Single"
 SWEP.Primary.RPM = 180
 SWEP.Primary.ClipSize = 2
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 7
 SWEP.Primary.KickDown = 5
 SWEP.Primary.KickHorizontal = 10

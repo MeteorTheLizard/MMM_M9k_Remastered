@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "AK-74"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 23
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_tct_ak47.mdl"
 SWEP.WorldModel = "models/weapons/w_tct_ak47.mdl"
 
-SWEP.Primary.Sound = Sound("Tactic_AK47.Single")
+SWEP.Primary.Sound = "Tactic_AK47.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.9
 SWEP.Primary.KickDown = 0.6
 SWEP.Primary.KickHorizontal = 1.2

@@ -1,10 +1,24 @@
 SWEP.Base = "bobs_gun_base"
 SWEP.Slot = 4
-SWEP.SlotPos = 1
 
 SWEP.ShellTime = 0.35
 SWEP.InsertingShell = false
 SWEP.CanceledReloadSuccess = false
+
+local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
+	["m9k_m3"] = true,
+	["m9k_browningauto5"] = true,
+	["m9k_dbarrel"] = true,
+	["m9k_ithacam37"] = true,
+	["m9k_mossberg590"] = true,
+	["m9k_jackhammer"] = true,
+	["m9k_remington870"] = true,
+	["m9k_spas12"] = true,
+	["m9k_striker12"] = true,
+	["m9k_1897winchester"] = true,
+	["m9k_1887winchester"] = true,
+	["m9k_usas"] = true
+}
 
 function SWEP:Deploy()
 	self:SetHoldType(self.HoldType)
@@ -21,13 +35,18 @@ function SWEP:Deploy()
 end
 
 function SWEP:PrimaryAttack()
+	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
+		self:EmitSound("Weapon_Pistol.Empty")
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+		return
+	end
+
 	if self.InsertingShell and not self.CanceledReloadSuccess then
 		self:FinishReloading()
 	elseif self:CanPrimaryAttack() and not self.InsertingShell then
 		local Spread = self.Primary.Spread
-		local Class = self:GetClass()
 
-		if not (Class == "m9k_m3" or Class == "m9k_browningauto5" or Class == "m9k_dbarrel" or Class == "m9k_ithacam37" or Class == "m9k_mossberg590" or Class == "m9k_jackhammer" or Class == "m9k_remington870" or Class == "m9k_spas12" or Class == "m9k_striker12" or Class == "m9k_1897winchester" or Class == "m9k_1887winchester") then
+		if not BannedClasses[self:GetClass()] then
 			if self.Owner:GetVelocity():Length() > 100 then
 				Spread = self.Primary.Spread * 6
 			elseif self.Owner:KeyDown(IN_DUCK) then
@@ -56,7 +75,12 @@ function SWEP:Reload()
 		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
 
 		timer.Create(TimerName,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
-			if not IsValid(self) or not IsValid(self.Owner) or self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+			if not IsValid(self) or not IsValid(self.Owner) then
+				timer.Remove(TimerName)
+				return
+			end
+
+			if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
 				self:FinishReloading()
 				timer.Remove(TimerName)
 				return

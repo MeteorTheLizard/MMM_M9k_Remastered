@@ -3,7 +3,6 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "HK MP7"
 
 SWEP.Slot = 2
-SWEP.SlotPos = 48
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_mp7_silenced.mdl"
 SWEP.WorldModel = "models/weapons/w_mp7_silenced.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_MP7.single")
+SWEP.Primary.Sound = "Weapon_MP7.single"
 SWEP.Primary.RPM = 600
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = .75
 SWEP.Primary.KickDown = .45
 SWEP.Primary.KickHorizontal = .45

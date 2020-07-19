@@ -3,7 +3,6 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "HK USC"
 
 SWEP.Slot = 2
-SWEP.SlotPos = 56
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_hkoch_usc.mdl"
 SWEP.WorldModel = "models/weapons/w_hk_usc.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_hkusc.Single")
+SWEP.Primary.Sound = "Weapon_hkusc.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 25
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.9
 SWEP.Primary.KickDown = 0.5
 SWEP.Primary.KickHorizontal = 2

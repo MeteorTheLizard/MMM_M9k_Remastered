@@ -2,8 +2,6 @@ SWEP.Base = "bobs_scoped_base"
 SWEP.Category = "M9K Sniper Rifles"
 SWEP.PrintName = "Intervention"
 
-SWEP.Slot = 4
-SWEP.SlotPos = 42
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +10,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_snip_int.mdl"
 SWEP.WorldModel = "models/weapons/w_snip_int.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_INT.Single")
+SWEP.Primary.Sound = "Weapon_INT.Single"
 SWEP.Primary.RPM = 35
 SWEP.Primary.ClipSize = 5
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2
 SWEP.Primary.KickHorizontal = 9

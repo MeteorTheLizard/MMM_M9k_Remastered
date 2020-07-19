@@ -2,8 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "Striker 12"
 
-SWEP.Slot = 3
-SWEP.SlotPos = 28
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +10,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_striker_12g.mdl"
 SWEP.WorldModel = "models/weapons/w_striker_12g.mdl"
 
-SWEP.Primary.Sound = Sound("ShotStriker12.Single")
+SWEP.Primary.Sound = "ShotStriker12.Single"
 SWEP.Primary.RPM = 365
 SWEP.Primary.ClipSize = 12
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 3
 SWEP.Primary.KickHorizontal = .6

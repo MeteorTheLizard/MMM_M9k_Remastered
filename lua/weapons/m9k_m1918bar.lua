@@ -3,7 +3,6 @@ SWEP.Category = "M9K Machine Guns"
 SWEP.PrintName = "M1918 BAR"
 
 SWEP.Slot = 4
-SWEP.SlotPos = 36
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_m1918bar.mdl"
 SWEP.WorldModel = "models/weapons/w_m1918_bar.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_bar1.Single")
+SWEP.Primary.Sound = "Weapon_bar1.Single"
 SWEP.Primary.RPM = 450
 SWEP.Primary.ClipSize = 20
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = 0.4
 SWEP.Primary.KickHorizontal = 0.5

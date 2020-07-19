@@ -1,6 +1,5 @@
 SWEP.Base = "bobs_gun_base"
 SWEP.Slot = 4
-SWEP.SlotPos = 1
 
 SWEP.ScopeState = 0
 SWEP.ScopeCD = 0

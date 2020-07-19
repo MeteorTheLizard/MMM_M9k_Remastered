@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "KAC PDW"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 44
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_kac_pdw1.mdl"
 SWEP.WorldModel = "models/weapons/w_kac_pdw.mdl"
 
-SWEP.Primary.Sound = Sound("KAC_PDW.Single")
+SWEP.Primary.Sound = "KAC_PDW.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.75
 SWEP.Primary.KickDown = 0.5
 SWEP.Primary.KickHorizontal = 0.5

@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "AAC Honey Badger"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 43
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_aacbadger.mdl"
 SWEP.WorldModel = "models/weapons/w_aac_honeybadger.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_HoneyB.single")
+SWEP.Primary.Sound = "Weapon_HoneyB.single"
 SWEP.Primary.RPM = 400
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = .3
 SWEP.Primary.KickHorizontal = 0.57

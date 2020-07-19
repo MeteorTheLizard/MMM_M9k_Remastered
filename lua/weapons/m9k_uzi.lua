@@ -3,7 +3,6 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "UZI"
 
 SWEP.Slot = 2
-SWEP.SlotPos = 57
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,11 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_imi_uzi01.mdl"
 SWEP.WorldModel = "models/weapons/w_uzi_imi.mdl"
 
-
-SWEP.Primary.Sound = Sound("Weapon_uzi.single")
+SWEP.Primary.Sound = "Weapon_uzi.single"
 SWEP.Primary.RPM = 725
 SWEP.Primary.ClipSize = 32
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0.6
 SWEP.Primary.KickDown = 0.3
 SWEP.Primary.KickHorizontal = 0.6

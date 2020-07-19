@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "M92 Beretta"
 
 SWEP.Slot = 1
-SWEP.SlotPos = 26
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_pistberettam92.mdl"
 SWEP.WorldModel = "models/weapons/w_beretta_m92.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_m92b.Single")
+SWEP.Primary.Sound = "Weapon_m92b.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 15
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = 1
 SWEP.Primary.KickHorizontal = 1

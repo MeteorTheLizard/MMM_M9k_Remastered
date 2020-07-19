@@ -1,3 +1,5 @@
+SWEP.SlotPos = 1
+
 SWEP.Spawnable = false
 SWEP.AdminSpawnable = false
 
@@ -24,6 +26,7 @@ SWEP.Primary.NumShots = 1
 SWEP.Primary.RPM = 0
 SWEP.Primary.ClipSize = 0
 SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 0
 SWEP.Primary.KickDown = 0
 SWEP.Primary.KickHorizontal = 0
@@ -32,6 +35,21 @@ SWEP.Primary.Ammo = "none"
 
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Ammo = "none"
+
+local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
+	["m9k_m3"] = true,
+	["m9k_browningauto5"] = true,
+	["m9k_dbarrel"] = true,
+	["m9k_ithacam37"] = true,
+	["m9k_mossberg590"] = true,
+	["m9k_jackhammer"] = true,
+	["m9k_remington870"] = true,
+	["m9k_spas12"] = true,
+	["m9k_striker12"] = true,
+	["m9k_1897winchester"] = true,
+	["m9k_1887winchester"] = true,
+	["m9k_usas"] = true
+}
 
 function SWEP:Initialize()
 	util.PrecacheSound(self.Primary.Sound)
@@ -58,22 +76,28 @@ function SWEP:Equip()
 end
 
 function SWEP:Deploy()
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
-
 	self:SetHoldType(self.HoldType)
 	self:SetWeaponHoldType(self.HoldType)
 	self:SendWeaponAnim(ACT_VM_DRAW)
+
+	local vm = self.Owner:GetViewModel()
+	self:SetNextPrimaryFire(CurTime() + vm:SequenceDuration() + 0.1)
+	self:SetNextSecondaryFire(CurTime() + vm:SequenceDuration() + 0.1)
 
 	return true
 end
 
 function SWEP:PrimaryAttack()
+	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
+		self:EmitSound("Weapon_Pistol.Empty")
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+		return
+	end
+
 	if self:CanPrimaryAttack() then
 		local Spread = self.Primary.Spread
-		local Class = self:GetClass()
 
-		if not (Class == "m9k_m3" or Class == "m9k_browningauto5" or Class == "m9k_dbarrel" or Class == "m9k_ithacam37" or Class == "m9k_mossberg590" or Class == "m9k_jackhammer" or Class == "m9k_remington870" or Class == "m9k_spas12" or Class == "m9k_striker12" or Class == "m9k_1897winchester" or Class == "m9k_1887winchester") then
+		if not BannedClasses[self:GetClass()] then
 			if self.Owner:GetVelocity():Length() > 100 then
 				Spread = self.Primary.Spread * 6
 			elseif self.Owner:KeyDown(IN_DUCK) then
@@ -139,8 +163,19 @@ function SWEP:Reload()
 end
 
 if CLIENT then
+	local effectData = EffectData() -- We don't have to re-create this
+	effectData:SetAttachment(1)
+	effectData:SetScale(1)
+	effectData:SetFlags(0)
+
 	function SWEP:FireAnimationEvent(_,_,event)
-		if event == 20 or event == 5001 then return true end
+		if event == 5001 or event == 5011 or event == 5021 or event == 5031 then
+			effectData:SetEntity(self.Owner:GetViewModel())
+
+			util.Effect("CS_MuzzleFlash",effectData)
+
+			return true
+		end
 	end
 
 	function SWEP:DrawWorldModel()

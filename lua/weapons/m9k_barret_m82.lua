@@ -2,8 +2,6 @@ SWEP.Base = "bobs_scoped_base"
 SWEP.Category = "M9K Sniper Rifles"
 SWEP.PrintName = "Barret M82"
 
-SWEP.Slot = 4
-SWEP.SlotPos = 51
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +10,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_50calm82.mdl"
 SWEP.WorldModel = "models/weapons/w_barret_m82.mdl"
 
-SWEP.Primary.Sound = Sound("BarretM82.Single")
+SWEP.Primary.Sound = "BarretM82.Single"
 SWEP.Primary.RPM = 200
 SWEP.Primary.ClipSize = 10
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 3
 SWEP.Primary.KickDown = 5
 SWEP.Primary.KickHorizontal = 6

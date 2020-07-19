@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "FN FAL"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 28
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_fnfalnato.mdl"
 SWEP.WorldModel = "models/weapons/w_fn_fal.mdl"
 
-SWEP.Primary.Sound = Sound("fnfal.Single")
+SWEP.Primary.Sound = "fnfal.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 20
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 2
 SWEP.Primary.KickDown = 0.75
 SWEP.Primary.KickHorizontal = 2

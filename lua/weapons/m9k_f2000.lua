@@ -3,7 +3,6 @@ SWEP.Category = "M9K Assault Rifles"
 SWEP.PrintName = "F2000"
 
 SWEP.Slot = 3
-SWEP.SlotPos = 27
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_tct_f2000.mdl"
 SWEP.WorldModel = "models/weapons/w_fn_f2000.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_F2000.Single")
+SWEP.Primary.Sound = "Weapon_F2000.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = .9
 SWEP.Primary.KickDown = .7
 SWEP.Primary.KickHorizontal = .45

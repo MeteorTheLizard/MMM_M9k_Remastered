@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "Desert Eagle"
 
 SWEP.Slot = 1
-SWEP.SlotPos = 21
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
@@ -12,10 +11,10 @@ SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_tcom_deagle.mdl"
 SWEP.WorldModel = "models/weapons/w_tcom_deagle.mdl"
 
-SWEP.Primary.Sound = Sound("Weapon_TDegle.Single")
+SWEP.Primary.Sound = "Weapon_TDegle.Single"
 SWEP.Primary.RPM = 400
 SWEP.Primary.ClipSize = 7
-SWEP.Primary.DefaultClip = 0
+
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2
 SWEP.Primary.KickHorizontal = 4
