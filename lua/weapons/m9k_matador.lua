@@ -90,54 +90,58 @@ function SWEP:PrimaryAttack()
 
 		self.MatadorIsReloading = true
 
-		self:SendWeaponAnim(ACT_VM_RELOAD)
-
-		timer.Create(TimerName,0.5,1,function()
+		timer.Create(TimerName,0.1,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
-			local EffectEnt = ents.Create("prop_physics")
-			EffectEnt:SetPos(self.Owner:GetShootPos() + (self.Owner:GetRight() * 15))
+			self:SendWeaponAnim(ACT_VM_RELOAD)
 
-			local Ang = self.Owner:EyeAngles()
-			Ang:SetUnpacked(Ang.p,Ang.y + 180,Ang.r)
-			EffectEnt:SetAngles(Ang)
-
-			EffectEnt:SetModel(self.WorldModel)
-			EffectEnt:Spawn()
-			EffectEnt:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-			EffectEnt.WasDropped = true -- MMM Compatibility
-
-			EffectEnt:SetOwner(self.Owner)
-
-			if CPPIExists then
-				EffectEnt:CPPISetOwner(self.Owner)
-			else
-				EffectEnt:SetNWEntity("my_owner",self.Owner) -- TinyCPPI Compatibility
-			end
-
-			SafeRemoveEntityDelayed(EffectEnt,5)
-
-			local Phys = EffectEnt:GetPhysicsObject()
-			if IsValid(Phys) then
-				Phys:SetVelocity(-(self.Owner:EyeAngles():Forward() * 25) + self.Owner:EyeAngles():Right() * 100)
-			end
-
-			timer.Create(TimerName,0.2,1,function()
+			timer.Create(TimerName,0.5,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
-				self.MatadorIsReloading = false
+				local EffectEnt = ents.Create("prop_physics")
+				EffectEnt:SetPos(self.Owner:GetShootPos() + (self.Owner:GetRight() * 15))
 
-				if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
-					self:Remove()
+				local Ang = self.Owner:EyeAngles()
+				Ang:SetUnpacked(Ang.p,Ang.y + 180,Ang.r)
+				EffectEnt:SetAngles(Ang)
 
-					local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
-					if #Weapons > 0 then
-						self.Owner:SelectWeapon(Weapons[1]:GetClass())
-					end
+				EffectEnt:SetModel(self.WorldModel)
+				EffectEnt:Spawn()
+				EffectEnt:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+				EffectEnt.WasDropped = true -- MMM Compatibility
+
+				EffectEnt:SetOwner(self.Owner)
+
+				if CPPIExists then
+					EffectEnt:CPPISetOwner(self.Owner)
 				else
-					self:SetClip1(1)
-					self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+					EffectEnt:SetNWEntity("my_owner",self.Owner) -- TinyCPPI Compatibility
 				end
+
+				SafeRemoveEntityDelayed(EffectEnt,5)
+
+				local Phys = EffectEnt:GetPhysicsObject()
+				if IsValid(Phys) then
+					Phys:SetVelocity(-(self.Owner:EyeAngles():Forward() * 25) + self.Owner:EyeAngles():Right() * 100)
+				end
+
+				timer.Create(TimerName,0.2,1,function()
+					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+
+					self.MatadorIsReloading = false
+
+					if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+						self:Remove()
+
+						local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
+						if #Weapons > 0 then
+							self.Owner:SelectWeapon(Weapons[1]:GetClass())
+						end
+					else
+						self:SetClip1(1)
+						self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+					end
+				end)
 			end)
 		end)
 	end
