@@ -11,6 +11,8 @@ It includes all original M9k extensions:
 
 They have been merged together and heavily optimized. Some features were removed, some were changed, and some were added.
 
+**Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!**
+
 **Most noticeable changes:**
 
 Dynamic weapon accuracy (Similar to how weapons behave in CS:S or CS:GO)
@@ -29,14 +31,29 @@ Scopes have been reverted to the old age. (Which might be changed later on).
  * Can now 'unzoom' by pressing the Reload key.
  
 Not all Weapons have made it back.
- * Some weapons such as the Orbital Strike Canon, Davy crockett, Harpoon, Knife, and more have been removed but MIGHT be re-added in the future. (I'm counting on the community here :) )
+ * Some weapons such as the Orbital Strike Canon, Davy crockett, Harpoon, Knife, and more have been removed but MIGHT be re-added in the future.
+ 
+ **Full list of missing weapons:**
+ * Damascus (Ninja sword)
+ * Davy crockett
+ * Fists
+ * Harpoon
+ * IED Detonator
+ * Knife
+ * m61 Frag Grenade
+ * Machete
+ * Nerve Gas
+ * Nitro
+ * Orbital Strike Canon
+ * Sticky Grenade
+ * Suicide bomb
 
 Some models that used to have scopes no longer have scopes. This was done to streamline assault rifles and heavy weapons to fit their weapon base (Nobody used the scopes on them anyway).
 
 **Hard to notice changes for non-developers:**
  * Every single script file has been optimized and modernized drastically. Around 70% of original code lines were removed since they basically do nothing or are not required anymore.
  * A massload of bugfixes, especially involving shotguns and weapons from the specialties pack.
-
+ 
 # Compatibility
 
 I cannot guarantee that you can use this Weapon pack as a base for other M9k-based weapons from the workshop. It might work, it might not. The best thing you can do is to test it out!
