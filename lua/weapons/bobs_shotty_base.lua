@@ -100,12 +100,12 @@ function SWEP:Reload()
 			vm:ResetSequence(vm:LookupSequence("after_reload"))
 			vm:SetPlaybackRate(.01)
 
-			timer.Create(TimerName,0.1,1,function()
+			timer.Simple(0.1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 
 				self:SendWeaponAnim(ACT_VM_RELOAD)
 
-				timer.Create(TimerName,0.2,1,function()
+				timer.Simple(0.2,function()
 					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 
 					self.Owner:RemoveAmmo(1,self.Primary.Ammo,false)
