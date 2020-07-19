@@ -85,7 +85,7 @@ function SWEP:Reload()
 		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
 
 		timer.Create(TimerName,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
-			if not IsValid(self) or not IsValid(self.Owner) then
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then
 				timer.Remove(TimerName)
 				return
 			end
@@ -100,13 +100,13 @@ function SWEP:Reload()
 			vm:ResetSequence(vm:LookupSequence("after_reload"))
 			vm:SetPlaybackRate(.01)
 
-			timer.Simple(0.1,function()
-				if not IsValid(self) or not IsValid(self.Owner) then return end
+			timer.Create(TimerName,0.1,1,function()
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 
 				self:SendWeaponAnim(ACT_VM_RELOAD)
 
-				timer.Simple(0.2,function()
-					if not IsValid(self) or not IsValid(self.Owner) then return end
+				timer.Create(TimerName,0.2,1,function()
+					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 
 					self.Owner:RemoveAmmo(1,self.Primary.Ammo,false)
 					self:SetClip1(self:Clip1() + 1)
