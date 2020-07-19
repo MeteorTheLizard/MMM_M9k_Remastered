@@ -29,9 +29,23 @@ SWEP.IsUSASReloading = false
 local OurClass = "m9k_usas"
 local ReloadSound = "Weapon_usas.draw"
 
--- And once again we have a special snowflake as this weapon requires 2 animations to be played in order to reload properly.
+function SWEP:CanPrimaryAttack()
+	if self.IsUSASReloading then
+		return false
+	end
 
-function SWEP:Reload()
+	if self:Clip1() <= 0 then
+		self:EmitSound("Weapon_Pistol.Empty")
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+		self:Reload()
+		return false
+	end
+
+	return true
+end
+
+-- And once again we have a special snowflake as this weapon requires 2 animations to be played in order to reload properly.
+function SWEP:Reload() -- This function has some serious and crappy workarounds, if only they would have made a NORMAL reload animation instead of using shotgun reload start etc..
 	if self.IsUSASReloading then return false end
 
 	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
@@ -46,11 +60,17 @@ function SWEP:Reload()
 
 			self:EmitSound(ReloadSound)
 
-			timer.Create(TimerName,0.15,1,function()
+			timer.Create(TimerName,0.3,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
-				self:DefaultReload(ACT_SHOTGUN_RELOAD_FINISH)
-				self.IsUSASReloading = false
+				self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
+
+				timer.Create(TimerName,0.7,1,function()
+					self:SetClip1(self.Owner:GetAmmoCount(self.Primary.Ammo) >= 20 and 20 or self.Owner:GetAmmoCount(self.Primary.Ammo))
+					self.IsUSASReloading = false
+
+					self:SetNextPrimaryFire(CurTime() + 0.25)
+				end)
 			end)
 		end)
 	end

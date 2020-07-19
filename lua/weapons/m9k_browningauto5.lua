@@ -11,7 +11,7 @@ SWEP.ViewModel = "models/weapons/v_brown_auto5.mdl"
 SWEP.WorldModel = "models/weapons/w_browning_auto.mdl"
 
 SWEP.Primary.Sound = "Weapon_a5.Single"
-SWEP.Primary.RPM = 250
+SWEP.Primary.RPM = 225
 SWEP.Primary.ClipSize = 6
 
 SWEP.Primary.KickUp = 3

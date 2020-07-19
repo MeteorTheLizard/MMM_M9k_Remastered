@@ -11,7 +11,7 @@ SWEP.ViewModel = "models/weapons/v_spas12_shot.mdl"
 SWEP.WorldModel = "models/weapons/w_spas_12.mdl"
 
 SWEP.Primary.Sound = "spas_12_shoty.Single"
-SWEP.Primary.RPM = 350
+SWEP.Primary.RPM = 200
 SWEP.Primary.ClipSize = 8
 
 SWEP.Primary.KickUp = 4

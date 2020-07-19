@@ -12,7 +12,7 @@ SWEP.ViewModel = "models/weapons/v_jackhammer2.mdl"
 SWEP.WorldModel = "models/weapons/w_pancor_jackhammer.mdl"
 
 SWEP.Primary.Sound = "Weapon_Jackhammer.Single"
-SWEP.Primary.RPM = 240
+SWEP.Primary.RPM = 190
 SWEP.Primary.ClipSize = 10
 
 SWEP.Primary.KickUp = 2

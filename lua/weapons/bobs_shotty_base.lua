@@ -133,5 +133,6 @@ function SWEP:FinishReloading()
 
 		self.InsertingShell = false
 		self:SetNextPrimaryFire(CurTime() + 1.25)
+		self:SetNextSecondaryFire(CurTime() + 1.25) -- Required for the dbarrel
 	end
 end

@@ -11,7 +11,7 @@ SWEP.ViewModel = "models/weapons/v_striker_12g.mdl"
 SWEP.WorldModel = "models/weapons/w_striker_12g.mdl"
 
 SWEP.Primary.Sound = "ShotStriker12.Single"
-SWEP.Primary.RPM = 365
+SWEP.Primary.RPM = 200
 SWEP.Primary.ClipSize = 12
 
 SWEP.Primary.KickUp = 4
