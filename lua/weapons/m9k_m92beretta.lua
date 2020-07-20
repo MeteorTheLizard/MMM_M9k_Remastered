@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "M92 Beretta"
 
 SWEP.Slot = 1
-SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 65

@@ -14,7 +14,7 @@ SWEP.BounceWeaponIcon = false
 SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = true
 
-SWEP.HoldType = "Pistol"
+SWEP.HoldType = "pistol"
 
 SWEP.Primary.Sound = ""
 SWEP.Primary.Cone = 0.2

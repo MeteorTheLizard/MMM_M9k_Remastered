@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "Colt 1911"
 
 SWEP.Slot = 1
-SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFlip = false

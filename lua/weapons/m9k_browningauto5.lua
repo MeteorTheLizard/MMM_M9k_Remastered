@@ -2,7 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "Browning Auto 5"
 
-SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_brown_auto5.mdl"

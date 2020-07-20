@@ -2,7 +2,7 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "Striker 12"
 
-SWEP.HoldType = "ar2"
+SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_striker_12g.mdl"

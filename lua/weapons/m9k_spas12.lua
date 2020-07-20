@@ -2,7 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "SPAS 12"
 
-SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_spas12_shot.mdl"

@@ -2,7 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "Ithaca M37"
 
-SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_ithaca_m37shot.mdl"

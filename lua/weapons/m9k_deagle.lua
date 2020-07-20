@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "Desert Eagle"
 
 SWEP.Slot = 1
-SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFlip = false

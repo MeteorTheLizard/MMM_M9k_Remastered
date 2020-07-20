@@ -3,7 +3,7 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "UZI"
 
 SWEP.Slot = 2
-SWEP.HoldType = "ar2"
+SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFlip = false

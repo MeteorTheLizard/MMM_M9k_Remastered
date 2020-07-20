@@ -3,7 +3,6 @@ SWEP.Category = "M9K Pistols"
 SWEP.PrintName = "P08 Luger"
 
 SWEP.Slot = 1
-SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_p08_luger.mdl"

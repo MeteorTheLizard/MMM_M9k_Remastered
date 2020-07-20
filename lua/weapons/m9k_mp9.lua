@@ -3,7 +3,7 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "MP9"
 
 SWEP.Slot = 2
-SWEP.HoldType = "ar2"
+SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_b_t_mp9.mdl"

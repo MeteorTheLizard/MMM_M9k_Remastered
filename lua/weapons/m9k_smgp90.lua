@@ -3,7 +3,7 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "FN P90"
 
 SWEP.Slot = 2
-SWEP.HoldType = "ar2"
+SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 65

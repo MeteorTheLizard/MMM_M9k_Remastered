@@ -1,6 +1,8 @@
 SWEP.Base = "bobs_gun_base"
 SWEP.Slot = 4
 
+SWEP.HoldType = "shotgun"
+
 SWEP.ShellTime = 0.35
 SWEP.InsertingShell = false
 SWEP.CanceledReloadSuccess = false

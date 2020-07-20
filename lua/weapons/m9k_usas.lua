@@ -3,7 +3,7 @@ SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "USAS"
 
 SWEP.Slot = 4
-SWEP.HoldType = "shotgun"
+SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_usas12_shot.mdl"

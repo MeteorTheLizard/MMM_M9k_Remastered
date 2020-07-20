@@ -2,7 +2,6 @@ SWEP.Base = "bobs_shotty_base"
 SWEP.Category = "M9K Shotguns"
 SWEP.PrintName = "Double Barrel Shotgun"
 
-SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFlip = false

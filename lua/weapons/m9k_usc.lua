@@ -3,7 +3,7 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "HK USC"
 
 SWEP.Slot = 2
-SWEP.HoldType = "ar2"
+SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_hkoch_usc.mdl"

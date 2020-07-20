@@ -3,7 +3,7 @@ SWEP.Category = "M9K Submachine Guns"
 SWEP.PrintName = "Magpul PDR"
 
 SWEP.Slot = 2
-SWEP.HoldType = "smg"
+SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_pdr_smg.mdl"
