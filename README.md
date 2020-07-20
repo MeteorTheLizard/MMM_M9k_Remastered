@@ -25,8 +25,7 @@ All weapons have been rebalanced to be more fair and more fun at the same time.
 Shotguns are actual shotguns now as they all shoot "pellet" rounds instead of generic shotgun rounds.
  * NumShots drastically increased, damage drastically reduced.
 
-Scopes have been reverted to the old age. (Which might be changed later on).
- * They only zoom in now and do not display a Scope Overlay.
+Scopes have received QoL updates:
  * Changed max zooms for every scoped base weapon from 2 to 3.
  * Can now 'unzoom' by pressing the Reload key.
  
