@@ -13,6 +13,8 @@ They have been merged together and heavily optimized. Some features were removed
 
 **Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!**
 
+**This Addon is being maintained and updated constantly. Reported bugs WILL be fixed, so if you find one, please report it!**
+
 **Most noticeable changes:**
 
 Dynamic weapon accuracy (Similar to how weapons behave in CS:S or CS:GO)
