@@ -6,8 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_jackhammer2.mdl"
 SWEP.WorldModel = "models/weapons/w_pancor_jackhammer.mdl"
 
@@ -23,3 +21,5 @@ SWEP.Primary.Ammo = "buckshot"
 SWEP.Primary.NumShots = 48
 SWEP.Primary.Damage = 4
 SWEP.Primary.Spread = .25
+
+SWEP.IronSightsPos = Vector(4.026,-2.296,0.917)

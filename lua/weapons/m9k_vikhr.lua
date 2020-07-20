@@ -6,7 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_dmg_vikhr.mdl"
 SWEP.WorldModel = "models/weapons/w_dmg_vikhr.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 19
 SWEP.Primary.Spread = .02
+
+SWEP.IronSightsPos = Vector(-2.2363,-1.0859,0.5292)
+SWEP.IronSightsAng = Vector(1.4076,0.0907,0)

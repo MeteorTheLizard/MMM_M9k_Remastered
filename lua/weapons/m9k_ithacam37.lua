@@ -5,8 +5,6 @@ SWEP.PrintName = "Ithaca M37"
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_ithaca_m37shot.mdl"
 SWEP.WorldModel = "models/weapons/w_ithaca_m37.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.NumShots = 41
 SWEP.Primary.Damage = 2
 SWEP.Primary.Spread = .23
 SWEP.ShellTime = .4
+
+SWEP.IronSightsPos = Vector(2.16,-1.429,0.6)
+SWEP.IronSightsAng = Vector(3,0,0)

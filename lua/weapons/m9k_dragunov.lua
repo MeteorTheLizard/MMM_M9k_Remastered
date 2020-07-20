@@ -11,7 +11,7 @@ SWEP.ViewModel = "models/weapons/v_dragunov02.mdl"
 SWEP.WorldModel = "models/weapons/w_svd_dragunov.mdl"
 
 SWEP.Primary.Sound = "Weapon_svd01.Single"
-SWEP.Primary.RPM = 400
+SWEP.Primary.RPM = 175
 SWEP.Primary.ClipSize = 10
 
 SWEP.Primary.KickUp = 4
@@ -24,3 +24,26 @@ SWEP.Primary.Damage = 90
 SWEP.Primary.Spread = .15
 SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
+
+SWEP.ScopeScale = 0.7
+SWEP.ReticleScale = 0.6
+
+if CLIENT then
+	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_svdsight")
+
+	function SWEP:DrawHUD()
+		if self.ScopeState > 0 then
+			if self.DrawCrosshair then -- Only set the vars once (this is faster)
+				self.Owner:DrawViewModel(false)
+				self.DrawCrosshair = false
+			end
+
+			surface.SetDrawColor(0,0,0,255)
+			surface.SetTexture(CachedTextureID1)
+			surface.DrawTexturedRect(self.LensTable.x,self.LensTable.y,self.LensTable.w,self.LensTable.h)
+		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
+			self.Owner:DrawViewModel(true)
+			self.DrawCrosshair = true
+		end
+	end
+end

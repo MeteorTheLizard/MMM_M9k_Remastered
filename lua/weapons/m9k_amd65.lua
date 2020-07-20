@@ -6,8 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_amd_65.mdl"
 SWEP.WorldModel = "models/weapons/w_amd_65.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 18
 SWEP.Primary.Spread = .029
+
+SWEP.IronSightsPos = Vector(3.5,-2.21,2.115)
+SWEP.IronSightsAng = Vector(-3.701,0,0)

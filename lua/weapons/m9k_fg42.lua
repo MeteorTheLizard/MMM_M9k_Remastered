@@ -6,8 +6,6 @@ SWEP.Slot = 4
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_rif_fg42.mdl"
 SWEP.WorldModel = "models/weapons/w_fg42.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 42
 SWEP.Primary.Spread = .05
+
+SWEP.IronSightsPos = Vector(3.47,-6.078,1.96)
+SWEP.IronSightsAng = Vector(0.216,-0.082,0)

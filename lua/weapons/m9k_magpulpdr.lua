@@ -6,8 +6,6 @@ SWEP.Slot = 2
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_pdr_smg.mdl"
 SWEP.WorldModel = "models/weapons/w_magpul_pdr.mdl"
 
@@ -23,3 +21,5 @@ SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 14
 SWEP.Primary.Spread = .035
+
+SWEP.IronSightsPos = Vector(4.8,0,2.079)

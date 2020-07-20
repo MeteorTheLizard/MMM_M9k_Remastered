@@ -23,3 +23,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 24
 SWEP.Primary.Spread = .05
+
+SWEP.IronSightsPos = Vector(-3.804,0,0.495)
+SWEP.IronSightsAng = Vector(0.119,-0.019,0)

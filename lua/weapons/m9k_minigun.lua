@@ -22,3 +22,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 27
 SWEP.Primary.Spread = .08
+
+function SWEP:IronSight() -- This weapon should not have ironsights!
+end

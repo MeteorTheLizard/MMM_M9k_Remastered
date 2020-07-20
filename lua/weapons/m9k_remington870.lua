@@ -5,7 +5,6 @@ SWEP.PrintName = "Remington 870"
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_rem870tactical.mdl"
 SWEP.WorldModel = "models/weapons/w_remington_870_tact.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.NumShots = 65
 SWEP.Primary.Damage = 2
 SWEP.Primary.Spread = .28
 SWEP.ShellTime = .45
+
+SWEP.IronSightsPos = Vector(-2.014,0.1,1.2)
+SWEP.IronSightsAng = Vector(0.551,0.028,0)

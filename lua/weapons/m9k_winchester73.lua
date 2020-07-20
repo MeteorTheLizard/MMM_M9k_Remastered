@@ -5,8 +5,6 @@ SWEP.PrintName = "73 Winchester Carbine"
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_winchester1873.mdl"
 SWEP.WorldModel = "models/weapons/w_winchester_1873.mdl"
 
@@ -22,3 +20,5 @@ SWEP.Primary.Ammo = "AirboatGun"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 55
 SWEP.Primary.Spread = .01
+
+SWEP.IronSightsPos = Vector(4.356,0,2.591)

@@ -24,6 +24,29 @@ SWEP.Primary.Spread = .15
 SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
+SWEP.ScopeScale = 0.7
+SWEP.ReticleScale = 0.6
+
+if CLIENT then
+	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_scopesight")
+
+	function SWEP:DrawHUD()
+		if self.ScopeState > 0 then
+			if self.DrawCrosshair then -- Only set the vars once (this is faster)
+				self.Owner:DrawViewModel(false)
+				self.DrawCrosshair = false
+			end
+
+			surface.SetDrawColor(0,0,0,255)
+			surface.SetTexture(CachedTextureID1)
+			surface.DrawTexturedRect(self.LensTable.x,self.LensTable.y,self.LensTable.w,self.LensTable.h)
+		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
+			self.Owner:DrawViewModel(true)
+			self.DrawCrosshair = true
+		end
+	end
+end
+
 local OurClass = "m9k_contender"
 
 -- The thompson Contender is a special little something that requires its own PrimaryAttack function as the original creators thought it was a good idea to have the reload animation EMBEDDED into the primary fire animation (SMH)
@@ -58,6 +81,7 @@ function SWEP:PrimaryAttack()
 			self.ScopeCD = CurTime() + 1.5
 			self.ScopeState = 0
 			self.Owner:SetFOV(0,0.1)
+			self.Owner:SetAnimation(PLAYER_RELOAD)
 
 			timer.Create(TimerName,1.25,1,function() -- Seems to be a tiny bit faster than the viewmodel animation which is what we want
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end

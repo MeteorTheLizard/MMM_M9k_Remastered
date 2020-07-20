@@ -7,7 +7,6 @@ SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 65
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_tommy_g.mdl"
 SWEP.WorldModel = "models/weapons/w_tommy_gun.mdl"
 
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 11
 SWEP.Primary.Spread = .05
+
+SWEP.IronSightsPos = Vector(3.359,0,1.84)
+SWEP.IronSightsAng = Vector(-2.166,-4.039,0)

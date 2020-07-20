@@ -5,13 +5,11 @@ SWEP.PrintName = "PSG-1"
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_psg1_snipe.mdl"
 SWEP.WorldModel = "models/weapons/w_hk_psg1.mdl"
 
 SWEP.Primary.Sound = "Weapon_psg_1.Single"
-SWEP.Primary.RPM = 500
+SWEP.Primary.RPM = 400
 SWEP.Primary.ClipSize = 10
 
 SWEP.Primary.KickUp = 4
@@ -24,3 +22,26 @@ SWEP.Primary.Damage = 37
 SWEP.Primary.Spread = .15
 SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
+
+SWEP.ScopeScale = 0.7
+SWEP.ReticleScale = 0.6
+
+if CLIENT then
+	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_scopesight")
+
+	function SWEP:DrawHUD()
+		if self.ScopeState > 0 then
+			if self.DrawCrosshair then -- Only set the vars once (this is faster)
+				self.Owner:DrawViewModel(false)
+				self.DrawCrosshair = false
+			end
+
+			surface.SetDrawColor(0,0,0,255)
+			surface.SetTexture(CachedTextureID1)
+			surface.DrawTexturedRect(self.LensTable.x,self.LensTable.y,self.LensTable.w,self.LensTable.h)
+		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
+			self.Owner:DrawViewModel(true)
+			self.DrawCrosshair = true
+		end
+	end
+end

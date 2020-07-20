@@ -6,7 +6,6 @@ SWEP.Slot = 5
 SWEP.HoldType = "rpg"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_rl7.mdl"
 SWEP.WorldModel = "models/weapons/w_rl7.mdl"
@@ -15,14 +14,14 @@ SWEP.Primary.Sound = "RPGF.single"
 SWEP.Primary.RPM = 30
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.DefaultClip = 1
-SWEP.Primary.KickUp = 0
-SWEP.Primary.KickDown = 0
-SWEP.Primary.KickHorizontal = 0
+SWEP.Primary.KickUp = 3
+SWEP.Primary.KickDown = 5
+SWEP.Primary.KickHorizontal = 10
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "RPG_Round"
-SWEP.Primary.NumShots = 0
-SWEP.Primary.Damage = 0
-SWEP.Primary.Spread = 0
+
+SWEP.IronSightsPos = Vector(-3.7384,-5.7481,-0.2713)
+SWEP.IronSightsAng = Vector(1.1426,0.0675,0)
 
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
@@ -61,6 +60,23 @@ function SWEP:PrimaryAttack()
 			rocket:Spawn()
 			rocket:Activate()
 		end
+
+		local KickUp = self.Primary.KickUp
+		local KickDown = self.Primary.KickDown
+		local KickHorizontal = self.Primary.KickHorizontal
+
+		if self.Owner:KeyDown(IN_DUCK) then
+			KickUp = self.Primary.KickUp / 2
+			KickDown = self.Primary.KickDown / 2
+			KickHorizontal = self.Primary.KickHorizontal / 2
+		end
+
+		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
+		local eyes = self.Owner:EyeAngles()
+		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+
+		self.Owner:ViewPunch(SharedRandom)
+		self.Owner:SetEyeAngles(eyes)
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)

@@ -6,7 +6,6 @@ SWEP.Slot = 1
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_tcom_deagle.mdl"
 SWEP.WorldModel = "models/weapons/w_tcom_deagle.mdl"
@@ -23,3 +22,5 @@ SWEP.Primary.Ammo = "pistol"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 60
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(-1.7102,0,0.2585)

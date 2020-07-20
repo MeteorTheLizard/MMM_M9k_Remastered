@@ -6,7 +6,6 @@ SWEP.Slot = 5
 SWEP.HoldType = "slam"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_px.mdl"
 SWEP.WorldModel = "models/weapons/w_px.mdl"
@@ -19,7 +18,6 @@ SWEP.Primary.KickDown = 0
 SWEP.Primary.KickHorizontal = 0
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "ProxMine"
-SWEP.Primary.Round = "m9k_proxy_mine"
 SWEP.Primary.NumShots = 0
 SWEP.Primary.Damage = 0
 SWEP.Primary.Spread = 0
@@ -28,6 +26,9 @@ local OurClass = "m9k_proxy_mine"
 local AngleCache1 = Angle(90,180,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
+
+function SWEP:IronSight() -- This weapon should not have ironsights!
+end
 
 function SWEP:PrimaryAttack()
 	if self:CanPrimaryAttack() then

@@ -6,8 +6,6 @@ SWEP.Slot = 2
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_kriss_svs.mdl"
 SWEP.WorldModel = "models/weapons/w_kriss_vector.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 7
 SWEP.Primary.Spread = .026
+
+SWEP.IronSightsPos = Vector(3.943,-0.129,1.677)
+SWEP.IronSightsAng = Vector(-1.922,0.481,0)

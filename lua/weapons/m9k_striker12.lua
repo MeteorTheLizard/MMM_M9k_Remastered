@@ -5,8 +5,6 @@ SWEP.PrintName = "Striker 12"
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_striker_12g.mdl"
 SWEP.WorldModel = "models/weapons/w_striker_12g.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.NumShots = 76
 SWEP.Primary.Damage = 2
 SWEP.Primary.Spread = .37
 SWEP.ShellTime = .3
+
+SWEP.IronSightsPos = Vector(3.805,-1.045,1.805)
+SWEP.IronSightsAng = Vector(2.502,3.431,0)

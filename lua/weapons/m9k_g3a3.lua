@@ -6,7 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_hk_g3_rif.mdl"
 SWEP.WorldModel = "models/weapons/w_hk_g3.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 33
 SWEP.Primary.Spread = .026
+
+SWEP.IronSightsPos = Vector(-2.419,-2.069,1.498)
+SWEP.IronSightsAng = Vector(-0.109,-0.281,0)

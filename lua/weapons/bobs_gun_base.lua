@@ -11,13 +11,12 @@ SWEP.DrawCrosshair = true
 SWEP.DrawWeaponInfoBox = false
 SWEP.BounceWeaponIcon = false
 
-SWEP.ViewModelFOV = 65
+SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = true
 
 SWEP.HoldType = "Pistol"
 
 SWEP.Primary.Sound = ""
-SWEP.Primary.Round = ""
 SWEP.Primary.Cone = 0.2
 SWEP.Primary.Recoil = 10
 SWEP.Primary.Damage = 10
@@ -157,10 +156,59 @@ end
 
 function SWEP:Reload()
 	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:DefaultReload(ACT_VM_RELOAD)
 	end
 end
+
+--IronSights
+-------------------
+
+function SWEP:IronSight()
+	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
+		self.Owner:SetFOV(80,0.2)
+		self.IronSightState = true
+		self.DrawCrosshair = false
+	elseif self.Owner:KeyReleased(IN_ATTACK2) then
+		self.Owner:SetFOV(0,0.1)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+end
+
+function SWEP:Think()
+	self:IronSight()
+end
+
+SWEP.AimMul = 0.2
+SWEP.LastCurTick = 0
+
+function SWEP:GetViewModelPosition(pos,ang)
+	if not self.IronSightsPos then return pos, ang end
+
+	self.AimMul = self.IronSightState and (self.AimMul + math.abs(self.LastCurTick - RealTime())*5) or (self.AimMul - math.abs(self.LastCurTick - RealTime())*5)
+
+	self.AimMul = math.Clamp(self.AimMul,0.2,1)
+	self.LastCurTick = RealTime()
+
+	if self.IronSightsAng then
+		ang:RotateAroundAxis(ang:Right(),self.IronSightsAng.x * self.AimMul)
+		ang:RotateAroundAxis(ang:Up(),self.IronSightsAng.y * self.AimMul)
+		ang:RotateAroundAxis(ang:Forward(),self.IronSightsAng.z * self.AimMul)
+	end
+
+	pos = pos + self.IronSightsPos.x * ang:Right() * self.AimMul
+	pos = pos + self.IronSightsPos.y * ang:Forward() * self.AimMul
+	pos = pos + self.IronSightsPos.z * ang:Up() * self.AimMul
+
+	return pos, ang
+end
+
+-------------------
 
 if CLIENT then
 	local effectData = EffectData() -- We don't have to re-create this

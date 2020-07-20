@@ -7,7 +7,6 @@ SWEP.HoldType = "revolver"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 65
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_pist_re1858.mdl"
 SWEP.WorldModel = "models/weapons/w_remington_1858.mdl"
 
@@ -23,3 +22,5 @@ SWEP.Primary.Ammo = "357"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 34
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(5.44,0,1.72)

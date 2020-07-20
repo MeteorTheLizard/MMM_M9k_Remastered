@@ -6,24 +6,22 @@ SWEP.Slot = 5
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_milkor_mgl1.mdl"
 SWEP.WorldModel = "models/weapons/w_milkor_mgl1.mdl"
 
 SWEP.Primary.Sound = "40mmGrenade.Single"
-SWEP.Primary.RPM = 250
+SWEP.Primary.RPM = 125
 SWEP.Primary.ClipSize = 6
 
-SWEP.Primary.KickUp = 0
-SWEP.Primary.KickDown = 0
-SWEP.Primary.KickHorizontal = 0
-SWEP.Primary.Automatic = false
+SWEP.Primary.KickUp = 4
+SWEP.Primary.KickDown = 3
+SWEP.Primary.KickHorizontal = 2
+SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "40mmGrenade"
-SWEP.Primary.NumShots = 0
-SWEP.Primary.Damage = 0
-SWEP.Primary.Spread = 0
-SWEP.ShellTime = .5
+SWEP.ShellTime = .45
+
+SWEP.IronSightsPos = Vector(2.8,-0.03,1.654)
+SWEP.IronSightsAng = Vector(1.432,2.7,0)
 
 local AngleCache1 = Angle(90,0,0)
 local VectorCache1 = Vector(0,0,1)
@@ -63,6 +61,23 @@ function SWEP:PrimaryAttack()
 			rocket:Spawn()
 			rocket:Activate()
 		end
+
+		local KickUp = self.Primary.KickUp
+		local KickDown = self.Primary.KickDown
+		local KickHorizontal = self.Primary.KickHorizontal
+
+		if self.Owner:KeyDown(IN_DUCK) then
+			KickUp = self.Primary.KickUp / 2
+			KickDown = self.Primary.KickDown / 2
+			KickHorizontal = self.Primary.KickHorizontal / 2
+		end
+
+		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
+		local eyes = self.Owner:EyeAngles()
+		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+
+		self.Owner:ViewPunch(SharedRandom)
+		self.Owner:SetEyeAngles(eyes)
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)

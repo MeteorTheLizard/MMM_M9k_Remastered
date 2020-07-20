@@ -7,7 +7,6 @@ SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 60
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_tec_9_smg.mdl"
 SWEP.WorldModel = "models/weapons/w_intratec_tec9.mdl"
 
@@ -23,3 +22,5 @@ SWEP.Primary.Ammo = "pistol"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 12
 SWEP.Primary.Spread = .029
+
+SWEP.IronSightsPos = Vector(4.314,-1.216,2.135)

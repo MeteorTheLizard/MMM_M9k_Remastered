@@ -2,7 +2,6 @@ local mats = {
 	[MAT_ALIENFLESH] = {5,9},
 	[MAT_ANTLION] = {5,9},
 	[MAT_BLOODYFLESH] = {5,8},
-	[45] = {5,8},
 	[MAT_CLIP] = {3,5},
 	[MAT_COMPUTER] = {4,5},
 	[MAT_FLESH] = {5,8},

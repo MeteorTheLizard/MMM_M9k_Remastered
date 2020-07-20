@@ -6,8 +6,6 @@ SWEP.Slot = 4
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_usas12_shot.mdl"
 SWEP.WorldModel = "models/weapons/w_usas_12.mdl"
 
@@ -23,6 +21,9 @@ SWEP.Primary.Ammo = "buckshot"
 SWEP.Primary.NumShots = 45
 SWEP.Primary.Damage = 2
 SWEP.Primary.Spread = .37
+
+SWEP.IronSightsPos = Vector(4.519,-2.159,1.039)
+SWEP.IronSightsAng = Vector(0.072,0.975,0)
 
 SWEP.IsUSASReloading = false
 

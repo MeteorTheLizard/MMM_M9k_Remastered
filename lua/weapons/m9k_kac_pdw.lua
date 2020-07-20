@@ -6,8 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_kac_pdw1.mdl"
 SWEP.WorldModel = "models/weapons/w_kac_pdw.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 15
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(3.4,0,1.759)
+SWEP.IronSightsAng = Vector(2.46,0,0)

@@ -6,7 +6,6 @@ SWEP.Slot = 5
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_m79_grenadelauncher.mdl"
 SWEP.WorldModel = "models/weapons/w_m79_grenadelauncher.mdl"
@@ -14,12 +13,15 @@ SWEP.WorldModel = "models/weapons/w_m79_grenadelauncher.mdl"
 SWEP.Primary.Sound = "40mmGrenade.Single"
 SWEP.Primary.ClipSize = 1
 
-SWEP.Primary.KickUp = 1
-SWEP.Primary.KickDown = 0.3
-SWEP.Primary.KickHorizontal = 1
+SWEP.Primary.KickUp = 6
+SWEP.Primary.KickDown = 3
+SWEP.Primary.KickHorizontal = 5
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "40mmGrenade"
 SWEP.ShellTime = .5
+
+SWEP.IronSightsPos = Vector(-4.633,-7.651,2.108)
+SWEP.IronSightsAng = Vector(1.294,0.15,0)
 
 local AngleCache1 = Angle(90,0,0)
 local VectorCache1 = Vector(0,0,1)
@@ -59,6 +61,23 @@ function SWEP:PrimaryAttack()
 			rocket:Spawn()
 			rocket:Activate()
 		end
+
+		local KickUp = self.Primary.KickUp
+		local KickDown = self.Primary.KickDown
+		local KickHorizontal = self.Primary.KickHorizontal
+
+		if self.Owner:KeyDown(IN_DUCK) then
+			KickUp = self.Primary.KickUp / 2
+			KickDown = self.Primary.KickDown / 2
+			KickHorizontal = self.Primary.KickHorizontal / 2
+		end
+
+		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
+		local eyes = self.Owner:EyeAngles()
+		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+
+		self.Owner:ViewPunch(SharedRandom)
+		self.Owner:SetEyeAngles(eyes)
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)

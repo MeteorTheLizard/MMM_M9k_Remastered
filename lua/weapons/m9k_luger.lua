@@ -6,8 +6,6 @@ SWEP.Slot = 1
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_p08_luger.mdl"
 SWEP.WorldModel = "models/weapons/w_luger_p08.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.Ammo = "pistol"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 14
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(2.71,-2.122,2.27)
+SWEP.IronSightsAng = Vector(0.563,-0.013,0)

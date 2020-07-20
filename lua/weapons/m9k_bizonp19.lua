@@ -7,7 +7,6 @@ SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFOV = 65
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_bizon19.mdl"
 SWEP.WorldModel = "models/weapons/w_pp19_bizon.mdl"
 
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 12
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(3.359,0,0.839)
+SWEP.IronSightsAng = Vector(0.744,-0.588,0)

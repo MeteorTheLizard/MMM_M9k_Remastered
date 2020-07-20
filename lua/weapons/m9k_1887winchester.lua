@@ -5,8 +5,6 @@ SWEP.PrintName = "Winchester 87"
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_1887winchester.mdl"
 SWEP.WorldModel = "models/weapons/w_winchester_1887.mdl"
 
@@ -23,3 +21,6 @@ SWEP.Primary.Damage = 1
 SWEP.Primary.Spread = .20
 SWEP.Primary.Ammo = "buckshot"
 SWEP.ShellTime = .67
+
+SWEP.IronSightsPos = Vector(4.84,0,1.8)
+SWEP.IronSightsAng = Vector(0,0,2.295)

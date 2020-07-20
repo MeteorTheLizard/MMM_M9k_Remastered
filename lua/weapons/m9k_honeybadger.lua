@@ -6,7 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_aacbadger.mdl"
 SWEP.WorldModel = "models/weapons/w_aac_honeybadger.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 24
 SWEP.Primary.Spread = .015
+
+SWEP.IronSightsPos = Vector(-3.096,-3.695,1.815)
+SWEP.IronSightsAng = Vector(0.039,0,0)

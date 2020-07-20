@@ -6,7 +6,6 @@ SWEP.Slot = 5
 SWEP.HoldType = "rpg"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_mat.mdl"
 SWEP.WorldModel = "models/weapons/w_gdcw_matador_rl.mdl"
@@ -15,14 +14,11 @@ SWEP.Primary.Sound = "MATADORF.single"
 SWEP.Primary.RPM = 60
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.DefaultClip = 1
-SWEP.Primary.KickUp = 0
-SWEP.Primary.KickDown = 0
-SWEP.Primary.KickHorizontal = 0
+SWEP.Primary.KickUp = 10
+SWEP.Primary.KickDown = 8
+SWEP.Primary.KickHorizontal = 10
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "RPG_Round"
-SWEP.Primary.NumShots = 0
-SWEP.Primary.Damage = 0
-SWEP.Primary.Spread = 0
 
 SWEP.MatadorIsReloading = false
 
@@ -30,6 +26,29 @@ local OurClass = "m9k_matador"
 local AngleCache1 = Angle(90,0,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
+
+SWEP.ScopeScale = 1.25
+SWEP.ReticleScale = 0.5
+
+if CLIENT then
+	local CachedTextureID1 = surface.GetTextureID("scope/rocketscope")
+
+	function SWEP:DrawHUD()
+		if self.ScopeState > 0 then
+			if self.DrawCrosshair then -- Only set the vars once (this is faster)
+				self.Owner:DrawViewModel(false)
+				self.DrawCrosshair = false
+			end
+
+			surface.SetDrawColor(0,0,0,255)
+			surface.SetTexture(CachedTextureID1)
+			surface.DrawTexturedRect(self.LensTable.x - 1,self.LensTable.y,self.LensTable.w,self.LensTable.h)
+		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
+			self.Owner:DrawViewModel(true)
+			self.DrawCrosshair = true
+		end
+	end
+end
 
 function SWEP:Holster()
 	self.ScopeState = 0
@@ -81,6 +100,23 @@ function SWEP:PrimaryAttack()
 
 			util.ScreenShake(self.Owner:GetShootPos(),1000,10,0.3,500)
 		end
+
+		local KickUp = self.Primary.KickUp
+		local KickDown = self.Primary.KickDown
+		local KickHorizontal = self.Primary.KickHorizontal
+
+		if self.Owner:KeyDown(IN_DUCK) then
+			KickUp = self.Primary.KickUp / 2
+			KickDown = self.Primary.KickDown / 2
+			KickHorizontal = self.Primary.KickHorizontal / 2
+		end
+
+		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
+		local eyes = self.Owner:EyeAngles()
+		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+
+		self.Owner:ViewPunch(SharedRandom)
+		self.Owner:SetEyeAngles(eyes)
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)

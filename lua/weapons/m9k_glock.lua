@@ -6,8 +6,6 @@ SWEP.Slot = 1
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_dmg_glock.mdl"
 SWEP.WorldModel = "models/weapons/w_dmg_glock.mdl"
 
@@ -23,3 +21,5 @@ SWEP.Primary.Ammo = "pistol"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 12
 SWEP.Primary.Spread = .03
+
+SWEP.IronSightsPos = Vector(2.2042,0,1.7661)

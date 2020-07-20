@@ -23,3 +23,6 @@ SWEP.Primary.NumShots = 117
 SWEP.Primary.Damage = 1
 SWEP.Primary.Spread = .5
 SWEP.ShellTime = .5
+
+SWEP.IronSightsPos = Vector(-2.72,-3.143,1.28)
+SWEP.IronSightsAng = Vector(0,-0.75,3)

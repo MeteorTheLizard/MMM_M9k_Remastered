@@ -5,7 +5,6 @@ SWEP.PrintName = "Double Barrel Shotgun"
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_doublebarrl.mdl"
 SWEP.WorldModel = "models/weapons/w_double_barrel_shotgun.mdl"
@@ -25,6 +24,9 @@ SWEP.Primary.Spread = .30
 SWEP.ShellTime = .5
 
 SWEP.Secondary.Sound = "dbarrel_dblast"
+
+function SWEP:IronSight() -- This weapon should not have ironsights!
+end
 
 function SWEP:SecondaryAttack()
 	if timer.Exists("ShotgunReload_" .. self:EntIndex()) then return end

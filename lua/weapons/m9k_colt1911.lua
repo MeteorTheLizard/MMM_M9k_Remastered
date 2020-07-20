@@ -6,7 +6,6 @@ SWEP.Slot = 1
 SWEP.HoldType = "pistol"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/f_dmgf_co1911.mdl"
 SWEP.WorldModel = "models/weapons/s_dmgf_co1911.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "pistol"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 20
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(-2.6004,-1.3877,1.1892)
+SWEP.IronSightsAng = Vector(0.3756,-0.0032,0.103)

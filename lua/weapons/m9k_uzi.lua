@@ -6,7 +6,6 @@ SWEP.Slot = 2
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_imi_uzi01.mdl"
 SWEP.WorldModel = "models/weapons/w_uzi_imi.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 14
 SWEP.Primary.Spread = .03
+
+SWEP.IronSightsPos = Vector(-2.951,-2.629,1.633)
+SWEP.IronSightsAng = Vector(0.109,-0.772,1.725)

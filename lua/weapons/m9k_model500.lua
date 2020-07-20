@@ -6,7 +6,6 @@ SWEP.Slot = 1
 SWEP.HoldType = "revolver"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_swmodel_500.mdl"
 SWEP.WorldModel = "models/weapons/w_sw_model_500.mdl"
@@ -23,3 +22,6 @@ SWEP.Primary.Ammo = "357"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 50
 SWEP.Primary.Spread = .035
+
+SWEP.IronSightsPos = Vector(-1.923,-1.675,0.374)
+SWEP.IronSightsAng = Vector(0.052,0,0)

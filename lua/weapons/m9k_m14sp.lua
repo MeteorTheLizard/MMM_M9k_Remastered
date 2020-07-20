@@ -6,7 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_snip_m14sp.mdl"
 SWEP.WorldModel = "models/weapons/w_snip_m14sp.mdl"
@@ -23,3 +22,5 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 57
 SWEP.Primary.Spread = .025
+
+SWEP.IronSightsPos = Vector(-2.7031,-1.0539,1.6562)

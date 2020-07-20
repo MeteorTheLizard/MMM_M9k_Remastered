@@ -5,8 +5,6 @@ SWEP.PrintName = "SPAS 12"
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_spas12_shot.mdl"
 SWEP.WorldModel = "models/weapons/w_spas_12.mdl"
 
@@ -23,3 +21,5 @@ SWEP.Primary.NumShots = 47
 SWEP.Primary.Damage = 4
 SWEP.Primary.Spread = .37
 SWEP.ShellTime = .4
+
+SWEP.IronSightsPos = Vector(2.657,.394,1.659)

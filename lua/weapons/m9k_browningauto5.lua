@@ -5,8 +5,6 @@ SWEP.PrintName = "Browning Auto 5"
 SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_brown_auto5.mdl"
 SWEP.WorldModel = "models/weapons/w_browning_auto.mdl"
 
@@ -23,3 +21,5 @@ SWEP.Primary.NumShots = 73
 SWEP.Primary.Damage = 3
 SWEP.Primary.Spread = .35
 SWEP.ShellTime = .35
+
+SWEP.IronSightsPos = Vector(1.953,0,1.388)

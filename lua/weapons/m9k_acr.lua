@@ -6,8 +6,6 @@ SWEP.Slot = 3
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
 
-SWEP.ViewModelFOV = 70
-SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_rif_msda.mdl"
 SWEP.WorldModel = "models/weapons/w_masada_acr.mdl"
 
@@ -23,3 +21,5 @@ SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 14
 SWEP.Primary.Spread = .035
+
+SWEP.IronSightsPos = Vector(2.668,0,0.675)
