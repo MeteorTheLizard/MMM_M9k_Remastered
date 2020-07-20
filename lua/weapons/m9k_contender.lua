@@ -55,6 +55,9 @@ function SWEP:PrimaryAttack()
 		-- The following part is needed for the viewmodel to not glitch out but also follow logic
 		if self:Clip1() == 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 then
 			local TimerName = "Contender_Reload_" .. self:EntIndex()
+			self.ScopeCD = CurTime() + 1.5
+			self.ScopeState = 0
+			self.Owner:SetFOV(0,0.1)
 
 			timer.Create(TimerName,1.25,1,function() -- Seems to be a tiny bit faster than the viewmodel animation which is what we want
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
@@ -69,6 +72,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Holster() -- Make sure the special reload animation gets canceled
+	self.ScopeState = 0
 	timer.Remove("Contender_Reload_" .. self:EntIndex())
 	return true -- We have to return true
 end

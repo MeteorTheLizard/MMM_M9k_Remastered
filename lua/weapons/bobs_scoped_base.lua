@@ -12,6 +12,11 @@ function SWEP:Think()
 	end
 end
 
+function SWEP:Holster()
+	self.ScopeState = 0
+	return true
+end
+
 function SWEP:AdjustMouseSensitivity()
 	if self.ScopeState == 0 then
 		return 1
@@ -47,7 +52,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-	if self.ScopeState > 0 and self.ScopeCD < CurTime() then
+	if self.ScopeState > 0 then
 		self.Owner:SetFOV(0,0.1)
 		self.ScopeState = 0
 		self.ScopeCD = CurTime() + 0.2

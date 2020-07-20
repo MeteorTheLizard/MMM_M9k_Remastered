@@ -32,6 +32,8 @@ local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
 
 function SWEP:Holster()
+	self.ScopeState = 0
+
 	if self.MatadorIsReloading then
 		local Clip = self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and 1 or 0
 
@@ -83,6 +85,10 @@ function SWEP:PrimaryAttack()
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+
+		self.ScopeState = 0
+		self.Owner:SetFOV(0,0.1)
+		self.ScopeCD = CurTime() + 1
 
 		if CLIENT then return end
 

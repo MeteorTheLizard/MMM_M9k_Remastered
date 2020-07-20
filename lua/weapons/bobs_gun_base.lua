@@ -177,8 +177,4 @@ if CLIENT then
 			return true
 		end
 	end
-
-	function SWEP:DrawWorldModel()
-		self:DrawModel()
-	end
 end

@@ -73,6 +73,8 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Holster()
+	self.ScopeState = 0
+
 	if self.M202IsReloading == 2 then
 		self:SetClip1(self.Owner:GetAmmoCount(self.Primary.Ammo) >= 4 and 4 or self.Owner:GetAmmoCount(self.Primary.Ammo))
 	end
@@ -84,16 +86,19 @@ end
 
 -- This special snowflake got its own reload animation that I stitched together, neat huh?
 function SWEP:Reload()
-	if self.ScopeState > 0 and self.ScopeCD < CurTime() then
+	if self.ScopeState > 0 then
 		self.Owner:SetFOV(0,0.1)
 		self.ScopeState = 0
 		self.ScopeCD = CurTime() + 0.2
 		self.Owner:EmitSound("weapons/zoom.wav")
 	end
 
-	if CLIENT then return end
-
 	if not self.M202IsReloading and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
+
+		self.ScopeCD = CurTime() + 2
+
+		if CLIENT then return end
+
 		self.M202IsReloading = true
 
 		local TimerName = "M202_Reload_" .. self:EntIndex()
