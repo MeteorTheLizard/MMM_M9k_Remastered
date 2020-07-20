@@ -24,7 +24,7 @@ Dynamic weapon accuracy (Similar to how weapons behave in CS:S or CS:GO)
 All weapons have been rebalanced to be more fair and more fun at the same time.
  * Damage, RPM, Spread, Recoil etc.. Has been adjusted to be more fun and fair to shoot, and play against. (Yay for roleplayers).
 
-Shotguns are actual shotguns now as they all shoot "pellet" rounds instead of generic shotgun rounds.
+Shotguns are actual shotguns now as they all shoot "birdshot" rounds instead of generic shotgun rounds.
  * NumShots drastically increased, damage drastically reduced.
 
 Scopes have received QoL updates:
