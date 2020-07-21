@@ -14,9 +14,9 @@ SWEP.Primary.Sound = "Weapon_P19.Single"
 SWEP.Primary.RPM = 700
 SWEP.Primary.ClipSize = 64
 
-SWEP.Primary.KickUp = 0.7
-SWEP.Primary.KickDown = 0.4
-SWEP.Primary.KickHorizontal = 0.5
+SWEP.Primary.KickUp = 1
+SWEP.Primary.KickDown = 1
+SWEP.Primary.KickHorizontal = 1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1

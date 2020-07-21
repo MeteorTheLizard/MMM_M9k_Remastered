@@ -10,16 +10,16 @@ SWEP.ViewModel = "models/weapons/v_auga3sa.mdl"
 SWEP.WorldModel = "models/weapons/w_auga3.mdl"
 
 SWEP.Primary.Sound = "aug_a3.Single"
-SWEP.Primary.RPM = 500
+SWEP.Primary.RPM = 345
 SWEP.Primary.ClipSize = 30
 
-SWEP.Primary.KickUp = .9
-SWEP.Primary.KickDown = .4
-SWEP.Primary.KickHorizontal = .7
+SWEP.Primary.KickUp = 2.5
+SWEP.Primary.KickDown = 1.9
+SWEP.Primary.KickHorizontal = 1.75
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 22
+SWEP.Primary.Damage = 35
 SWEP.Primary.Spread = .03
 SWEP.Primary.SpreadZoomed = .0125
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread

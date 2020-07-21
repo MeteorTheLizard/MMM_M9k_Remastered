@@ -14,13 +14,13 @@ SWEP.Primary.Sound = "hk_g3_weapon.Single"
 SWEP.Primary.RPM = 300
 SWEP.Primary.ClipSize = 20
 
-SWEP.Primary.KickUp = 1.2
-SWEP.Primary.KickDown = 0.85
-SWEP.Primary.KickHorizontal = 1.0
+SWEP.Primary.KickUp = 2
+SWEP.Primary.KickDown = 1.4
+SWEP.Primary.KickHorizontal = 1.9
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 33
+SWEP.Primary.Damage = 37
 SWEP.Primary.Spread = .026
 
 SWEP.IronSightsPos = Vector(-2.419,-2.069,1.498)

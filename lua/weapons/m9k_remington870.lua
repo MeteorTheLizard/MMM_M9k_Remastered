@@ -9,17 +9,17 @@ SWEP.ViewModel = "models/weapons/v_rem870tactical.mdl"
 SWEP.WorldModel = "models/weapons/w_remington_870_tact.mdl"
 
 SWEP.Primary.Sound = "WepRem870.Single"
-SWEP.Primary.RPM = 70
-SWEP.Primary.ClipSize = 9
+SWEP.Primary.RPM = 60
+SWEP.Primary.ClipSize = 8
 
-SWEP.Primary.KickUp = 3
-SWEP.Primary.KickDown = 0
+SWEP.Primary.KickUp = 4
+SWEP.Primary.KickDown = 2
 SWEP.Primary.KickHorizontal = 10
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "buckshot"
-SWEP.Primary.NumShots = 65
-SWEP.Primary.Damage = 2
-SWEP.Primary.Spread = .28
+SWEP.Primary.NumShots = 40
+SWEP.Primary.Damage = 3
+SWEP.Primary.Spread = .17
 SWEP.ShellTime = .45
 
 SWEP.IronSightsPos = Vector(-2.014,0.1,1.2)

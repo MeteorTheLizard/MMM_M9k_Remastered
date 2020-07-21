@@ -112,4 +112,9 @@ if CLIENT then
 	killicon.Add("m9k_knife","vgui/hud/m9k_knife",icol)
 	killicon.Add("m9k_thrown_spec_knife","vgui/hud/m9k_knife",icol)
 	killicon.Add("m9k_nitro_vapor","vgui/hud/m9k_nitro",icol)
+
+	killicon.Add("m9k_hk45_admin","vgui/hud/m9k_hk45",icol)
+	killicon.Add("m9k_l85_admin","vgui/hud/m9k_l85",icol)
+	killicon.Add("m9k_amd65_admin","vgui/hud/m9k_amd65",icol)
+	killicon.Add("m9k_mossberg590_admin","vgui/hud/m9k_mossberg590",icol)
 end

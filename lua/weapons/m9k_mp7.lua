@@ -13,9 +13,9 @@ SWEP.Primary.Sound = "Weapon_MP7.single"
 SWEP.Primary.RPM = 600
 SWEP.Primary.ClipSize = 30
 
-SWEP.Primary.KickUp = .75
-SWEP.Primary.KickDown = .45
-SWEP.Primary.KickHorizontal = .45
+SWEP.Primary.KickUp = 1.2
+SWEP.Primary.KickDown = .6
+SWEP.Primary.KickHorizontal = .7
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1

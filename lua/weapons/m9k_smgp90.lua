@@ -14,13 +14,13 @@ SWEP.Primary.Sound = "P90_weapon.single"
 SWEP.Primary.RPM = 800
 SWEP.Primary.ClipSize = 50
 
-SWEP.Primary.KickUp = 0.6
-SWEP.Primary.KickDown = 0.4
-SWEP.Primary.KickHorizontal = 0.5
+SWEP.Primary.KickUp = 0.8
+SWEP.Primary.KickDown = 0.6
+SWEP.Primary.KickHorizontal = 0.7
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 7
+SWEP.Primary.Damage = 13
 SWEP.Primary.Spread = .032
 
 SWEP.IronSightsPos = Vector(2.707,-2.46,2.219)

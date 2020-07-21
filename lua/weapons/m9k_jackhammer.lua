@@ -18,8 +18,8 @@ SWEP.Primary.KickDown = 1
 SWEP.Primary.KickHorizontal = 2
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "buckshot"
-SWEP.Primary.NumShots = 48
-SWEP.Primary.Damage = 4
-SWEP.Primary.Spread = .25
+SWEP.Primary.NumShots = 30
+SWEP.Primary.Damage = 3
+SWEP.Primary.Spread = .19
 
 SWEP.IronSightsPos = Vector(4.026,-2.296,0.917)

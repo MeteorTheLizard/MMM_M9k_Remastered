@@ -11,12 +11,12 @@ SWEP.ViewModel = "models/weapons/v_tommy_g.mdl"
 SWEP.WorldModel = "models/weapons/w_tommy_gun.mdl"
 
 SWEP.Primary.Sound = "Weapon_tmg.Single"
-SWEP.Primary.RPM = 800
+SWEP.Primary.RPM = 700
 SWEP.Primary.ClipSize = 85
 
-SWEP.Primary.KickUp = 0.7
-SWEP.Primary.KickDown = 0.4
-SWEP.Primary.KickHorizontal = 0.4
+SWEP.Primary.KickUp = 0.8
+SWEP.Primary.KickDown = 0.5
+SWEP.Primary.KickHorizontal = 0.6
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1

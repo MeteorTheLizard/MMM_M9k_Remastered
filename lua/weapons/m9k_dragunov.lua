@@ -11,18 +11,17 @@ SWEP.ViewModel = "models/weapons/v_dragunov02.mdl"
 SWEP.WorldModel = "models/weapons/w_svd_dragunov.mdl"
 
 SWEP.Primary.Sound = "Weapon_svd01.Single"
-SWEP.Primary.RPM = 175
+SWEP.Primary.RPM = 125
 SWEP.Primary.ClipSize = 10
 
-SWEP.Primary.KickUp = 4
+SWEP.Primary.KickUp = 5
 SWEP.Primary.KickDown = 3
 SWEP.Primary.KickHorizontal = 5
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "SniperPenetratedRound"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 90
+SWEP.Primary.Damage = 76
 SWEP.Primary.Spread = .15
-SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.7

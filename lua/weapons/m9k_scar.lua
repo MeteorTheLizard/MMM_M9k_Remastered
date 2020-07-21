@@ -11,16 +11,16 @@ SWEP.ViewModel = "models/weapons/v_fnscarh.mdl"
 SWEP.WorldModel = "models/weapons/w_fn_scar_h.mdl"
 
 SWEP.Primary.Sound = "Wep_fnscarh.single"
-SWEP.Primary.RPM = 500
+SWEP.Primary.RPM = 390
 SWEP.Primary.ClipSize = 30
 
-SWEP.Primary.KickUp = 0.7
-SWEP.Primary.KickDown = 0.4
-SWEP.Primary.KickHorizontal = 0.8
+SWEP.Primary.KickUp = 2.2
+SWEP.Primary.KickDown = 1.35
+SWEP.Primary.KickHorizontal = 1.9
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 30
+SWEP.Primary.Damage = 32
 SWEP.Primary.Spread = .03
 
 SWEP.IronSightsPos = Vector(-2.652,0.187,-0.003)

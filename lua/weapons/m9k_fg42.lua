@@ -10,12 +10,12 @@ SWEP.ViewModel = "models/weapons/v_rif_fg42.mdl"
 SWEP.WorldModel = "models/weapons/w_fg42.mdl"
 
 SWEP.Primary.Sound = "FG42_weapon.Single"
-SWEP.Primary.RPM = 350
+SWEP.Primary.RPM = 250
 SWEP.Primary.ClipSize = 20
 
-SWEP.Primary.KickUp = 0.6
-SWEP.Primary.KickDown = 0.3
-SWEP.Primary.KickHorizontal = 0.8
+SWEP.Primary.KickUp = 2.3
+SWEP.Primary.KickDown = 1.5
+SWEP.Primary.KickHorizontal = 1.7
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1

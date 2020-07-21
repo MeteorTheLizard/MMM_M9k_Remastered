@@ -13,13 +13,13 @@ SWEP.Primary.Sound = "Dmgfok_M16A4.Single"
 SWEP.Primary.RPM = 360
 SWEP.Primary.ClipSize = 30
 
-SWEP.Primary.KickUp = 1.2
-SWEP.Primary.KickDown = .4
-SWEP.Primary.KickHorizontal = .65
+SWEP.Primary.KickUp = 2.3
+SWEP.Primary.KickDown = 1.3
+SWEP.Primary.KickHorizontal = 1.8
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 17
+SWEP.Primary.Damage = 31
 SWEP.Primary.Spread = .02
 SWEP.Primary.SpreadZoomed = .0075
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread

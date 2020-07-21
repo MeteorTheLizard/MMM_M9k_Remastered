@@ -9,18 +9,17 @@ SWEP.ViewModel = "models/weapons/v_psg1_snipe.mdl"
 SWEP.WorldModel = "models/weapons/w_hk_psg1.mdl"
 
 SWEP.Primary.Sound = "Weapon_psg_1.Single"
-SWEP.Primary.RPM = 400
+SWEP.Primary.RPM = 150
 SWEP.Primary.ClipSize = 10
 
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2
 SWEP.Primary.KickHorizontal = 3
-SWEP.Primary.Automatic = false
+SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "SniperPenetratedRound"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 37
+SWEP.Primary.Damage = 65
 SWEP.Primary.Spread = .15
-SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.7

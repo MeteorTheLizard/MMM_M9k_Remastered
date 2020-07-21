@@ -12,13 +12,13 @@ SWEP.Primary.Sound = "Dmgfok_glock.Single"
 SWEP.Primary.RPM = 650
 SWEP.Primary.ClipSize = 32
 
-SWEP.Primary.KickUp = 1.3
-SWEP.Primary.KickDown = 0.3
-SWEP.Primary.KickHorizontal = 0.5
+SWEP.Primary.KickUp = 1.9
+SWEP.Primary.KickDown = 1.3
+SWEP.Primary.KickHorizontal = 1.1
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "pistol"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 12
-SWEP.Primary.Spread = .03
+SWEP.Primary.Damage = 11
+SWEP.Primary.Spread = .036
 
 SWEP.IronSightsPos = Vector(2.2042,0,1.7661)

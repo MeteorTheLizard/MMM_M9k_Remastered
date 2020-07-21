@@ -13,9 +13,9 @@ SWEP.Primary.Sound = "mp5_navy_Single"
 SWEP.Primary.RPM = 675
 SWEP.Primary.ClipSize = 30
 
-SWEP.Primary.KickUp = 0.75
-SWEP.Primary.KickDown = 0.15
-SWEP.Primary.KickHorizontal = 0.2
+SWEP.Primary.KickUp = 0.8
+SWEP.Primary.KickDown = 0.5
+SWEP.Primary.KickHorizontal = 0.6
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "smg1"
 SWEP.Primary.NumShots = 1

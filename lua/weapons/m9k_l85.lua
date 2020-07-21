@@ -10,17 +10,17 @@ SWEP.ViewModel = "models/weapons/v_rif_l85.mdl"
 SWEP.WorldModel = "models/weapons/w_l85a2.mdl"
 
 SWEP.Primary.Sound = "Weapon_l85.Single"
-SWEP.Primary.RPM = 500
+SWEP.Primary.RPM = 325
 SWEP.Primary.ClipSize = 30
 
-SWEP.Primary.KickUp = .7
-SWEP.Primary.KickDown = .91
-SWEP.Primary.KickHorizontal = .75
+SWEP.Primary.KickUp = 2.5
+SWEP.Primary.KickDown = 1.3
+SWEP.Primary.KickHorizontal = 2
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 29
-SWEP.Primary.Spread = .023
+SWEP.Primary.Damage = 38
+SWEP.Primary.Spread = .02
 SWEP.Primary.SpreadZoomed = .0115
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 

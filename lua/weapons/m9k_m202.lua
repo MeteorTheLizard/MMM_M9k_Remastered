@@ -42,7 +42,7 @@ function SWEP:Deploy()
 
 	local Dur = self.Owner:GetViewModel():SequenceDuration() + 0.1
 	timer.Create("M202_DeployFix_" .. self:EntIndex(),Dur,1,function() -- Fixes buggy hand position after deploying
-		if not IsValid(self) or not IsValid(self.Owner) then return end
+		if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 		self:SendWeaponAnim(ACT_VM_IDLE)
 	end)
 

@@ -9,7 +9,7 @@ SWEP.ViewModel = "models/weapons/v_50calm82.mdl"
 SWEP.WorldModel = "models/weapons/w_barret_m82.mdl"
 
 SWEP.Primary.Sound = "BarretM82.Single"
-SWEP.Primary.RPM = 200
+SWEP.Primary.RPM = 60
 SWEP.Primary.ClipSize = 10
 
 SWEP.Primary.KickUp = 3
@@ -18,9 +18,8 @@ SWEP.Primary.KickHorizontal = 6
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "SniperPenetratedRound"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 110
-SWEP.Primary.Spread = .15
-SWEP.Primary.SpreadZoomed = .001
+SWEP.Primary.Damage = 130
+SWEP.Primary.Spread = .18
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.7

@@ -11,14 +11,14 @@ SWEP.Primary.Sound = "BenelliM3.Single"
 SWEP.Primary.RPM = 70
 SWEP.Primary.ClipSize = 8
 
-SWEP.Primary.KickUp = 3
-SWEP.Primary.KickDown = 1
-SWEP.Primary.KickHorizontal = 6
+SWEP.Primary.KickUp = 6
+SWEP.Primary.KickDown = 3
+SWEP.Primary.KickHorizontal = 7
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "buckshot"
-SWEP.Primary.NumShots = 67
-SWEP.Primary.Damage = 2
-SWEP.Primary.Spread = .44
+SWEP.Primary.NumShots = 35
+SWEP.Primary.Damage = 4
+SWEP.Primary.Spread = .16
 SWEP.ShellTime = .45
 
 SWEP.IronSightsPos = Vector(2.279,-1.007,1.302)

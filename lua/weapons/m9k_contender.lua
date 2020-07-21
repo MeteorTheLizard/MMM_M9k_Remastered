@@ -19,8 +19,8 @@ SWEP.Primary.KickHorizontal = 5
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "SniperPenetratedRound"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 74
-SWEP.Primary.Spread = .15
+SWEP.Primary.Damage = 75
+SWEP.Primary.Spread = .30
 SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 

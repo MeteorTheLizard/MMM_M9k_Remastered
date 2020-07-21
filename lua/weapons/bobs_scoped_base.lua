@@ -1,6 +1,8 @@
 SWEP.Base = "bobs_gun_base"
 SWEP.Slot = 4
 
+SWEP.Primary.SpreadZoomed = .001
+
 SWEP.ScopeState = 0
 SWEP.ScopeCD = 0
 SWEP.ScopeScale = 0.5

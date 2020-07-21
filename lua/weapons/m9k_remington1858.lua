@@ -11,16 +11,16 @@ SWEP.ViewModel = "models/weapons/v_pist_re1858.mdl"
 SWEP.WorldModel = "models/weapons/w_remington_1858.mdl"
 
 SWEP.Primary.Sound = "Remington.single"
-SWEP.Primary.RPM = 150
+SWEP.Primary.RPM = 157
 SWEP.Primary.ClipSize = 6
 
-SWEP.Primary.KickUp = 1.7
-SWEP.Primary.KickDown = 1.2
-SWEP.Primary.KickHorizontal = 1.2
+SWEP.Primary.KickUp = 5
+SWEP.Primary.KickDown = 3
+SWEP.Primary.KickHorizontal = 4
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "357"
-SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 34
-SWEP.Primary.Spread = .025
+SWEP.Primary.NumShots = 9
+SWEP.Primary.Damage = 5
+SWEP.Primary.Spread = .037
 
 SWEP.IronSightsPos = Vector(5.44,0,1.72)

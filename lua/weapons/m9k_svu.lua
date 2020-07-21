@@ -10,18 +10,17 @@ SWEP.ViewModel = "models/weapons/v_sniper_svu.mdl"
 SWEP.WorldModel = "models/weapons/w_dragunov_svu.mdl"
 
 SWEP.Primary.Sound = "Weapon_SVU.Single"
-SWEP.Primary.RPM = 600
+SWEP.Primary.RPM = 85
 SWEP.Primary.ClipSize = 10
 
-SWEP.Primary.KickUp = 4
-SWEP.Primary.KickDown = 3
-SWEP.Primary.KickHorizontal = 5
+SWEP.Primary.KickUp = 3
+SWEP.Primary.KickDown = 2
+SWEP.Primary.KickHorizontal = 2
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "SniperPenetratedRound"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 85
-SWEP.Primary.Spread = .15
-SWEP.Primary.SpreadZoomed = .001
+SWEP.Primary.Damage = 75
+SWEP.Primary.Spread = .25
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.7

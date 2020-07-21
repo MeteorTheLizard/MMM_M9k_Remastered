@@ -14,14 +14,14 @@ SWEP.Primary.Sound = "Model_500.Single"
 SWEP.Primary.RPM = 100
 SWEP.Primary.ClipSize = 5
 
-SWEP.Primary.KickUp = 3
-SWEP.Primary.KickDown = 2
-SWEP.Primary.KickHorizontal = 4
+SWEP.Primary.KickUp = 15
+SWEP.Primary.KickDown = 5
+SWEP.Primary.KickHorizontal = 10
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "357"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 50
-SWEP.Primary.Spread = .035
+SWEP.Primary.Damage = 85
+SWEP.Primary.Spread = .024
 
 SWEP.IronSightsPos = Vector(-1.923,-1.675,0.374)
 SWEP.IronSightsAng = Vector(0.052,0,0)

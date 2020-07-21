@@ -17,9 +17,9 @@ SWEP.Primary.KickDown = 5
 SWEP.Primary.KickHorizontal = 10
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "buckshot"
-SWEP.Primary.NumShots = 81
-SWEP.Primary.Damage = 1
-SWEP.Primary.Spread = .30
+SWEP.Primary.NumShots = 27
+SWEP.Primary.Damage = 4
+SWEP.Primary.Spread = .15
 SWEP.ShellTime = .5
 
 SWEP.Secondary.Sound = "dbarrel_dblast"
@@ -40,7 +40,7 @@ function SWEP:SecondaryAttack()
 		self:FinishReloading()
 	elseif self:CanPrimaryAttack() and not self.InsertingShell then
 		if self:Clip1() >= 2 then
-			self:ShootBullet(1 * self.Primary.Damage * math.Rand(.85,1.3),self.Primary.Recoil,self.Primary.NumShots * 4,self.Primary.Spread * 2)
+			self:ShootBullet(self.Primary.Damage * 1.2,self.Primary.Recoil,self.Primary.NumShots * 2,self.Primary.Spread * 1.25)
 			self:TakePrimaryAmmo(2)
 			self:EmitSound(self.Secondary.Sound)
 			self.Owner:SetAnimation(PLAYER_ATTACK1)

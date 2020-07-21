@@ -19,7 +19,7 @@ SWEP.Primary.KickHorizontal = 0.7
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
-SWEP.Primary.Damage = 17
-SWEP.Primary.Spread = .023
+SWEP.Primary.Damage = 13
+SWEP.Primary.Spread = .035
 
 SWEP.IronSightsPos = Vector(4.073,-3.438,1.259)

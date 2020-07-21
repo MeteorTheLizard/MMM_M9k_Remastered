@@ -19,7 +19,8 @@ local BannedClasses = { -- These weapons use the gun_base but shouldn't be affec
 	["m9k_striker12"] = true,
 	["m9k_1897winchester"] = true,
 	["m9k_1887winchester"] = true,
-	["m9k_usas"] = true
+	["m9k_usas"] = true,
+	["m9k_mossberg590_admin"] = true
 }
 
 function SWEP:Deploy()
