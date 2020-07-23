@@ -7,10 +7,6 @@ ENT.Category = "M9K Ammunition"
 ENT.Spawnable = true
 ENT.AdminOnly = false
 
-if CLIENT then
-	language.Add("SniperPenetratedRound_ammo","Sniper Ammo")
-end
-
 if SERVER then
 	local VectorCache1 = Vector(0,0,10)
 	local AngleCache1 = Angle(90,-90,180)
@@ -46,6 +42,8 @@ if SERVER then
 end
 
 if CLIENT then
+	language.Add("SniperPenetratedRound_ammo","Sniper Ammo")
+
 	local LEDColor = Color(230,45,45,255)
 	local VectorCache1 = Vector(90,0,0)
 	local Text = "Sniper Ammo"

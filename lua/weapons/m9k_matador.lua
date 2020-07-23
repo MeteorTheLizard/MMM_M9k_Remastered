@@ -173,12 +173,12 @@ function SWEP:PrimaryAttack()
 					self.MatadorIsReloading = false
 
 					if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
-						self:Remove()
-
 						local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
 						if #Weapons > 0 then
 							self.Owner:SelectWeapon(Weapons[1]:GetClass())
 						end
+
+						self:Remove()
 					else
 						self:SetClip1(1)
 						self.Owner:RemoveAmmo(1,self.Primary.Ammo)

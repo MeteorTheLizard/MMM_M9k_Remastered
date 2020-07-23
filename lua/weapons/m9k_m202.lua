@@ -119,10 +119,28 @@ function SWEP:Holster()
 	return true
 end
 
+function SWEP:IronSight()
+	if self.Owner:GetViewEntity() ~= self.Owner or self.M202IsReloading then return end
+
+	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
+		self.Owner:SetFOV(80,0.2)
+		self.IronSightState = true
+		self.DrawCrosshair = false
+	elseif self.Owner:KeyReleased(IN_ATTACK2) then
+		self.Owner:SetFOV(0,0.1)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+end
+
 if SERVER then
 	function SWEP:Reload() -- This special snowflake got its own reload animation that I stitched together, neat huh?
 		if not self.M202IsReloading and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
 			self.M202IsReloading = true
+
+			self.Owner:SetFOV(0,0.1)
+			self.IronSightState = false
+			self.DrawCrosshair = true
 
 			local TimerName = "M202_Reload_" .. self:EntIndex()
 
@@ -166,8 +184,9 @@ if SERVER then
 
 					self:DefaultReload(ACT_VM_DRAW)
 
-					timer.Simple(0.3,function()
+					timer.Create("M202_DeployFix_" .. self:EntIndex(),self.Owner:GetViewModel():SequenceDuration() + 0.1,1,function() -- Fixes buggy hand position after deploying
 						if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+						self:SendWeaponAnim(ACT_VM_IDLE)
 						self.M202IsReloading = false
 					end)
 				end)

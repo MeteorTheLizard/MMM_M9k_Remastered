@@ -4,4 +4,5 @@ vertexLitGeneric
 	"$envmapmask" "models\weapons\v_models\se_c4\blip3_ref"
 	"$bumpmap" "models\weapons\v_models\se_c4\normal"
 	"$Selfillum" "1"
+	"$normalmapalphaenvmapmask" "1"
 }

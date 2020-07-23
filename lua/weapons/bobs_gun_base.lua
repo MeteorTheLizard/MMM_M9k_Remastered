@@ -143,12 +143,18 @@ function SWEP:ShootBullet(damage,_,num_bullets,aimcone)
 		KickHorizontal = self.Primary.KickHorizontal / 2
 	end
 
-	local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
-	local eyes = self.Owner:EyeAngles()
-	eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+	local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
+	self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
 
-	self.Owner:ViewPunch(SharedRandom)
-	self.Owner:SetEyeAngles(eyes)
+	if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
+		local eyes = self.Owner:EyeAngles()
+		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+		self.Owner:SetEyeAngles(eyes)
+	elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
+		local eyes = self.Owner:EyeAngles()
+		eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
+		self.Owner:SetEyeAngles(eyes)
+	end
 
 	self:ShootEffects()
 	self.Owner:FireBullets(bullet) -- The bullet always comes out last! (Stop messing with simple logic pls.)
@@ -173,6 +179,8 @@ end
 -------------------
 
 function SWEP:IronSight()
+	if self.Owner:GetViewEntity() ~= self.Owner then return end
+
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)
 		self.IronSightState = true
@@ -222,8 +230,9 @@ if CLIENT then
 
 	function SWEP:FireAnimationEvent(_,_,event)
 		if event == 5001 or event == 5011 or event == 5021 or event == 5031 then
-			effectData:SetEntity(self.Owner:GetViewModel())
+			if self.Owner:GetViewEntity() ~= self.Owner then return end
 
+			effectData:SetEntity(self.Owner:GetViewModel())
 			util.Effect("CS_MuzzleFlash",effectData)
 
 			return true
