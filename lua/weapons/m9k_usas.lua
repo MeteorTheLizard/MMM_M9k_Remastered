@@ -47,10 +47,16 @@ end
 
 -- And once again we have a special snowflake as this weapon requires 2 animations to be played in order to reload properly.
 function SWEP:Reload() -- This function has some serious and crappy workarounds, if only they would have made a NORMAL reload animation instead of using shotgun reload start etc..
-	if self.IsUSASReloading then return false end
+	if not self.CanReload or self.IsUSASReloading then return end
 
 	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
 		self.IsUSASReloading = true
+		
+		if self.IronSightState then
+			self.Owner:SetFOV(0,0.3)
+			self.IronSightState = false
+			self.DrawCrosshair = true
+		end
 
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)

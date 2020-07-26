@@ -19,6 +19,11 @@ if CLIENT then
 		self:SendWeaponAnim(ACT_VM_IDLE)
 
 		if CLIENT then
+			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+				self:Equip()
+				self:Deploy()
+			end
+
 			self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
 		end
 
@@ -124,7 +129,7 @@ function SWEP:Reload()
 		self.Owner:EmitSound("weapons/zoom.wav")
 	end
 
-	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then
+	if self.CanReload and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then
 		self:DefaultReload(ACT_VM_RELOAD)
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 	end

@@ -30,13 +30,14 @@ SWEP.IronSightsPos = Vector(-3.5,-7,2)
 SWEP.IronSightsAng = Vector(0,0,0)
 
 local OurClass = "m9k_mmm_peashooter_rifle"
-local CachedColor1 = Color(255,189,6,255)
+local CachedColor1 = Color(255,235,0)
 local ViewPunchUp = Angle(-13,0,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
 
 function SWEP:DrawWeaponSelection(x,y,wide,tall)
-	draw.SimpleText("2","HL2MPTypeDeath",x + wide / 2,y + tall * 0.2,CachedColor1,TEXT_ALIGN_CENTER)
+	draw.SimpleText("l","WeaponIconsSelected_m9k",x + wide / 2,y + tall * 0.02,CachedColor1,TEXT_ALIGN_CENTER)
+	draw.SimpleText("l","WeaponIcons_m9k",x + wide / 2,y + tall * 0.02,CachedColor1,TEXT_ALIGN_CENTER)
 end
 
 function SWEP:Initialize()
@@ -47,6 +48,13 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 	self:SetWeaponHoldType(self.HoldType)
 	self:SendWeaponAnim(ACT_VM_IDLE)
+	
+	if CLIENT then
+		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+			self:Equip()
+			self:Deploy()
+		end
+	end
 end
 
 function SWEP:PrimaryAttack()

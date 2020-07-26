@@ -41,20 +41,35 @@ function SWEP:Initialize()
 	self:SendWeaponAnim(ACT_VM_IDLE)
 
 	if CLIENT then
+		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+			self:Equip()
+			self:Deploy()
+		end
+
 		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_amd65")
 	end
 end
 
 function SWEP:Deploy()
+	self.CanIronSights = false
+	self.CanReload = false
+
 	self:SetHoldType(self.HoldType)
 	self:SetWeaponHoldType(self.HoldType)
 	self:SendWeaponAnim(ACT_VM_DRAW)
 
-	local vm = self.Owner:GetViewModel()
-	self:SetNextPrimaryFire(CurTime() + vm:SequenceDuration() + 0.1)
-	self:SetNextSecondaryFire(CurTime() + vm:SequenceDuration() + 0.1)
+	local Dur = self.Owner:GetViewModel():SequenceDuration() + 0.1
+	self:SetNextPrimaryFire(CurTime() + Dur)
+	self:SetNextSecondaryFire(CurTime() + Dur)
 
-	if not self.Owner:IsAdmin() and not self.Owner:IsSuperAdmin() and not (IsDeveloperExists and self.Owner:IsDeveloper() or false) then -- If the weapon is dropped by an admin, do not let non-admins use it!
+	timer.Remove("MMM_M9k_Deploy_" .. self:EntIndex())
+	timer.Create("MMM_M9k_Deploy_" .. self:EntIndex(),Dur,1,function()
+		if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+		self.CanIronSights = true
+		self.CanReload = true
+	end)
+
+	if SERVER and not self.Owner:IsAdmin() and not self.Owner:IsSuperAdmin() and not (IsDeveloperExists and self.Owner:IsDeveloper() or false) then -- If the weapon is dropped by an admin, do not let non-admins use it!
 		self.Owner:EmitSound("buttons/button11.wav")
 		self:Remove()
 		return

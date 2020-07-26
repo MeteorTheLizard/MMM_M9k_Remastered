@@ -1,3 +1,5 @@
+MMM_M9k_IsBaseInstalled = true -- Absolutely avoid global variables like this whenever possible and if there is no way around it, make it as unique as possible.
+
 SWEP.SlotPos = 1
 
 SWEP.Spawnable = false
@@ -35,6 +37,9 @@ SWEP.Primary.Ammo = "none"
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Ammo = "none"
 
+SWEP.CanIronSights = false
+SWEP.CanReload = false
+
 local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
 	["m9k_m3"] = true,
 	["m9k_browningauto5"] = true,
@@ -64,6 +69,11 @@ function SWEP:Initialize()
 	self:SendWeaponAnim(ACT_VM_IDLE)
 
 	if CLIENT then
+		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+			self:Equip()
+			self:Deploy()
+		end
+
 		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
 	end
 end
@@ -72,20 +82,30 @@ function SWEP:Equip()
 	self:SetHoldType(self.HoldType)
 	self:SetWeaponHoldType(self.HoldType)
 
-	if not self.Owner:IsPlayer() then
+	if SERVER and not self.Owner:IsPlayer() then
 		self:Remove()
 		return
 	end
 end
 
 function SWEP:Deploy()
+	self.CanIronSights = false
+	self.CanReload = false
+
 	self:SetHoldType(self.HoldType)
 	self:SetWeaponHoldType(self.HoldType)
 	self:SendWeaponAnim(ACT_VM_DRAW)
 
-	local vm = self.Owner:GetViewModel()
-	self:SetNextPrimaryFire(CurTime() + vm:SequenceDuration() + 0.1)
-	self:SetNextSecondaryFire(CurTime() + vm:SequenceDuration() + 0.1)
+	local Dur = self.Owner:GetViewModel():SequenceDuration() + 0.1
+	self:SetNextPrimaryFire(CurTime() + Dur)
+	self:SetNextSecondaryFire(CurTime() + Dur)
+
+	timer.Remove("MMM_M9k_Deploy_" .. self:EntIndex())
+	timer.Create("MMM_M9k_Deploy_" .. self:EntIndex(),Dur,1,function()
+		if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+		self.CanIronSights = true
+		self.CanReload = true
+	end)
 
 	return true
 end
@@ -165,10 +185,12 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
-		self.Owner:SetFOV(0,0.3)
-		self.IronSightState = false
-		self.DrawCrosshair = true
+	if self.CanReload and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
+		if self.IronSightState then
+			self.Owner:SetFOV(0,0.3)
+			self.IronSightState = false
+			self.DrawCrosshair = true
+		end
 
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:DefaultReload(ACT_VM_RELOAD)
@@ -179,7 +201,7 @@ end
 -------------------
 
 function SWEP:IronSight()
-	if self.Owner:GetViewEntity() ~= self.Owner then return end
+	if self.Owner:GetViewEntity() ~= self.Owner or not self.CanIronSights then return end
 
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)

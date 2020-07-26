@@ -40,6 +40,11 @@ function SWEP:Initialize()
 	self:SetMaterial("models/debug/debugwhite")
 
 	if CLIENT then
+		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+			self:Equip()
+			self:Deploy()
+		end
+
 		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_mmm_flaregun")
 	end
 
@@ -51,7 +56,7 @@ function SWEP:FireAnimationEvent(_,_,event)
 end
 
 function SWEP:IronSight()
-	if self.ReloadingTime ~= 0 or self.Owner:GetViewEntity() ~= self.Owner then return end
+	if self.ReloadingTime ~= 0 or self.Owner:GetViewEntity() ~= self.Owner or not self.CanIronSights then return end
 
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)
@@ -133,13 +138,15 @@ function SWEP:Holster()
 end
 
 function SWEP:Reload()
-	if self.ReloadingTime == 0 and self:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) > 0 then
+	if self.CanReload and self.ReloadingTime == 0 and self:Clip1() < self.Primary.ClipSize and self.Owner:GetAmmoCount(self.Primary.Ammo) > 0 then
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:DefaultReload(ACT_VM_HOLSTER)
 
-		self.Owner:SetFOV(0,0.1)
-		self.IronSightState = false
-		self.DrawCrosshair = true
+		if self.IronSightState then
+			self.Owner:SetFOV(0,0.1)
+			self.IronSightState = false
+			self.DrawCrosshair = true
+		end
 
 		self.ReloadingTime = CurTime() + 3.7
 		self:SetNextPrimaryFire(self.ReloadingTime)

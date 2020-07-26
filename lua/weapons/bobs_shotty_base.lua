@@ -24,16 +24,27 @@ local BannedClasses = { -- These weapons use the gun_base but shouldn't be affec
 }
 
 function SWEP:Deploy()
+	self.CanIronSights = false
+	self.CanReload = false
+
 	self:SetHoldType(self.HoldType)
-
-	local TimerName = "ShotgunReload_" .. self:EntIndex()
-	timer.Remove(TimerName)
-
+	self:SetWeaponHoldType(self.HoldType)
 	self:SendWeaponAnim(ACT_VM_DRAW)
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
-	self.InsertingShell = false
 
+	timer.Remove("ShotgunReload_" .. self:EntIndex())
+
+	local Dur = self.Owner:GetViewModel():SequenceDuration() + 0.1
+	self:SetNextPrimaryFire(CurTime() + Dur)
+	self:SetNextSecondaryFire(CurTime() + Dur)
+
+	timer.Remove("MMM_M9k_Deploy_" .. self:EntIndex())
+	timer.Create("MMM_M9k_Deploy_" .. self:EntIndex(),Dur,1,function()
+		if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+		self.CanIronSights = true
+		self.CanReload = true
+	end)
+
+	self.InsertingShell = false
 	return true
 end
 
@@ -77,7 +88,13 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Reload()
-	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and not self.InsertingShell and self:Clip1() < self.Primary.ClipSize then
+	if self.CanReload and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and not self.InsertingShell and self:Clip1() < self.Primary.ClipSize then
+		if self.IronSightState then
+			self.Owner:SetFOV(0,0.3)
+			self.IronSightState = false
+			self.DrawCrosshair = true
+		end
+	
 		self.InsertingShell = true
 		self.CanceledReloadSuccess = false
 
