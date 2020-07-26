@@ -43,16 +43,19 @@ function SWEP:Deploy()
 	self:SetWeaponHoldType(self.HoldType)
 	self:SendWeaponAnim(ACT_VM_DRAW)
 
-	local Dur = self.Owner:GetViewModel():SequenceDuration() + 0.1
-	timer.Create("M202_DeployFix_" .. self:EntIndex(),Dur,1,function() -- Fixes buggy hand position after deploying
-		if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
-		self:SendWeaponAnim(ACT_VM_IDLE)
-		self.CanIronSights = true
-		self.CanReload = true
-	end)
+	local vm = self.Owner:GetViewModel()
+	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
+		local Dur = vm:SequenceDuration() + 0.1
+		timer.Create("M202_DeployFix_" .. self:EntIndex(),Dur,1,function() -- Fixes buggy hand position after deploying
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+			self:SendWeaponAnim(ACT_VM_IDLE)
+			self.CanIronSights = true
+			self.CanReload = true
+		end)
 
-	self:SetNextPrimaryFire(CurTime() + Dur)
-	self:SetNextSecondaryFire(CurTime() + Dur)
+		self:SetNextPrimaryFire(CurTime() + Dur)
+		self:SetNextSecondaryFire(CurTime() + Dur)
+	end
 
 	return true
 end
