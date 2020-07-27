@@ -37,8 +37,11 @@ SWEP.Primary.Ammo = "none"
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Ammo = "none"
 
-SWEP.CanIronSights = false
 SWEP.CanReload = false
+SWEP.CanIronSights = false
+
+SWEP.AimMul = 0.2
+SWEP.LastCurTick = 0
 
 local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
 	["m9k_m3"] = true,
@@ -60,28 +63,24 @@ local BannedClasses = { -- These weapons use the gun_base but shouldn't be affec
 }
 
 function SWEP:Initialize()
-	util.PrecacheSound(self.Primary.Sound)
-	util.PrecacheModel(self.ViewModel)
-	util.PrecacheModel(self.WorldModel)
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_IDLE)
+	self.OurIndex = self:EntIndex()
 
 	if CLIENT then
-		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-			self:Equip()
-			self:Deploy()
-		end
-
 		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
+
+		if self.Owner == LocalPlayer() then
+			self:SendWeaponAnim(ACT_VM_IDLE)
+
+			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+				self:Equip()
+				self:Deploy()
+			end
+		end
 	end
 end
 
 function SWEP:Equip()
-	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-
 	if SERVER and not self.Owner:IsPlayer() then
 		self:Remove()
 		return
@@ -89,21 +88,20 @@ function SWEP:Equip()
 end
 
 function SWEP:Deploy()
-	self.CanIronSights = false
-	self.CanReload = false
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_DRAW)
 
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
+		self.CanReload = false
+		self.CanIronSights = false
+		self:SendWeaponAnim(ACT_VM_DRAW)
+
 		local Dur = vm:SequenceDuration() + 0.1
 		self:SetNextPrimaryFire(CurTime() + Dur)
 		self:SetNextSecondaryFire(CurTime() + Dur)
 
-		timer.Remove("MMM_M9k_Deploy_" .. self:EntIndex())
-		timer.Create("MMM_M9k_Deploy_" .. self:EntIndex(),Dur,1,function()
+		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
+		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 			self.CanIronSights = true
 			self.CanReload = true
@@ -200,8 +198,17 @@ function SWEP:Reload()
 	end
 end
 
---IronSights
--------------------
+function SWEP:Holster()
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
+	if self.IronSightState then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+
+	return true
+end
 
 function SWEP:IronSight()
 	if self.Owner:GetViewEntity() ~= self.Owner or not self.CanIronSights then return end
@@ -221,33 +228,28 @@ function SWEP:Think()
 	self:IronSight()
 end
 
-SWEP.AimMul = 0.2
-SWEP.LastCurTick = 0
+if CLIENT then
+	function SWEP:GetViewModelPosition(pos,ang)
+		if not self.IronSightsPos then return pos, ang end
 
-function SWEP:GetViewModelPosition(pos,ang)
-	if not self.IronSightsPos then return pos, ang end
+		self.AimMul = self.IronSightState and (self.AimMul + math.abs(self.LastCurTick - RealTime())*5) or (self.AimMul - math.abs(self.LastCurTick - RealTime())*5)
 
-	self.AimMul = self.IronSightState and (self.AimMul + math.abs(self.LastCurTick - RealTime())*5) or (self.AimMul - math.abs(self.LastCurTick - RealTime())*5)
+		self.AimMul = math.Clamp(self.AimMul,0.2,1)
+		self.LastCurTick = RealTime()
 
-	self.AimMul = math.Clamp(self.AimMul,0.2,1)
-	self.LastCurTick = RealTime()
+		if self.IronSightsAng then
+			ang:RotateAroundAxis(ang:Right(),self.IronSightsAng.x * self.AimMul)
+			ang:RotateAroundAxis(ang:Up(),self.IronSightsAng.y * self.AimMul)
+			ang:RotateAroundAxis(ang:Forward(),self.IronSightsAng.z * self.AimMul)
+		end
 
-	if self.IronSightsAng then
-		ang:RotateAroundAxis(ang:Right(),self.IronSightsAng.x * self.AimMul)
-		ang:RotateAroundAxis(ang:Up(),self.IronSightsAng.y * self.AimMul)
-		ang:RotateAroundAxis(ang:Forward(),self.IronSightsAng.z * self.AimMul)
+		pos = pos + self.IronSightsPos.x * ang:Right() * self.AimMul
+		pos = pos + self.IronSightsPos.y * ang:Forward() * self.AimMul
+		pos = pos + self.IronSightsPos.z * ang:Up() * self.AimMul
+
+		return pos, ang
 	end
 
-	pos = pos + self.IronSightsPos.x * ang:Right() * self.AimMul
-	pos = pos + self.IronSightsPos.y * ang:Forward() * self.AimMul
-	pos = pos + self.IronSightsPos.z * ang:Up() * self.AimMul
-
-	return pos, ang
-end
-
--------------------
-
-if CLIENT then
 	local effectData = EffectData() -- We don't have to re-create this
 	effectData:SetAttachment(1)
 	effectData:SetScale(1)

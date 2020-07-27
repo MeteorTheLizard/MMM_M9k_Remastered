@@ -71,12 +71,18 @@ function SWEP:PrimaryAttack()
 			KickHorizontal = self.Primary.KickHorizontal / 2
 		end
 
-		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
-		local eyes = self.Owner:EyeAngles()
-		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
+		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
 
-		self.Owner:ViewPunch(SharedRandom)
-		self.Owner:SetEyeAngles(eyes)
+		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+			self.Owner:SetEyeAngles(eyes)
+		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
+			self.Owner:SetEyeAngles(eyes)
+		end
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)

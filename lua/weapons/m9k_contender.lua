@@ -27,29 +27,21 @@ SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 SWEP.ScopeScale = 0.7
 SWEP.ReticleScale = 0.6
 
-if CLIENT then
-	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_scopesight")
-
-	function SWEP:DrawHUD()
-		if self.ScopeState > 0 then
-			if self.DrawCrosshair then -- Only set the vars once (this is faster)
-				self.Owner:DrawViewModel(false)
-				self.DrawCrosshair = false
-			end
-
-			surface.SetDrawColor(0,0,0,255)
-			surface.SetTexture(CachedTextureID1)
-			surface.DrawTexturedRect(self.LensTable.x,self.LensTable.y,self.LensTable.w,self.LensTable.h)
-		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
-			self.Owner:DrawViewModel(true)
-			self.DrawCrosshair = true
-		end
-	end
-end
-
 local OurClass = "m9k_contender"
 
--- The thompson Contender is a special little something that requires its own PrimaryAttack function as the original creators thought it was a good idea to have the reload animation EMBEDDED into the primary fire animation (SMH)
+function SWEP:Holster() -- Make sure the special reload animation gets canceled
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
+	if self.IronSightState then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+
+	self.ScopeState = 0
+	timer.Remove("Contender_Reload_" .. self.OurIndex)
+	return true -- We have to return true
+end
 
 function SWEP:PrimaryAttack()
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
@@ -77,17 +69,19 @@ function SWEP:PrimaryAttack()
 
 		-- The following part is needed for the viewmodel to not glitch out but also follow logic
 		if self:Clip1() == 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 then
-			local TimerName = "Contender_Reload_" .. self:EntIndex()
+			self.CanReload = false
 			self.ScopeCD = CurTime() + 1.5
 			self.ScopeState = 0
 			self.Owner:SetFOV(0,0.1)
 			self.Owner:SetAnimation(PLAYER_RELOAD)
 
+			local TimerName = "Contender_Reload_" .. self.OurIndex
 			timer.Create(TimerName,1.25,1,function() -- Seems to be a tiny bit faster than the viewmodel animation which is what we want
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
 				self:SetClip1(1)
 				self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+				self.CanReload = true
 			end)
 		else
 			self:SendWeaponAnim(ACT_VM_IDLE)
@@ -95,8 +89,37 @@ function SWEP:PrimaryAttack()
 	end
 end
 
-function SWEP:Holster() -- Make sure the special reload animation gets canceled
-	self.ScopeState = 0
-	timer.Remove("Contender_Reload_" .. self:EntIndex())
-	return true -- We have to return true
+function SWEP:Reload()
+	if self.ScopeState > 0 then
+		self.Owner:SetFOV(0,0.1)
+		self.ScopeState = 0
+		self.ScopeCD = CurTime() + 0.2
+		self.Owner:EmitSound("weapons/zoom.wav")
+		self.NextReloadTime = CurTime() + 0.5
+	end
+
+	if self.CanReload and self.NextReloadTime < CurTime() and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then
+		self:DefaultReload(ACT_VM_RELOAD)
+		self.Owner:SetAnimation(PLAYER_RELOAD)
+	end
+end
+
+if CLIENT then
+	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_scopesight")
+
+	function SWEP:DrawHUD()
+		if self.ScopeState > 0 then
+			if self.DrawCrosshair then -- Only set the vars once (this is faster)
+				self.Owner:DrawViewModel(false)
+				self.DrawCrosshair = false
+			end
+
+			surface.SetDrawColor(0,0,0,255)
+			surface.SetTexture(CachedTextureID1)
+			surface.DrawTexturedRect(self.LensTable.x,self.LensTable.y,self.LensTable.w,self.LensTable.h)
+		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
+			self.Owner:DrawViewModel(true)
+			self.DrawCrosshair = true
+		end
+	end
 end

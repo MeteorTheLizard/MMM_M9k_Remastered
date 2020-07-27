@@ -35,26 +35,43 @@ local ViewPunchUp = Angle(-13,0,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
 
-function SWEP:DrawWeaponSelection(x,y,wide,tall)
-	draw.SimpleText("l","WeaponIconsSelected_m9k",x + wide / 2,y + tall * 0.02,CachedColor1,TEXT_ALIGN_CENTER)
-	draw.SimpleText("l","WeaponIcons_m9k",x + wide / 2,y + tall * 0.02,CachedColor1,TEXT_ALIGN_CENTER)
-end
-
 function SWEP:Initialize()
-	util.PrecacheSound(self.Primary.Sound)
-	util.PrecacheModel(self.ViewModel)
-	util.PrecacheModel(self.WorldModel)
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_IDLE)
-	
-	if CLIENT then
+	self.OurIndex = self:EntIndex()
+
+	if CLIENT and self.Owner == LocalPlayer() then
+		self:SendWeaponAnim(ACT_VM_IDLE)
+
 		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
 			self:Equip()
 			self:Deploy()
 		end
 	end
+end
+
+function SWEP:Deploy()
+	self:SetHoldType(self.HoldType)
+
+	local vm = self.Owner:GetViewModel()
+	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
+		self.CanReload = false
+		self.CanIronSights = false
+		self:SendWeaponAnim(ACT_VM_DRAW)
+
+		local Dur = vm:SequenceDuration() + 0.1
+		self:SetNextPrimaryFire(CurTime() + Dur)
+		self:SetNextSecondaryFire(CurTime() + Dur)
+
+		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
+		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+			self.CanIronSights = true
+			self.CanReload = true
+			self:SendWeaponAnim(ACT_VM_IDLE)
+		end)
+	end
+
+	return true
 end
 
 function SWEP:PrimaryAttack()
@@ -71,6 +88,14 @@ function SWEP:PrimaryAttack()
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound,75,math.random(95,105))
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+
+		if SERVER then -- The following is a serverside thing
+			timer.Remove("m9k_peashooter_returntoidle_" .. self.OurIndex)
+			timer.Create("m9k_peashooter_returntoidle_" .. self.OurIndex,0.3,1,function()
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				self:SendWeaponAnim(ACT_VM_IDLE)
+			end)
+		end
 	elseif SERVER and self:Clip1() <= 0 then
 		timer.Simple(0.1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
@@ -131,6 +156,11 @@ function SWEP:Reload()
 end
 
 if CLIENT then
+	function SWEP:DrawWeaponSelection(x,y,wide,tall)
+		draw.SimpleText("l","WeaponIconsSelected_m9k",x + wide / 2,y + tall * 0.02,CachedColor1,TEXT_ALIGN_CENTER)
+		draw.SimpleText("l","WeaponIcons_m9k",x + wide / 2,y + tall * 0.02,CachedColor1,TEXT_ALIGN_CENTER)
+	end
+
 	function SWEP:FireAnimationEvent(_,_,event)
 		if event == 22 or event == 32 then return true end -- No muzzleflash
 	end

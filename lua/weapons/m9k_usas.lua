@@ -31,9 +31,7 @@ local OurClass = "m9k_usas"
 local ReloadSound = "Weapon_usas.draw"
 
 function SWEP:CanPrimaryAttack()
-	if self.IsUSASReloading then
-		return false
-	end
+	if not SERVER and self.Owner ~= LocalPlayer() or self.IsUSASReloading then return end
 
 	if self:Clip1() <= 0 then
 		self:EmitSound("Weapon_Pistol.Empty")
@@ -50,18 +48,18 @@ function SWEP:Reload() -- This function has some serious and crappy workarounds,
 	if not self.CanReload or self.IsUSASReloading then return end
 
 	if self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
+		self.Owner:SetAnimation(PLAYER_RELOAD)
+		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
+
 		self.IsUSASReloading = true
-		
+
 		if self.IronSightState then
 			self.Owner:SetFOV(0,0.3)
 			self.IronSightState = false
 			self.DrawCrosshair = true
 		end
 
-		self.Owner:SetAnimation(PLAYER_RELOAD)
-		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
-
-		local TimerName = "USAS_Reload_" .. self:EntIndex()
+		local TimerName = "USAS_Reload_" .. self.OurIndex
 		timer.Create(TimerName,0.65,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
@@ -84,7 +82,15 @@ function SWEP:Reload() -- This function has some serious and crappy workarounds,
 end
 
 function SWEP:Holster() -- Make sure the reload animation is canceled when swapping
-	timer.Remove("USAS_Reload_" .. self:EntIndex())
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
+	if self.IronSightState then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+
+	timer.Remove("USAS_Reload_" .. self.OurIndex)
 	self.IsUSASReloading = false
 	return true
 end

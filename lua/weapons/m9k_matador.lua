@@ -22,36 +22,16 @@ SWEP.Primary.Ammo = "RPG_Round"
 
 SWEP.MatadorIsReloading = false
 
+SWEP.ScopeScale = 1.25
+SWEP.ReticleScale = 0.5
+
 local OurClass = "m9k_matador"
 local AngleCache1 = Angle(90,0,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
 
-SWEP.ScopeScale = 1.25
-SWEP.ReticleScale = 0.5
-
-if CLIENT then
-	local CachedTextureID1 = surface.GetTextureID("scope/rocketscope")
-
-	function SWEP:DrawHUD()
-		if self.ScopeState > 0 then
-			if self.DrawCrosshair then -- Only set the vars once (this is faster)
-				self.Owner:DrawViewModel(false)
-				self.DrawCrosshair = false
-			end
-
-			surface.SetDrawColor(0,0,0,255)
-			surface.SetTexture(CachedTextureID1)
-			surface.DrawTexturedRect(self.LensTable.x - 1,self.LensTable.y,self.LensTable.w,self.LensTable.h)
-		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
-			self.Owner:DrawViewModel(true)
-			self.DrawCrosshair = true
-		end
-	end
-end
-
 function SWEP:Holster()
-	self.ScopeState = 0
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
 
 	if self.MatadorIsReloading then
 		local Clip = self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and 1 or 0
@@ -63,8 +43,9 @@ function SWEP:Holster()
 		end
 	end
 
+	self.ScopeState = 0
 	self.MatadorIsReloading = false
-	timer.Remove("Matador_Reload_" .. self:EntIndex())
+	timer.Remove("Matador_Reload_" .. self.OurIndex)
 	return true
 end
 
@@ -79,13 +60,10 @@ function SWEP:PrimaryAttack()
 		self:SetNextPrimaryFire(CurTime() + 1.75)
 		self:TakePrimaryAmmo(1)
 
-		local aim = self.Owner:GetAimVector()
-		local pos = self.Owner:GetShootPos()
-
 		if SERVER then
 			local rocket = ents.Create("m9k_ammo_matador_90mm")
-			rocket:SetAngles(aim:Angle() + AngleCache1)
-			rocket:SetPos(pos)
+			rocket:SetAngles(self.Owner:GetAimVector():Angle() + AngleCache1)
+			rocket:SetPos(self.Owner:GetShootPos())
 
 			rocket:SetOwner(self.Owner)
 
@@ -111,12 +89,18 @@ function SWEP:PrimaryAttack()
 			KickHorizontal = self.Primary.KickHorizontal / 2
 		end
 
-		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
-		local eyes = self.Owner:EyeAngles()
-		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
+		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
 
-		self.Owner:ViewPunch(SharedRandom)
-		self.Owner:SetEyeAngles(eyes)
+		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+			self.Owner:SetEyeAngles(eyes)
+		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
+			self.Owner:SetEyeAngles(eyes)
+		end
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)
@@ -128,10 +112,8 @@ function SWEP:PrimaryAttack()
 
 		if CLIENT then return end
 
-		local TimerName = "Matador_Reload_" .. self:EntIndex()
-
 		self.MatadorIsReloading = true
-
+		local TimerName = "Matador_Reload_" .. self.OurIndex
 		timer.Create(TimerName,0.1,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
@@ -167,23 +149,19 @@ function SWEP:PrimaryAttack()
 					Phys:SetVelocity(-(self.Owner:EyeAngles():Forward() * 25) + self.Owner:EyeAngles():Right() * 100)
 				end
 
-				timer.Create(TimerName,0.2,1,function()
-					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				self.MatadorIsReloading = false
 
-					self.MatadorIsReloading = false
-
-					if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
-						local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
-						if #Weapons > 0 then
-							self.Owner:SelectWeapon(Weapons[1]:GetClass())
-						end
-
-						self:Remove()
-					else
-						self:SetClip1(1)
-						self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+				if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
+					local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
+					if #Weapons > 0 then
+						self.Owner:SelectWeapon(Weapons[1]:GetClass())
 					end
-				end)
+
+					self:Remove()
+				else
+					self:SetClip1(1)
+					self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+				end
 			end)
 		end)
 	end
@@ -191,4 +169,24 @@ end
 
 function SWEP:Reload()
 	return false
+end
+
+if CLIENT then
+	local CachedTextureID1 = surface.GetTextureID("scope/rocketscope")
+
+	function SWEP:DrawHUD()
+		if self.ScopeState > 0 then
+			if self.DrawCrosshair then -- Only set the vars once (this is faster)
+				self.Owner:DrawViewModel(false)
+				self.DrawCrosshair = false
+			end
+
+			surface.SetDrawColor(0,0,0,255)
+			surface.SetTexture(CachedTextureID1)
+			surface.DrawTexturedRect(self.LensTable.x - 1,self.LensTable.y,self.LensTable.w,self.LensTable.h)
+		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
+			self.Owner:DrawViewModel(true)
+			self.DrawCrosshair = true
+		end
+	end
 end

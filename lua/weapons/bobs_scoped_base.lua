@@ -7,24 +7,22 @@ SWEP.ScopeState = 0
 SWEP.ScopeCD = 0
 SWEP.ScopeScale = 0.5
 SWEP.ReticleScale = 0.5
+SWEP.NextReloadTime = 0
 
-if CLIENT then
-	function SWEP:Initialize()
-		util.PrecacheSound(self.Primary.Sound)
-		util.PrecacheModel(self.ViewModel)
-		util.PrecacheModel(self.WorldModel)
+function SWEP:Initialize()
+	self:SetHoldType(self.HoldType)
+	self.OurIndex = self:EntIndex()
 
-		self:SetHoldType(self.HoldType)
-		self:SetWeaponHoldType(self.HoldType)
-		self:SendWeaponAnim(ACT_VM_IDLE)
+	if CLIENT then
+		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
 
-		if CLIENT then
+		if self.Owner == LocalPlayer() then
+			self:SendWeaponAnim(ACT_VM_IDLE)
+
 			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
 				self:Equip()
 				self:Deploy()
 			end
-
-			self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
 		end
 
 		local iScreenWidth = ScrW()
@@ -82,6 +80,8 @@ function SWEP:Think()
 end
 
 function SWEP:Holster()
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
 	self.Owner:DrawViewModel(true)
 	self.ScopeState = 0
 	return true
@@ -127,9 +127,10 @@ function SWEP:Reload()
 		self.ScopeState = 0
 		self.ScopeCD = CurTime() + 0.2
 		self.Owner:EmitSound("weapons/zoom.wav")
+		self.NextReloadTime = CurTime() + 0.5
 	end
 
-	if self.CanReload and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then
+	if self.CanReload and self.NextReloadTime < CurTime() and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then
 		self:DefaultReload(ACT_VM_RELOAD)
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 	end

@@ -51,7 +51,8 @@ function SWEP:PrimaryAttack()
 
 			self.ScopeCD = CurTime() + 1.9
 
-			timer.Create("Barret_M98b_Resetscope_" .. self:EntIndex(),1.9,1,function()
+			timer.Remove("AW50_Resetscope_" .. self.OurIndex)
+			timer.Create("AW50_Resetscope_" .. self.OurIndex,1.9,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 				self.ScopeState = OldScopeState - 1
 				self:SecondaryAttack() -- Shitty but effective hack

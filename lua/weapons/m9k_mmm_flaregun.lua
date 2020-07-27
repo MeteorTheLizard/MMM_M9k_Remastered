@@ -34,25 +34,24 @@ local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPISetOwner and true or false
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_IDLE)
+	self.OurIndex = self:EntIndex()
 	self:SetColor(CachedColor1)
 	self:SetMaterial("models/debug/debugwhite")
 
 	if CLIENT then
-		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-			self:Equip()
-			self:Deploy()
-		end
+		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_mossberg590")
 
-		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_mmm_flaregun")
+		if self.Owner == LocalPlayer() then
+			self:SendWeaponAnim(ACT_VM_IDLE)
+
+			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+				self:Equip()
+				self:Deploy()
+			end
+		end
 	end
 
 	self.ReloadingTime = 0
-end
-
-function SWEP:FireAnimationEvent(_,_,event)
-	if event == 6001 then return true end
 end
 
 function SWEP:IronSight()
@@ -77,14 +76,15 @@ function SWEP:PrimaryAttack()
 	end
 
 	if self:CanPrimaryAttack() then
-		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
-		self:TakePrimaryAmmo(1)
-
-		local aim = self.Owner:GetAimVector()
-		local side = aim:Cross(VectorCache1)
-		local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
+		self:SetNextPrimaryFire(CurTime() + 0.5)
 
 		if SERVER then
+			self:TakePrimaryAmmo(1)
+
+			local aim = self.Owner:GetAimVector()
+			local side = aim:Cross(VectorCache1)
+			local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
+
 			local rocket = ents.Create("m9k_launched_flare")
 			rocket:SetAngles(aim:Angle() + AngleCache1)
 			rocket:SetPos(pos)
@@ -118,12 +118,18 @@ function SWEP:PrimaryAttack()
 			KickHorizontal = self.Primary.KickHorizontal / 2
 		end
 
-		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
-		local eyes = self.Owner:EyeAngles()
-		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
+		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
 
-		self.Owner:ViewPunch(SharedRandom)
-		self.Owner:SetEyeAngles(eyes)
+		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+			self.Owner:SetEyeAngles(eyes)
+		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
+			self.Owner:SetEyeAngles(eyes)
+		end
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound,100) -- This is very loud yes
@@ -132,7 +138,15 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Holster()
-	timer.Remove("MMM_Flaregun_Reload_" .. self:EntIndex())
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
+	if self.IronSightState then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+
+	timer.Remove("MMM_Flaregun_Reload_" .. self.OurIndex)
 	self.Owner:StopSound("weapons/mmm/flaregun-reload1.mp3")
 	return true
 end
@@ -151,9 +165,12 @@ function SWEP:Reload()
 		self.ReloadingTime = CurTime() + 3.7
 		self:SetNextPrimaryFire(self.ReloadingTime)
 
-		self.Owner:EmitSound("weapons/mmm/flaregun-reload1.mp3")
+		if SERVER then -- Only play it once and for everyone!
+			self.Owner:EmitSound("weapons/mmm/flaregun-reload1.mp3",65)
+		end
 
-		timer.Create("MMM_Flaregun_Reload_" .. self:EntIndex(),2.6,1,function()
+		timer.Remove("MMM_Flaregun_Reload_" .. self.OurIndex)
+		timer.Create("MMM_Flaregun_Reload_" .. self.OurIndex,2.6,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 			self:SendWeaponAnim(ACT_VM_DRAW)
 			self.ReloadingTime = 0
@@ -163,6 +180,6 @@ end
 
 if CLIENT then
 	function SWEP:FireAnimationEvent(_,_,event) -- No muzzleflash
-		if event == 22 then return true end
+		if event == 22 or event == 6001 then return true end
 	end
 end

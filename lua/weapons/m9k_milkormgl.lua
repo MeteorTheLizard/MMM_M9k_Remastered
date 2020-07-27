@@ -3,7 +3,7 @@ SWEP.Category = "M9K Specialties"
 SWEP.PrintName = "Milkor Mk1"
 
 SWEP.Slot = 5
-SWEP.HoldType = "shotgun"
+SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_milkor_mgl1.mdl"
@@ -39,13 +39,14 @@ function SWEP:PrimaryAttack()
 		self:FinishReloading()
 	elseif self:CanPrimaryAttack() and not self.InsertingShell then
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
-		self:TakePrimaryAmmo(1)
-
-		local aim = self.Owner:GetAimVector()
-		local side = aim:Cross(VectorCache1)
-		local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
 
 		if SERVER then
+			self:TakePrimaryAmmo(1)
+
+			local aim = self.Owner:GetAimVector()
+			local side = aim:Cross(VectorCache1)
+			local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
+
 			local rocket = ents.Create("m9k_launched_m79")
 			rocket:SetAngles(aim:Angle() + AngleCache1)
 			rocket:SetPos(pos)
@@ -72,15 +73,27 @@ function SWEP:PrimaryAttack()
 			KickHorizontal = self.Primary.KickHorizontal / 2
 		end
 
-		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
-		local eyes = self.Owner:EyeAngles()
-		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
+		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
 
-		self.Owner:ViewPunch(SharedRandom)
-		self.Owner:SetEyeAngles(eyes)
+		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+			self.Owner:SetEyeAngles(eyes)
+		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
+			self.Owner:SetEyeAngles(eyes)
+		end
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+	end
+end
+
+if CLIENT then
+	function SWEP:FireAnimationEvent(_,_,event) -- No shell ejection
+		if event == 20 then return true end
 	end
 end

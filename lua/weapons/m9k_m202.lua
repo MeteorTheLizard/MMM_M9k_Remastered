@@ -31,22 +31,17 @@ local CPPIExists = MetaE.CPPISetOwner and true or false
 local VectorCache1 = Vector(0,0,1)
 local ViewPunchUp = Angle(-13,0,0)
 
-function SWEP:Holster()
-	timer.Remove("M202_DeployFix_" .. self:EntIndex())
-end
-
 function SWEP:Deploy()
-	self.CanIronSights = false
-	self.CanReload = false
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_DRAW)
 
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
+		self.CanReload = false
+		self.CanIronSights = false
+		self:SendWeaponAnim(ACT_VM_DRAW)
+
 		local Dur = vm:SequenceDuration() + 0.1
-		timer.Create("M202_DeployFix_" .. self:EntIndex(),Dur,1,function() -- Fixes buggy hand position after deploying
+		timer.Create("M202_DeployFix_" .. self.OurIndex,Dur,1,function() -- Fixes buggy hand position after deploying
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 			self:SendWeaponAnim(ACT_VM_IDLE)
 			self.CanIronSights = true
@@ -69,13 +64,14 @@ function SWEP:PrimaryAttack()
 
 	if self:CanPrimaryAttack() then
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
-		self:TakePrimaryAmmo(1)
-
-		local aim = self.Owner:GetAimVector()
-		local side = aim:Cross(VectorCache1)
-		local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
 
 		if SERVER then
+			self:TakePrimaryAmmo(1)
+
+			local aim = self.Owner:GetAimVector()
+			local side = aim:Cross(VectorCache1)
+			local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
+
 			util.ScreenShake(self.Owner:GetShootPos(),1000,10,0.3,500)
 
 			local rocket = ents.Create("m9k_m202_rocket")
@@ -104,12 +100,18 @@ function SWEP:PrimaryAttack()
 			KickHorizontal = self.Primary.KickHorizontal / 2
 		end
 
-		local SharedRandom = Angle(math.Rand(-KickDown,-KickUp),math.Rand(-KickHorizontal,KickHorizontal),0)
-		local eyes = self.Owner:EyeAngles()
-		eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
+		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
 
-		self.Owner:ViewPunch(SharedRandom)
-		self.Owner:SetEyeAngles(eyes)
+		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
+			self.Owner:SetEyeAngles(eyes)
+		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
+			local eyes = self.Owner:EyeAngles()
+			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
+			self.Owner:SetEyeAngles(eyes)
+		end
 
 		self.Owner:SetAnimation(PLAYER_ATTACK1)
 		self:EmitSound(self.Primary.Sound)
@@ -118,12 +120,21 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Holster()
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
+	if self.IronSightState then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+
 	if self.M202IsReloading == 2 then
 		self:SetClip1(self.Owner:GetAmmoCount(self.Primary.Ammo) >= 4 and 4 or self.Owner:GetAmmoCount(self.Primary.Ammo))
 	end
 
 	self.M202IsReloading = false
-	timer.Remove("M202_Reload_" .. self:EntIndex())
+	timer.Remove("M202_DeployFix_" .. self.OurIndex)
+	timer.Remove("M202_Reload_" .. self.OurIndex)
 	return true
 end
 
@@ -152,8 +163,7 @@ if SERVER then
 				self.DrawCrosshair = true
 			end
 
-			local TimerName = "M202_Reload_" .. self:EntIndex()
-
+			local TimerName = "M202_Reload_" .. self.OurIndex
 			timer.Create(TimerName,0.7,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
@@ -194,7 +204,7 @@ if SERVER then
 
 					self:DefaultReload(ACT_VM_DRAW)
 
-					timer.Create("M202_DeployFix_" .. self:EntIndex(),self.Owner:GetViewModel():SequenceDuration() + 0.1,1,function() -- Fixes buggy hand position after deploying
+					timer.Create("M202_DeployFix_" .. self.OurIndex,self.Owner:GetViewModel():SequenceDuration() + 0.1,1,function() -- Fixes buggy hand position after deploying
 						if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 						self:SendWeaponAnim(ACT_VM_IDLE)
 						self.M202IsReloading = false

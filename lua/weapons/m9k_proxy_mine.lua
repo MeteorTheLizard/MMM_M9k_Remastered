@@ -35,10 +35,12 @@ function SWEP:PrimaryAttack()
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 
+		if CLIENT then return end
+
 		local plant = self.Owner:GetViewModel():SequenceDuration()
 		timer.Simple(plant,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not self.Owner:Alive() or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then
-				return -- ^ What a messy line
+				return
 			end
 
 			local trace = util.TraceLine({
@@ -46,8 +48,6 @@ function SWEP:PrimaryAttack()
 				endpos = self.Owner:GetShootPos() + 100 * self.Owner:GetAimVector(),
 				filter = {self.Owner}
 			})
-
-			if CLIENT then return end
 
 			local proxy = ents.Create("m9k_proxy")
 			proxy:SetPos(trace.HitPos + trace.HitNormal)

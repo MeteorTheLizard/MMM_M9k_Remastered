@@ -24,23 +24,22 @@ local BannedClasses = { -- These weapons use the gun_base but shouldn't be affec
 }
 
 function SWEP:Deploy()
-	self.CanIronSights = false
-	self.CanReload = false
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_DRAW)
 
-	timer.Remove("ShotgunReload_" .. self:EntIndex())
+	timer.Remove("ShotgunReload_" .. self.OurIndex)
 
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
+		self.CanReload = false
+		self.CanIronSights = false
+		self:SendWeaponAnim(ACT_VM_DRAW)
+
 		local Dur = vm:SequenceDuration() + 0.1
 		self:SetNextPrimaryFire(CurTime() + Dur)
 		self:SetNextSecondaryFire(CurTime() + Dur)
 
-		timer.Remove("MMM_M9k_Deploy_" .. self:EntIndex())
-		timer.Create("MMM_M9k_Deploy_" .. self:EntIndex(),Dur,1,function()
+		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
+		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 			self.CanIronSights = true
 			self.CanReload = true
@@ -52,8 +51,16 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
+	if not SERVER and self.Owner ~= LocalPlayer() then return end
+
+	if self.IronSightState then
+		self.Owner:SetFOV(0,0.3)
+		self.IronSightState = false
+		self.DrawCrosshair = true
+	end
+
 	if self.InsertingShell then
-		timer.Remove("ShotgunReload_" .. self:EntIndex())
+		timer.Remove("ShotgunReload_" .. self.OurIndex)
 		self.InsertingShell = false
 		self:SetNextPrimaryFire(CurTime() + 1.25)
 	end
@@ -97,30 +104,28 @@ function SWEP:Reload()
 			self.IronSightState = false
 			self.DrawCrosshair = true
 		end
-	
+
 		self.InsertingShell = true
 		self.CanceledReloadSuccess = false
-
-		local TimerName = "ShotgunReload_" .. self:EntIndex()
-		timer.Remove(TimerName)
 
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
 
-		timer.Create(TimerName,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
+		timer.Remove("ShotgunReload_" .. self.OurIndex)
+		timer.Create("ShotgunReload_" .. self.OurIndex,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then
-				timer.Remove(TimerName)
+				timer.Remove("ShotgunReload_" .. self.OurIndex)
 				return
 			end
 
 			if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
 				self:FinishReloading()
-				timer.Remove(TimerName)
+				timer.Remove("ShotgunReload_" .. self.OurIndex)
 				return
 			end
 
 			local vm = self.Owner:GetViewModel()
-			vm:ResetSequence(vm:LookupSequence("after_reload"))
+			vm:ResetSequence("after_reload")
 			vm:SetPlaybackRate(.01)
 
 			timer.Simple(0.1,function()
@@ -145,7 +150,7 @@ end
 
 function SWEP:FinishReloading()
 	if self.InsertingShell then
-		timer.Remove("ShotgunReload_" .. self:EntIndex())
+		timer.Remove("ShotgunReload_" .. self.OurIndex)
 
 		timer.Simple(0.35,function()
 			if not IsValid(self) or not IsValid(self.Owner) then return end
@@ -156,6 +161,6 @@ function SWEP:FinishReloading()
 
 		self.InsertingShell = false
 		self:SetNextPrimaryFire(CurTime() + 1.25)
-		self:SetNextSecondaryFire(CurTime() + 1.25) -- Required for the dbarrel
+		self:SetNextSecondaryFire(CurTime() + 1.25)
 	end
 end

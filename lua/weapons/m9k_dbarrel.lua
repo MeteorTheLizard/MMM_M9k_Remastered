@@ -28,7 +28,7 @@ function SWEP:IronSight() -- This weapon should not have ironsights!
 end
 
 function SWEP:SecondaryAttack()
-	if timer.Exists("ShotgunReload_" .. self:EntIndex()) then return end
+	if timer.Exists("ShotgunReload_" .. self.OurIndex) then return end
 
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
 		self:EmitSound("Weapon_Pistol.Empty")

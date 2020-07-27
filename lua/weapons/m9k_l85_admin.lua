@@ -34,21 +34,20 @@ local MetaP = FindMetaTable("Player")
 local IsDeveloperExists = MetaP.IsDeveloper or false
 
 function SWEP:Initialize()
-	util.PrecacheSound(self.Primary.Sound)
-	util.PrecacheModel(self.ViewModel)
-	util.PrecacheModel(self.WorldModel)
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_IDLE)
+	self.OurIndex = self:EntIndex()
 
 	if CLIENT then
-		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-			self:Equip()
-			self:Deploy()
-		end
-
 		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_l85")
+
+		if self.Owner == LocalPlayer() then
+			self:SendWeaponAnim(ACT_VM_IDLE)
+
+			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+				self:Equip()
+				self:Deploy()
+			end
+		end
 
 		local iScreenWidth = ScrW()
 		local iScreenHeight = ScrH()
@@ -97,21 +96,20 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
-	self.CanIronSights = false
-	self.CanReload = false
-
 	self:SetHoldType(self.HoldType)
-	self:SetWeaponHoldType(self.HoldType)
-	self:SendWeaponAnim(ACT_VM_DRAW)
 
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
+		self.CanReload = false
+		self.CanIronSights = false
+		self:SendWeaponAnim(ACT_VM_DRAW)
+
 		local Dur = vm:SequenceDuration() + 0.1
 		self:SetNextPrimaryFire(CurTime() + Dur)
 		self:SetNextSecondaryFire(CurTime() + Dur)
 
-		timer.Remove("MMM_M9k_Deploy_" .. self:EntIndex())
-		timer.Create("MMM_M9k_Deploy_" .. self:EntIndex(),Dur,1,function()
+		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
+		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
 			self.CanIronSights = true
 			self.CanReload = true
