@@ -111,6 +111,11 @@ function SWEP:Deploy()
 	return true
 end
 
+function SWEP:AttackAnimation()
+	if not IsValid(self.Owner) then return end
+	self.Owner:SetAnimation(PLAYER_ATTACK1)
+end
+
 function SWEP:PrimaryAttack()
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
 		self:EmitSound("Weapon_Pistol.Empty")
@@ -132,7 +137,7 @@ function SWEP:PrimaryAttack()
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 		self:TakePrimaryAmmo(1)
 		self:ShootBullet((1 * self.Primary.Damage) * math.Rand(.85,1.3),self.Primary.Recoil,self.Primary.NumShots,Spread)
-		self.Owner:SetAnimation(PLAYER_ATTACK1)
+		self:AttackAnimation()
 		self:EmitSound(self.Primary.Sound)
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 		self:MuzzleFlash() -- IDK if this is really needed tbh

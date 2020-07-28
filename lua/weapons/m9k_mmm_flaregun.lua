@@ -131,7 +131,7 @@ function SWEP:PrimaryAttack()
 			self.Owner:SetEyeAngles(eyes)
 		end
 
-		self.Owner:SetAnimation(PLAYER_ATTACK1)
+		self:AttackAnimation()
 		self:EmitSound(self.Primary.Sound,100) -- This is very loud yes
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	end

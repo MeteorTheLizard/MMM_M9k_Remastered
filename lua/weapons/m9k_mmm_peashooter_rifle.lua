@@ -85,7 +85,7 @@ function SWEP:PrimaryAttack()
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 		self:TakePrimaryAmmo(1)
 		self:ShootBullet(self.Primary.Damage,self.Primary.Recoil,self.Primary.NumShots,self.Primary.Spread)
-		self.Owner:SetAnimation(PLAYER_ATTACK1)
+		self:AttackAnimation()
 		self:EmitSound(self.Primary.Sound,75,math.random(95,105))
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 

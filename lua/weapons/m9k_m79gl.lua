@@ -86,7 +86,7 @@ function SWEP:PrimaryAttack()
 			self.Owner:SetEyeAngles(eyes)
 		end
 
-		self.Owner:SetAnimation(PLAYER_ATTACK1)
+		self:AttackAnimation()
 		self:EmitSound(self.Primary.Sound)
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	end

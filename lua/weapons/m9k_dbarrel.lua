@@ -43,7 +43,7 @@ function SWEP:SecondaryAttack()
 			self:ShootBullet(self.Primary.Damage * 1.2,self.Primary.Recoil,self.Primary.NumShots * 2,self.Primary.Spread * 1.25)
 			self:TakePrimaryAmmo(2)
 			self:EmitSound(self.Secondary.Sound)
-			self.Owner:SetAnimation(PLAYER_ATTACK1)
+			self:AttackAnimation()
 			self.Owner:MuzzleFlash()
 			self:SetNextSecondaryFire(CurTime() + 1 / ((self.Primary.RPM / 2) / 60))
 		elseif self:Clip1() == 1 then
