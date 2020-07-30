@@ -152,7 +152,7 @@ function SWEP:PrimaryAttack()
 		if self.IronSightState then -- Let us not play messy fire animations while aiming down the sights.. WE WANT TO SEE DAMMIT!
 			self:SendWeaponAnim(ACT_VM_IDLE) -- Unfortunately this gets rid of the muzzleflash and brass ejection (So we need to simulate it.)
 
-			if CLIENT then
+			if CLIENT and IsFirstTimePredicted() or game.SinglePlayer() then
 				local vm = self.Owner:GetViewModel()
 
 				local effectData = EffectData()
