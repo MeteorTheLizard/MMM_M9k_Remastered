@@ -36,7 +36,7 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if self:CanPrimaryAttack() then
+	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
 		local Spread = self.Primary.Spread
 
 		if self.Owner:GetVelocity():Length() > 100 then

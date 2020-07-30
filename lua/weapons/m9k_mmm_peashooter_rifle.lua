@@ -81,7 +81,7 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if self:CanPrimaryAttack() then
+	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 		self:TakePrimaryAmmo(1)
 		self:ShootBullet(self.Primary.Damage,self.Primary.Recoil,self.Primary.NumShots,self.Primary.Spread)

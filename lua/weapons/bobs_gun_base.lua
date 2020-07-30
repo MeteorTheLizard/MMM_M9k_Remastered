@@ -42,6 +42,7 @@ SWEP.CanIronSights = false
 
 SWEP.AimMul = 0.2
 SWEP.LastCurTick = 0
+SWEP.PrimaryAnimationInt = 0
 
 local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
 	["m9k_m3"] = true,
@@ -60,6 +61,13 @@ local BannedClasses = { -- These weapons use the gun_base but shouldn't be affec
 	["m9k_hk45_admin"] = true,
 	["m9k_l85_admin"] = true,
 	["m9k_amd65_admin"] = true
+}
+
+local EjectShellTypes = { -- This is needed to simulate shell ejections when aiming down the sights.
+	["pistol"] = "ShellEject",
+	["smg"] = "RifleShellEject",
+	["ar2"] = "RifleShellEject",
+	["shotgun"] = "ShotgunShellEject"
 }
 
 function SWEP:Initialize()
@@ -123,7 +131,7 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if self:CanPrimaryAttack() then
+	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
 		local Spread = self.Primary.Spread
 
 		if not BannedClasses[self:GetClass()] then
@@ -135,11 +143,35 @@ function SWEP:PrimaryAttack()
 		end
 
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
+
 		self:TakePrimaryAmmo(1)
 		self:ShootBullet((1 * self.Primary.Damage) * math.Rand(.85,1.3),self.Primary.Recoil,self.Primary.NumShots,Spread)
 		self:AttackAnimation()
 		self:EmitSound(self.Primary.Sound)
-		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+
+		if self.IronSightState then -- Let us not play messy fire animations while aiming down the sights.. WE WANT TO SEE DAMMIT!
+			self:SendWeaponAnim(ACT_VM_IDLE) -- Unfortunately this gets rid of the muzzleflash and brass ejection (So we need to simulate it.)
+
+			if CLIENT then
+				local vm = self.Owner:GetViewModel()
+
+				local effectData = EffectData()
+				effectData:SetEntity(vm)
+				util.Effect("CS_MuzzleFlash",effectData)
+
+				local Shell = EjectShellTypes[self.HoldType] or false
+				if Shell then
+					effectData:SetOrigin(vm:GetAttachment("2").Pos)
+					effectData:SetAngles(vm:GetAttachment("2").Ang)
+					util.Effect(Shell,effectData,true,true)
+				end
+			end
+
+			self.PrimaryAnimationInt = 3 -- Recoil.
+		else
+			self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+		end
+
 		self:MuzzleFlash() -- IDK if this is really needed tbh
 	end
 end
@@ -182,7 +214,6 @@ function SWEP:ShootBullet(damage,_,num_bullets,aimcone)
 		self.Owner:SetEyeAngles(eyes)
 	end
 
-	self:ShootEffects()
 	self.Owner:FireBullets(bullet) -- The bullet always comes out last! (Stop messing with simple logic pls.)
 end
 
@@ -249,8 +280,12 @@ if CLIENT then
 		end
 
 		pos = pos + self.IronSightsPos.x * ang:Right() * self.AimMul
-		pos = pos + self.IronSightsPos.y * ang:Forward() * self.AimMul
+		pos = pos + self.IronSightsPos.y * ang:Forward() * self.AimMul - (ang:Forward() * math.Clamp(self.PrimaryAnimationInt,0,10))
 		pos = pos + self.IronSightsPos.z * ang:Up() * self.AimMul
+
+		if self.PrimaryAnimationInt >= 0 then
+			self.PrimaryAnimationInt = self.PrimaryAnimationInt - 0.05
+		end
 
 		return pos, ang
 	end

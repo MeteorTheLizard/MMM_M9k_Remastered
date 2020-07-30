@@ -77,7 +77,7 @@ function SWEP:PrimaryAttack()
 
 	if self.InsertingShell and not self.CanceledReloadSuccess then
 		self:FinishReloading()
-	elseif self:CanPrimaryAttack() and not self.InsertingShell then
+	elseif self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() and not self.InsertingShell then
 		local Spread = self.Primary.Spread
 
 		if not BannedClasses[self:GetClass()] then
@@ -94,6 +94,7 @@ function SWEP:PrimaryAttack()
 		self:AttackAnimation()
 		self:EmitSound(self.Primary.Sound)
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+		self:MuzzleFlash()
 	end
 end
 

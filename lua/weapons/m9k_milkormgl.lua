@@ -37,7 +37,7 @@ function SWEP:PrimaryAttack()
 
 	if self.InsertingShell and not self.CanceledReloadSuccess then
 		self:FinishReloading()
-	elseif self:CanPrimaryAttack() and not self.InsertingShell then
+	elseif self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() and not self.InsertingShell then
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 
 		if SERVER then

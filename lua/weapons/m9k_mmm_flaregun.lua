@@ -75,7 +75,7 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if self:CanPrimaryAttack() then
+	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
 		self:SetNextPrimaryFire(CurTime() + 0.5)
 
 		if SERVER then
