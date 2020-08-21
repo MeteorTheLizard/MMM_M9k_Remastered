@@ -49,8 +49,9 @@ Some models that used to have scopes no longer have scopes. This was done to str
  
 # Compatibility
 
-I cannot guarantee that you can use this Weapon pack as a base for other M9k-based weapons from the workshop. It might work, it might not. The best thing you can do is to test it out!
-And if you are a Developer, I'd appreciate any contributions to this project.
+This version of M9k is NOT compatible with Legacy M9k packs. Weapons and packs have to be specifically coded for this addon to function properly!
+
+It is highly recommended to uninstall all non-M9k Remastered packs before installing this addon!
 
 # Credits
 
