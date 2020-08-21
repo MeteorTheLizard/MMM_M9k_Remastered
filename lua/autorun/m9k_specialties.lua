@@ -1,18 +1,3 @@
-if CLIENT then
-	language.Add("40mmGrenade_ammo","40mm Grenade")
-	language.Add("ProxMine_ammo","Proximity Mine")
-end
-
-game.AddAmmoType({
-	name = "40mmGrenade",
-	dmgtype = DMG_BULLET
-})
-
-game.AddAmmoType({
-	name = "ProxMine",
-	dmgtype = DMG_BULLET
-})
-
 sound.Add({
 	name = "EX41.Pump",
 	channel = CHAN_ITEM,

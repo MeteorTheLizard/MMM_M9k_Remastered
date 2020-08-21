@@ -24,7 +24,7 @@ SWEP.IronSightsPos = Vector(-3.7384,-5.7481,-0.2713)
 SWEP.IronSightsAng = Vector(1.1426,0.0675,0)
 
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 local VectorCache1 = Vector(0,0,1)
 
 function SWEP:PrimaryAttack()

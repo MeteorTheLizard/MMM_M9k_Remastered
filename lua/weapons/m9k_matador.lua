@@ -28,7 +28,7 @@ SWEP.ReticleScale = 0.5
 local OurClass = "m9k_matador"
 local AngleCache1 = Angle(90,0,0)
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 
 function SWEP:Holster()
 	if not SERVER and self.Owner ~= LocalPlayer() then return end
@@ -37,7 +37,7 @@ function SWEP:Holster()
 		local Clip = self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and 1 or 0
 
 		if Clip == 0 then
-			self:Remove()
+			self.Owner:StripWeapon("m9k_matador")
 		else
 			self:SetClip1(Clip)
 		end
@@ -152,12 +152,7 @@ function SWEP:PrimaryAttack()
 				self.MatadorIsReloading = false
 
 				if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
-					local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
-					if #Weapons > 0 then
-						self.Owner:SelectWeapon(Weapons[1]:GetClass())
-					end
-
-					self:Remove()
+					self.Owner:StripWeapon("m9k_matador")
 				else
 					self:SetClip1(1)
 					self.Owner:RemoveAmmo(1,self.Primary.Ammo)

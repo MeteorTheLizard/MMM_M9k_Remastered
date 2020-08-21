@@ -31,7 +31,7 @@ local CachedColor1 = Color(255,93,0,255)
 local AngleCache1 = Angle(90,0,0)
 local VectorCache1 = Vector(0,0,1)
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 
 function SWEP:Initialize()
 	self.OurIndex = self:EntIndex()
@@ -39,7 +39,7 @@ function SWEP:Initialize()
 	self:SetMaterial("models/debug/debugwhite")
 
 	if CLIENT then
-		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_mossberg590")
+		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_mmm_flaregun")
 
 		if self.Owner == LocalPlayer() then
 			self:SendWeaponAnim(ACT_VM_IDLE)

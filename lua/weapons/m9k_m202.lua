@@ -27,7 +27,7 @@ SWEP.M202IsReloading = false
 
 local OurClass = "m9k_m202"
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 local VectorCache1 = Vector(0,0,1)
 local ViewPunchUp = Angle(-13,0,0)
 

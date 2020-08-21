@@ -32,21 +32,13 @@ Scopes have received QoL updates:
  * Can now 'unzoom' by pressing the Reload key.
  
 Not all Weapons have made it back.
- * Some weapons such as the Orbital Strike Canon, Davy crockett, Harpoon, Knife, and more have been removed but MIGHT be re-added in the future.
+ * Some weapons have been removed but MIGHT be re-added in the future.
  
  **Full list of missing weapons:**
- * Damascus (Ninja sword)
  * Davy crockett
  * Fists
- * Harpoon
  * IED Detonator
- * Knife
- * m61 Frag Grenade
- * Machete
- * Nerve Gas
- * Nitro
  * Orbital Strike Canon
- * Sticky Grenade
  * Suicide bomb
 
 Some models that used to have scopes no longer have scopes. This was done to streamline assault rifles and heavy weapons to fit their weapon base (Nobody used the scopes on them anyway).

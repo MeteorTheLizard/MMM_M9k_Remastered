@@ -7,11 +7,6 @@ ENT.Category = "M9K Ammunition"
 ENT.Spawnable = true
 ENT.AdminOnly = false
 
-game.AddAmmoType({
-	name = "rzmflaregun",
-	dmgtype = DMG_BULLET
-})
-
 if SERVER then
 	local VectorCache1 = Vector(0,0,10)
 
@@ -45,8 +40,6 @@ if SERVER then
 end
 
 if CLIENT then
-	language.Add("rzmflaregun_ammo","Flaregun Ammo")
-
 	function ENT:Draw()
 		self:DrawModel()
 	end

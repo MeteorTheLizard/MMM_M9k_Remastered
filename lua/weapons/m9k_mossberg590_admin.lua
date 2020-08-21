@@ -73,7 +73,8 @@ function SWEP:Deploy()
 
 	if SERVER and not self.Owner:IsAdmin() and not self.Owner:IsSuperAdmin() and not (IsDeveloperExists and self.Owner:IsDeveloper() or false) then -- If the weapon is dropped by an admin, do not let non-admins use it!
 		self.Owner:EmitSound("buttons/button11.wav")
-		self:Remove()
+		self.Owner:StripWeapon("m9k_mossberg590_admin")
+		self:Remove() -- Just to make sure
 		return
 	end
 

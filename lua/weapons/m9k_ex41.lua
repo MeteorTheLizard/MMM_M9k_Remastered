@@ -28,7 +28,7 @@ SWEP.SetNextZoom = 0
 local AngleCache1 = Angle(90,0,0)
 local VectorCache1 = Vector(0,0,1)
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 
 function SWEP:PrimaryAttack()
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater

@@ -25,7 +25,7 @@ SWEP.Primary.Spread = 0
 local OurClass = "m9k_proxy_mine"
 local AngleCache1 = Angle(90,180,0)
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 
 function SWEP:IronSight() -- This weapon should not have ironsights!
 end
@@ -68,12 +68,7 @@ function SWEP:PrimaryAttack()
 			proxy:SetMoveType(MOVETYPE_NONE)
 
 			if self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then
-				local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
-				if #Weapons > 0 then
-					self.Owner:SelectWeapon(Weapons[1]:GetClass())
-				end
-
-				self:Remove()
+				self.Owner:StripWeapon("m9k_proxy_mine")
 			else
 				self.Owner:RemoveAmmo(1,self.Primary.Ammo)
 				self:SendWeaponAnim(ACT_VM_DRAW)

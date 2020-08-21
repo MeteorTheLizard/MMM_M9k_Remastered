@@ -32,7 +32,7 @@ local OurClass = "m9k_mmm_peashooter"
 local CachedColor1 = Color(255,235,0)
 local ViewPunchUp = Angle(-13,0,0)
 local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPISetOwner and true or false
+local CPPIExists = MetaE.CPPIGetOwner and true or false
 
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
@@ -137,13 +137,8 @@ function SWEP:PrimaryAttack()
 						Phys:SetVelocity(self.Owner:GetAimVector() * 250)
 						Phys:AddAngleVelocity(VectorRand(-50,50))
 					end
-
-					local Weapons = self.Owner:GetWeapons() -- We need to select a different weapon, otherwise the viewmodels might glitch out here
-					if #Weapons > 0 then
-						self.Owner:SelectWeapon(Weapons[1]:GetClass())
-					end
-
-					self:Remove()
+					
+					self.Owner:StripWeapon("m9k_mmm_peashooter")
 				end)
 			end)
 		end)

@@ -8,6 +8,8 @@ ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
 if SERVER then
+	local MetaE = FindMetaTable("Entity")
+	local CPPIExists = MetaE.CPPIGetOwner and true or false
 	local ColorCache1 = Color(255,255,255,0)
 
 	function ENT:Initialize()
@@ -19,7 +21,6 @@ if SERVER then
 		self:SetTrigger(true)
 
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 
 		local burnFX = ents.Create("env_flare")
 		burnFX:SetPos(self:GetPos())
@@ -27,6 +28,8 @@ if SERVER then
 		burnFX:SetKeyValue("scale",3)
 		burnFX:SetKeyValue("duration",30)
 		burnFX:Spawn()
+
+		SafeRemoveEntityDelayed(burnFX,30)
 	end
 
 	local BurnEntity = function(Ent,Target)
@@ -37,17 +40,17 @@ if SERVER then
 		burnFX:SetKeyValue("duration",30)
 		burnFX:Spawn()
 
-		Target:Ignite(30)
+		SafeRemoveEntityDelayed(burnFX,30)
 
-		SafeRemoveEntityDelayed(Target,30)
+		Target:Ignite(30)
 
 		Ent:Remove()
 	end
 
 	function ENT:StartTouch(v)
-		if v:IsNPC() then
+		if v:IsNPC() and (CPPIExists and v:CPPIGetOwner() == self.Owner or not CPPIExists) or v:IsPlayer() and (MMM and v:IsPVP() and self.Owner:IsPVP() or not MMM) then
 			BurnEntity(self,v)
-		elseif MMM and v:GetClass() == "prop_ragdoll" then -- MMM Compat
+		elseif MMM and v:GetClass() == "prop_ragdoll" and ((CPPIExists and v:CPPIGetOwner() == self.Owner or not CPPIExists) or (v:GetOwner():IsPVP() and self.Owner:IsPVP())) then -- MMM Compat
 			BurnEntity(self,v)
 		end
 	end

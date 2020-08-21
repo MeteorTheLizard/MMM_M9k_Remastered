@@ -42,8 +42,6 @@ if SERVER then
 end
 
 if CLIENT then
-	language.Add("AirboatGun_ammo","Winchester Ammo")
-
 	local LEDColor = Color(230,45,45,255)
 	local VectorCache1 = Vector(90,0,0)
 	local Text = "Winchester Ammo"
