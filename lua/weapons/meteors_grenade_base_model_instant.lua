@@ -43,8 +43,6 @@ function SWEP:PrimaryAttack()
 	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
 		self:SetNextPrimaryFire(CurTime() + 2)
 
-		timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex) -- Prevent the animation from being overwritten by the idle thing
-
 		self:SendWeaponAnim(self.PrimaryAttackSequence or ACT_VM_THROW)
 		self:AttackAnimation()
 
