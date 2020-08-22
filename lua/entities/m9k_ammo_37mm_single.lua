@@ -14,7 +14,7 @@ if SERVER then
 		self:SetModel("models/weapons/w_40mm_grenade_launched.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+		self:SetCollisionGroup(COLLISION_GROUP_WEAPON) -- We do not want such small things to have collisions!
 		self:PhysWake()
 		self:SetUseType(SIMPLE_USE)
 

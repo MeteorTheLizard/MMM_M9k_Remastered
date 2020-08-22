@@ -22,7 +22,10 @@ if CLIENT then
 
 		self.ShouldDraw = true
 
-		self.ViewEnt:SetNoDraw(true)
+		if IsValid(self.ViewEnt) then
+			self.ViewEnt:SetNoDraw(true)
+		end
+
 		return true
 	end
 end

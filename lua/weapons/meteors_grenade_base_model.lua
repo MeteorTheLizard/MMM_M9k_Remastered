@@ -153,6 +153,15 @@ if CLIENT then
 			self.ViewEnt:SetNoDraw(true)
 		end
 
+		if SERVER and IsValid(self.Owner) then
+			if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Remove the grenade when its 'empty'
+				self.Owner:StripWeapon(self:GetClass())
+			elseif self:Clip1() <= 0 then -- Unless we still have some left in which case we refill the 'magazine'
+				self:SetClip1(1)
+				self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+			end
+		end
+
 		return true
 	end
 

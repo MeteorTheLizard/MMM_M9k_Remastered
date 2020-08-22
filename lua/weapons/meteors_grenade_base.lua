@@ -183,8 +183,13 @@ function SWEP:Holster()
 	self.CanPullPin = true
 	self.PinPulled = false
 
-	if SERVER and IsValid(self.Owner) and (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Remove the grenade when its 'empty'
-		self.Owner:StripWeapon(self:GetClass())
+	if SERVER and IsValid(self.Owner) then
+		if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Remove the grenade when its 'empty'
+			self.Owner:StripWeapon(self:GetClass())
+		elseif self:Clip1() <= 0 then -- Unless we still have some left in which case we refill the 'magazine'
+			self:SetClip1(1)
+			self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+		end
 	end
 
 	return true
@@ -210,7 +215,7 @@ if SERVER then
 			-- HACK!! At the time of coding this, WEAPON:OwnerChanged does not work for the first spawn and drop! (Which causes issues!!)
 			-- https://github.com/Facepunch/garrysmod-issues/issues/4639
 			if IsValid(self.LastOwner) then -- This is done to fix the viewmodel after dropping
-				self.LastOwner:SendLua("Entity(" .. self:EntIndex() .. "):Holster()")
+				self.LastOwner:SendLua("local Ent = Entity(" .. self:EntIndex() .. "); if IsValid(Ent) then Ent:Holster() end")
 			end
 		end
 	end

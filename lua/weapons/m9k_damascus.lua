@@ -29,7 +29,7 @@ function SWEP:PrimaryAttack() -- Stabby stab stab
 
 		local vm = self.Owner:GetViewModel() -- We want to play the idle animation after we are done attacking!
 		if SERVER or IsValid(vm) then -- The user attacking
-			if not IsFirstTimePredicted() or game.SinglePlayer() then return end -- Fixes weird prediction bugs.
+			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs.
 
 			vm:ResetSequence(self.SlashAnim and "midslash2" or "midslash1") -- This is how you do efficient flip-flops in Lua
 			self.SlashAnim = not self.SlashAnim

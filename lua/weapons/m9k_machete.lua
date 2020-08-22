@@ -90,7 +90,7 @@ function SWEP:PrimaryAttack() -- Stabby stab stab
 
 		local vm = self.Owner:GetViewModel() -- We want to play the idle animation after we are done attacking!
 		if SERVER or IsValid(vm) then -- The user attacking
-			if not IsFirstTimePredicted() or game.SinglePlayer() then return end -- Fixes weird prediction bugs.
+			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs.
 			local Dur = vm:SequenceDuration()
 
 			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,0.1,1,function() -- Attack damage is delayed!
@@ -119,7 +119,7 @@ function SWEP:SecondaryAttack()
 
 		local vm = self.Owner:GetViewModel()
 		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			if not IsFirstTimePredicted() or game.SinglePlayer() then return end -- Fixes weird prediction bugs.
+			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs.
 			local Dur = vm:SequenceDuration() - 1.25
 
 			if CLIENT then

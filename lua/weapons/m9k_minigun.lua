@@ -2,7 +2,7 @@ SWEP.Base = "bobs_gun_base"
 SWEP.Category = "M9K Machine Guns"
 SWEP.PrintName = "Minigun"
 
-SWEP.Slot = 5
+SWEP.Slot = 4
 SWEP.HoldType = "crossbow"
 SWEP.Spawnable = true
 

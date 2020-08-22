@@ -9,8 +9,17 @@ ENT.AdminOnly = false
 
 if SERVER then
 	local VectorCache1 = Vector(0,0,10)
+	local effectdata = EffectData()
+	effectdata:SetMagnitude(18)
+	effectdata:SetScale(1.3)
 
 	function ENT:Initialize()
+		self.Owner = self:GetCreator()
+
+		if IsValid(self.Owner) then -- We NEED to have an owner, otherwise we cannot 'splode
+			self.CanSplode = true
+		end
+
 		self:SetModel("models/items/ammocrates/cratestickys.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -23,11 +32,18 @@ if SERVER then
 			self:SetPos(self:GetPos() + VectorCache1)
 			self:DropToFloor()
 		end)
+
+		self.iHealth = 100
 	end
 
 	function ENT:PhysicsCollide(Data)
 		if Data.Speed > 80 and Data.DeltaTime > 0.2 then
 			self:EmitSound("Wood.ImpactHard")
+
+			if Data.Speed > 350 then
+				self.iHealth = self.iHealth - math.Clamp(Data.Speed/20,0,100)
+				self:Splode() -- Check if we should 'splode
+			end
 		end
 	end
 
@@ -39,6 +55,36 @@ if SERVER then
 			else
 				Activator:GiveAmmo(5,"StickyGrenade")
 			end
+
+			self:Remove()
+		end
+	end
+
+	function ENT:OnTakeDamage(dmginfo)
+		local dmg = dmginfo:GetDamage()
+
+		if isnumber(dmg) then
+			self.iHealth = self.iHealth - dmg
+			self:Splode() -- Check if we should 'splode
+		end
+	end
+
+	function ENT:Splode()
+		if not self.CanSplode then return end
+
+		if self.iHealth <= 0 and not self.Sploded then
+			self.Sploded = true -- Safeguard since BlastDamage causes an infinite loop otherwise
+			local Pos = self:GetPos()
+
+			self:EmitSound("physics/wood/wood_plank_break" .. math.random(2,4) .. ".wav")
+
+			effectdata:SetOrigin(Pos)
+			effectdata:SetEntity(self)
+			effectdata:SetRadius(1)
+			util.BlastDamage(self,self.Owner,Pos,600,150)
+			util.Effect("m9k_gdcw_tpaboom",effectdata)
+			util.ScreenShake(Pos,10,5,1,3000)
+			util.Decal("Scorch",Pos + VectorCache1,Pos - VectorCache1,self)
 
 			self:Remove()
 		end
