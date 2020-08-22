@@ -24,6 +24,7 @@ local BannedClasses = { -- These weapons use the gun_base but shouldn't be affec
 }
 
 function SWEP:Deploy()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("Deploy") end -- Make sure that it runs on the CLIENT!
 	self:SetHoldType(self.HoldType)
 
 	timer.Remove("ShotgunReload_" .. self.OurIndex)
@@ -31,7 +32,7 @@ function SWEP:Deploy()
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
 		self.CanReload = false
-		self.CanIronSights = false
+		self:SetNWBool("CanIronSights",false)
 		self:SendWeaponAnim(ACT_VM_DRAW)
 
 		local Dur = vm:SequenceDuration() + 0.1
@@ -41,7 +42,7 @@ function SWEP:Deploy()
 		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
 		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-			self.CanIronSights = true
+			self:SetNWBool("CanIronSights",true)
 			self.CanReload = true
 		end)
 	end
@@ -51,6 +52,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:Holster()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("Holster") end -- Make sure that it runs on the CLIENT!
 	if not SERVER and self.Owner ~= LocalPlayer() then return end
 
 	if self.IronSightState then
@@ -69,6 +71,8 @@ function SWEP:Holster()
 end
 
 function SWEP:PrimaryAttack()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("PrimaryAttack") end -- Make sure that it runs on the CLIENT!
+
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
 		self:EmitSound("Weapon_Pistol.Empty")
 		self:SetNextPrimaryFire(CurTime() + 0.2)
@@ -89,6 +93,9 @@ function SWEP:PrimaryAttack()
 		end
 
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
+
+		if CLIENT and game.SinglePlayer() then return end
+
 		self:TakePrimaryAmmo(1)
 		self:ShootBullet((1 * self.Primary.Damage) * math.Rand(.85,1.3),self.Primary.Recoil,self.Primary.NumShots,Spread)
 		self:AttackAnimation()
@@ -96,6 +103,21 @@ function SWEP:PrimaryAttack()
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 		self:MuzzleFlash()
 	end
+end
+
+function SWEP:CanPrimaryAttack() -- Required for Singleplayer
+	if self:Clip1() <= 0 then
+		self:EmitSound("Weapon_Pistol.Empty")
+		self:SetNextPrimaryFire(CurTime() + 0.2)
+
+		if SERVER then
+			self:Reload()
+		end
+
+		return false
+	end
+
+	return true
 end
 
 function SWEP:Reload()
@@ -106,6 +128,7 @@ function SWEP:Reload()
 			self.DrawCrosshair = true
 		end
 
+		self:SetNWBool("CanIronSights",false)
 		self.InsertingShell = true
 		self.CanceledReloadSuccess = false
 
@@ -126,8 +149,10 @@ function SWEP:Reload()
 			end
 
 			local vm = self.Owner:GetViewModel()
-			vm:ResetSequence("after_reload")
-			vm:SetPlaybackRate(.01)
+			if IsValid(vm) then
+				vm:ResetSequence("after_reload")
+				vm:SetPlaybackRate(.01)
+			end
 
 			timer.Simple(0.1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
@@ -158,6 +183,7 @@ function SWEP:FinishReloading()
 
 			self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
 			self.CanceledReloadSuccess = true
+			self:SetNWBool("CanIronSights",true)
 		end)
 
 		self.InsertingShell = false

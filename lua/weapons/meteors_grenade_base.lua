@@ -96,7 +96,7 @@ function SWEP:PrimaryAttack()
 
 		local vm = self.Owner:GetViewModel()
 		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			if not IsFirstTimePredicted() or game.SinglePlayer() then return end -- Fixes weird prediction bugs
+			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs
 			local Dur = vm:SequenceDuration() + 0.2
 
 			timer.Create("M9k_MMM_Grenade_Pullpin" .. self.OurIndex,Dur,1,function()
@@ -114,7 +114,7 @@ function SWEP:Think()
 
 		local vm = self.Owner:GetViewModel()
 		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or 0.5)
+			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or (game.SinglePlayer() and 0.3 or 0.5))
 
 			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,Dur,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
@@ -215,7 +215,7 @@ if SERVER then
 			-- HACK!! At the time of coding this, WEAPON:OwnerChanged does not work for the first spawn and drop! (Which causes issues!!)
 			-- https://github.com/Facepunch/garrysmod-issues/issues/4639
 			if IsValid(self.LastOwner) then -- This is done to fix the viewmodel after dropping
-				self.LastOwner:SendLua("local Ent = Entity(" .. self:EntIndex() .. "); if IsValid(Ent) then Ent:Holster() end")
+				self.LastOwner:SendLua("local Ent = Entity(" .. self.OurIndex .. "); if IsValid(Ent) then Ent:Holster() end")
 			end
 		end
 	end

@@ -38,7 +38,6 @@ SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Ammo = "none"
 
 SWEP.CanReload = false
-SWEP.CanIronSights = false
 
 SWEP.AimMul = 0.2
 SWEP.LastCurTick = 0
@@ -96,12 +95,13 @@ function SWEP:Equip()
 end
 
 function SWEP:Deploy()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("Deploy") end -- Make sure that it runs on the CLIENT!
 	self:SetHoldType(self.HoldType)
 
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
 		self.CanReload = false
-		self.CanIronSights = false
+		self:SetNWBool("CanIronSights",false)
 		self:SendWeaponAnim(ACT_VM_DRAW)
 
 		local Dur = vm:SequenceDuration() + 0.1
@@ -111,7 +111,7 @@ function SWEP:Deploy()
 		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
 		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-			self.CanIronSights = true
+			self:SetNWBool("CanIronSights",true)
 			self.CanReload = true
 		end)
 	end
@@ -125,13 +125,18 @@ function SWEP:AttackAnimation()
 end
 
 function SWEP:PrimaryAttack()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("PrimaryAttack") end -- Make sure that it runs on the CLIENT!
+
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
-		self:EmitSound("Weapon_Pistol.Empty")
+		if SERVER then
+			self:EmitSound("Weapon_Pistol.Empty")
+		end
+
 		self:SetNextPrimaryFire(CurTime() + 0.2)
 		return
 	end
 
-	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
+	if self:CanPrimaryAttack() and (self:GetNextPrimaryFire() < CurTime() or game.SinglePlayer()) then
 		local Spread = self.Primary.Spread
 
 		if not BannedClasses[self:GetClass()] then
@@ -144,15 +149,10 @@ function SWEP:PrimaryAttack()
 
 		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 
-		self:TakePrimaryAmmo(1)
-		self:ShootBullet((1 * self.Primary.Damage) * math.Rand(.85,1.3),self.Primary.Recoil,self.Primary.NumShots,Spread)
-		self:AttackAnimation()
-		self:EmitSound(self.Primary.Sound)
-
 		if self.IronSightState then -- Let us not play messy fire animations while aiming down the sights.. WE WANT TO SEE DAMMIT!
 			self:SendWeaponAnim(ACT_VM_IDLE) -- Unfortunately this gets rid of the muzzleflash and brass ejection (So we need to simulate it.)
 
-			if CLIENT and IsFirstTimePredicted() or game.SinglePlayer() then
+			if (CLIENT or (SERVER and game.SinglePlayer())) and IsFirstTimePredicted() then
 				local vm = self.Owner:GetViewModel()
 
 				local effectData = EffectData()
@@ -173,6 +173,13 @@ function SWEP:PrimaryAttack()
 		end
 
 		self:MuzzleFlash() -- IDK if this is really needed tbh
+
+		if CLIENT and game.SinglePlayer() then return end
+
+		self:TakePrimaryAmmo(1)
+		self:ShootBullet((1 * self.Primary.Damage) * math.Rand(.85,1.3),self.Primary.Recoil,self.Primary.NumShots,Spread)
+		self:AttackAnimation()
+		self:EmitSound(self.Primary.Sound)
 	end
 end
 
@@ -222,6 +229,8 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("Reload") end -- Make sure that it runs on the CLIENT!
+
 	if self.CanReload and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self.Primary.ClipSize then
 		if self.IronSightState then
 			self.Owner:SetFOV(0,0.3)
@@ -231,10 +240,24 @@ function SWEP:Reload()
 
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:DefaultReload(ACT_VM_RELOAD)
+
+		if SERVER then
+			local vm = self.Owner:GetViewModel()
+
+			if IsValid(vm) then
+				self:SetNWBool("CanIronSights",false)
+
+				timer.Simple(vm:SequenceDuration() + 0.1,function()
+					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+					self:SetNWBool("CanIronSights",true)
+				end)
+			end
+		end
 	end
 end
 
 function SWEP:Holster()
+	if SERVER and game.SinglePlayer() then self:CallOnClient("Holster") end -- Make sure that it runs on the CLIENT!
 	if not SERVER and self.Owner ~= LocalPlayer() then return end
 
 	if self.IronSightState then
@@ -247,7 +270,7 @@ function SWEP:Holster()
 end
 
 function SWEP:IronSight()
-	if self.Owner:GetViewEntity() ~= self.Owner or not self.CanIronSights then return end
+	if self.Owner:GetViewEntity() ~= self.Owner or not self:GetNWBool("CanIronSights") then return end
 
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)

@@ -38,7 +38,7 @@ function SWEP:Holster() -- Make sure the special reload animation gets canceled
 		self.DrawCrosshair = true
 	end
 
-	self.ScopeState = 0
+	self:SetNWInt("ScopeState",0)
 	timer.Remove("Contender_Reload_" .. self.OurIndex)
 	return true -- We have to return true
 end
@@ -71,12 +71,12 @@ function SWEP:PrimaryAttack()
 		if self:Clip1() == 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 then
 			self.CanReload = false
 			self.ScopeCD = CurTime() + 1.5
-			self.ScopeState = 0
+			self:SetNWInt("ScopeState",0)
 			self.Owner:SetFOV(0,0.1)
 			self.Owner:SetAnimation(PLAYER_RELOAD)
 
 			local TimerName = "Contender_Reload_" .. self.OurIndex
-			timer.Create(TimerName,1.25,1,function() -- Seems to be a tiny bit faster than the viewmodel animation which is what we want
+			timer.Create(TimerName,1.6,1,function() -- Seems to be a tiny bit faster than the viewmodel animation which is what we want
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 
 				self:SetClip1(1)
@@ -90,9 +90,9 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:Reload()
-	if self.ScopeState > 0 then
+	if self:GetNWInt("ScopeState") > 0 then
 		self.Owner:SetFOV(0,0.1)
-		self.ScopeState = 0
+		self:SetNWInt("ScopeState",0)
 		self.ScopeCD = CurTime() + 0.2
 		self.Owner:EmitSound("weapons/zoom.wav")
 		self.NextReloadTime = CurTime() + 0.5
@@ -108,7 +108,7 @@ if CLIENT then
 	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_scopesight")
 
 	function SWEP:DrawHUD()
-		if self.ScopeState > 0 then
+		if self:GetNWInt("ScopeState") > 0 then
 			if self.DrawCrosshair then -- Only set the vars once (this is faster)
 				self.Owner:DrawViewModel(false)
 				self.DrawCrosshair = false

@@ -20,7 +20,7 @@ if CLIENT then
 
 		timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex)
 
-		self.ShouldDraw = true
+		self:SetNWBool("ShouldDraw",true)
 
 		if IsValid(self.ViewEnt) then
 			self.ViewEnt:SetNoDraw(true)
@@ -53,13 +53,12 @@ function SWEP:PrimaryAttack()
 		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
 			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs
 			timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex) -- Prevent the animation from being overwritten by the idle thing
-			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or 0.5)
+			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or (game.SinglePlayer() and 0.4 or 0.5))
 
-			if CLIENT then
-				timer.Simple(0.1,function() -- This only runs on the thrower
-					self.ShouldDraw = false
-				end)
-			end
+			timer.Simple(0.1,function()
+				if not IsValid(self) then return end
+				self:SetNWBool("ShouldDraw",false)
+			end)
 
 			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,Dur,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
@@ -108,9 +107,7 @@ function SWEP:PrimaryAttack()
 						self:SetClip1(1)
 					end
 
-					if CLIENT then
-						self.ShouldDraw = true
-					end
+					self:SetNWBool("ShouldDraw",true)
 				end)
 			end)
 		end

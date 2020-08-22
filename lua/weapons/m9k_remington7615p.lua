@@ -36,7 +36,9 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
+	if self:CanPrimaryAttack() and (self:GetNextPrimaryFire() < CurTime() or game.SinglePlayer()) then
+		timer.Remove("m9k_resetscope_" .. self.OurIndex)
+
 		local Spread = self.Primary.Spread
 
 		if self.Owner:GetVelocity():Length() > 100 then
@@ -45,19 +47,19 @@ function SWEP:PrimaryAttack()
 			Spread = self.Primary.Spread / 2
 		end
 
+		local Scope = self:GetNWInt("ScopeState")
 		local OldScopeState = 0
-		if self.ScopeState > 0 then
-			OldScopeState = self.ScopeState
-			self.ScopeState = 0
+		if Scope > 0 then
+			OldScopeState = Scope
+			self:SetNWInt("ScopeState",0)
 			self.Owner:SetFOV(0,0.1)
 
 			self.ScopeCD = CurTime() + 1.4
 
-			timer.Remove("Remington7615p_Resetscope_" .. self.OurIndex)
-			timer.Create("Remington7615p_Resetscope_" .. self.OurIndex,1.4,1,function()
+			timer.Create("m9k_resetscope_" .. self.OurIndex,1.4,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
-				self.ScopeState = OldScopeState - 1
-				self:SecondaryAttack() -- Shitty but effective hack
+				self:SetNWInt("ScopeState",OldScopeState - 1)
+				self:SecondaryAttack()  -- Shitty but effective hack
 			end)
 		end
 
@@ -71,12 +73,11 @@ function SWEP:PrimaryAttack()
 	end
 end
 
-
 if CLIENT then
 	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_scopesight")
 
 	function SWEP:DrawHUD()
-		if self.ScopeState > 0 then
+		if self:GetNWInt("ScopeState") > 0 then
 			if self.DrawCrosshair then -- Only set the vars once (this is faster)
 				self.Owner:DrawViewModel(false)
 				self.DrawCrosshair = false

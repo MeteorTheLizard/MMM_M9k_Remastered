@@ -7,6 +7,8 @@ ENT.AdminOnly = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
+game.AddParticles("particles/nitro_main.pcf")
+
 function ENT:CanTool() return false end
 
 if SERVER then

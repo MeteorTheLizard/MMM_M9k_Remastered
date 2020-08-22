@@ -43,7 +43,7 @@ function SWEP:Holster()
 		end
 	end
 
-	self.ScopeState = 0
+	self:SetNWInt("ScopeState",0)
 	self.MatadorIsReloading = false
 	timer.Remove("Matador_Reload_" .. self.OurIndex)
 	return true
@@ -106,7 +106,7 @@ function SWEP:PrimaryAttack()
 		self:EmitSound(self.Primary.Sound)
 		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 
-		self.ScopeState = 0
+		self:SetNWInt("ScopeState",0)
 		self.Owner:SetFOV(0,0.1)
 		self.ScopeCD = CurTime() + 1
 
@@ -170,7 +170,7 @@ if CLIENT then
 	local CachedTextureID1 = surface.GetTextureID("scope/rocketscope")
 
 	function SWEP:DrawHUD()
-		if self.ScopeState > 0 then
+		if self:GetNWInt("ScopeState") > 0 then
 			if self.DrawCrosshair then -- Only set the vars once (this is faster)
 				self.Owner:DrawViewModel(false)
 				self.DrawCrosshair = false

@@ -102,7 +102,7 @@ if SERVER then
 		return Projectile
 	end
 
-	function SWEP:OnDrop() -- Also defined here to change the material after dropping
+	function SWEP:OnDrop()
 		if self.PinPulled or not self.CanPullPin then -- The owner died and the pin was pulled, so we do whatever the throwable does!
 			self.Owner = self.LastOwner
 			self:CreateGrenadeProjectile(self:GetPos())
@@ -114,7 +114,7 @@ if SERVER then
 			-- HACK!! At the time of coding this, WEAPON:OwnerChanged does not work for the first spawn and drop! (Which causes issues!!)
 			-- https://github.com/Facepunch/garrysmod-issues/issues/4639
 			if IsValid(self.LastOwner) then -- This is done to fix the viewmodel after dropping
-				self.LastOwner:SendLua("Entity(" .. self:EntIndex() .. "):Holster()")
+				self.LastOwner:SendLua("local Ent = Entity(" .. self.OurIndex .. "); if IsValid(Ent) then Ent:Holster() end")
 			end
 		end
 	end

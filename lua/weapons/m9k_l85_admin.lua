@@ -36,6 +36,7 @@ local IsDeveloperExists = MetaP.IsDeveloper or false
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 	self.OurIndex = self:EntIndex()
+	self:SetNWInt("ScopeState",0)
 
 	if CLIENT then
 		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_l85")
@@ -101,7 +102,7 @@ function SWEP:Deploy()
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
 		self.CanReload = false
-		self.CanIronSights = false
+		self:SetNWBool("CanIronSights",false)
 		self:SendWeaponAnim(ACT_VM_DRAW)
 
 		local Dur = vm:SequenceDuration() + 0.1
@@ -111,7 +112,7 @@ function SWEP:Deploy()
 		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
 		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-			self.CanIronSights = true
+			self:SetNWBool("CanIronSights",true)
 			self.CanReload = true
 		end)
 	end
@@ -132,7 +133,7 @@ if CLIENT then
 	local CachedTextureID3 = surface.GetTextureID("scope/gdcw_acogcross")
 
 	function SWEP:DrawHUD()
-		if self.ScopeState > 0 then
+		if self:GetNWInt("ScopeState") > 0 then
 			if self.DrawCrosshair then -- Only set the vars once (this is faster)
 				self.Owner:DrawViewModel(false)
 				self.DrawCrosshair = false

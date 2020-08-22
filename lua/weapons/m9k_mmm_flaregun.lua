@@ -55,7 +55,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:IronSight()
-	if self.ReloadingTime ~= 0 or self.Owner:GetViewEntity() ~= self.Owner or not self.CanIronSights then return end
+	if self.ReloadingTime ~= 0 or self.Owner:GetViewEntity() ~= self.Owner or not self:GetNWBool("CanIronSights") then return end
 
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)

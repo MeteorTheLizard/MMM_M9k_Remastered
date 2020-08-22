@@ -37,14 +37,14 @@ function SWEP:Deploy()
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
 		self.CanReload = false
-		self.CanIronSights = false
+		self:SetNWBool("CanIronSights",false)
 		self:SendWeaponAnim(ACT_VM_DRAW)
 
 		local Dur = vm:SequenceDuration() + 0.1
 		timer.Create("M202_DeployFix_" .. self.OurIndex,Dur,1,function() -- Fixes buggy hand position after deploying
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
 			self:SendWeaponAnim(ACT_VM_IDLE)
-			self.CanIronSights = true
+			self:SetNWBool("CanIronSights",true)
 			self.CanReload = true
 		end)
 
@@ -139,7 +139,7 @@ function SWEP:Holster()
 end
 
 function SWEP:IronSight()
-	if self.Owner:GetViewEntity() ~= self.Owner or self.M202IsReloading or not self.CanIronSights then return end
+	if self.Owner:GetViewEntity() ~= self.Owner or self.M202IsReloading or not self:GetNWBool("CanIronSights") then return end
 
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)

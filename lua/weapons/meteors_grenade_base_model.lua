@@ -40,22 +40,20 @@ if CLIENT then
 		self:SetHoldType(self.HoldType)
 		self.OurIndex = self:EntIndex()
 
-		if CLIENT then
-			self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
-			self.ShouldDraw = true
-			self.LastViewEntity = NULL
+		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
+		self:SetNWBool("ShouldDraw",true)
+		self.LastViewEntity = NULL
 
-			self:CreateWorldModel()
+		self:CreateWorldModel()
 
-			if self.Owner == LocalPlayer() then
-				self:SendWeaponAnim(ACT_VM_IDLE)
+		if self.Owner == LocalPlayer() then
+			self:SendWeaponAnim(ACT_VM_IDLE)
 
-				self:CreateViewModel()
+			self:CreateViewModel()
 
-				if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-					self:Equip()
-					self:Deploy()
-				end
+			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+				self:Equip()
+				self:Deploy()
 			end
 		end
 	end
@@ -89,7 +87,7 @@ if CLIENT then
 		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
 		local vm = self.Owner:GetViewModel()
 
-		if not self.ShouldDraw then return end -- At some points it should not be drawn, mainly during the throw animation
+		if not self:GetNWBool("ShouldDraw") then return end -- At some points it should not be drawn, mainly during the throw animation
 
 		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
 		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
@@ -145,21 +143,12 @@ if CLIENT then
 		timer.Remove("M9k_MMM_Grenade_Pullpin" .. self.OurIndex)
 		timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex)
 
-		self.ShouldDraw = true
+		self:SetNWBool("ShouldDraw",true)
 		self.CanPullPin = true
 		self.PinPulled = false
 
 		if IsValid(self.ViewEnt) then
 			self.ViewEnt:SetNoDraw(true)
-		end
-
-		if SERVER and IsValid(self.Owner) then
-			if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Remove the grenade when its 'empty'
-				self.Owner:StripWeapon(self:GetClass())
-			elseif self:Clip1() <= 0 then -- Unless we still have some left in which case we refill the 'magazine'
-				self:SetClip1(1)
-				self.Owner:RemoveAmmo(1,self.Primary.Ammo)
-			end
 		end
 
 		return true
@@ -173,6 +162,15 @@ if CLIENT then
 		if IsValid(self.ViewEnt) then
 			self.ViewEnt:Remove()
 		end
+
+		local vm = IsValid(self.Owner) and self.Owner:GetViewModel() or IsValid(self.LastOwner) and self.LastOwner:GetViewModel()
+		if not IsValid(vm) or not vm:GetBoneCount() then return end
+
+		for k = 0,vm:GetBoneCount() do -- Make sure to reset the bones! (very important!!)
+			vm:ManipulateBoneScale(k,VectorCache1)
+			vm:ManipulateBoneAngles(k,angle_zero)
+			vm:ManipulateBonePosition(k,vector_zero)
+		end
 	end
 end
 
@@ -182,6 +180,7 @@ function SWEP:Deploy()
 	end
 
 	self:SetHoldType(self.HoldType)
+	self:SetNWBool("ShouldDraw",true)
 
 	local vm = self.Owner:GetViewModel()
 	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
@@ -232,11 +231,9 @@ function SWEP:Think()
 		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
 			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs
 			timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex) -- Prevent the animation from being overwritten by the idle thing
-			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or 0.5)
+			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or (game.SinglePlayer() and 0.4 or 0.5))
 
-			if CLIENT then
-				self.ShouldDraw = false
-			end
+			self:SetNWBool("ShouldDraw",false)
 
 			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,Dur,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
@@ -285,9 +282,7 @@ function SWEP:Think()
 						self:SetClip1(1)
 					end
 
-					if CLIENT then
-						self.ShouldDraw = true
-					end
+					self:SetNWBool("ShouldDraw",true)
 				end)
 			end)
 		end

@@ -3,7 +3,6 @@ SWEP.Slot = 4
 
 SWEP.Primary.SpreadZoomed = .001
 
-SWEP.ScopeState = 0
 SWEP.ScopeCD = 0
 SWEP.ScopeScale = 0.5
 SWEP.ReticleScale = 0.5
@@ -12,6 +11,7 @@ SWEP.NextReloadTime = 0
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 	self.OurIndex = self:EntIndex()
+	self:SetNWInt("ScopeState",0)
 
 	if CLIENT then
 		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
@@ -72,7 +72,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:Think()
-	if self.ScopeState > 0 and self.Owner:GetVelocity():Length() < 100 then
+	if self:GetNWInt("ScopeState") > 0 and self.Owner:GetVelocity():Length() < 100 then
 		self.Primary.Spread = self.Primary.SpreadZoomed
 	else
 		self.Primary.Spread = self.Primary.SpreadBefore
@@ -82,49 +82,56 @@ end
 function SWEP:Holster()
 	if not SERVER and self.Owner ~= LocalPlayer() then return end
 
+	timer.Remove("m9k_resetscope_" .. self.OurIndex)
 	self.Owner:DrawViewModel(true)
-	self.ScopeState = 0
+	self:SetNWInt("ScopeState",0)
 	return true
 end
 
 function SWEP:AdjustMouseSensitivity()
-	if self.ScopeState == 0 then
+	local Scope = self:GetNWInt("ScopeState")
+
+	if Scope == 0 then
 		return 1
-	elseif self.ScopeState == 1 then
+	elseif Scope == 1 then
 		return 0.75
-	elseif self.ScopeState == 2 then
+	elseif Scope == 2 then
 		return 0.35
-	elseif self.ScopeState == 3 then
+	elseif Scope == 3 then
 		return 0.1
 	end
 end
 
 function SWEP:SecondaryAttack()
 	if self.ScopeCD > CurTime() or self.Owner:GetViewEntity() ~= self.Owner then return false end
+	local Scope = self:GetNWInt("ScopeState")
 
-	self.ScopeState = self.ScopeState  + 1
-	if self.ScopeState > 3 then
-		self.ScopeState = 0
+	Scope = Scope  + 1
+	if Scope > 3 then
+		Scope = 0
 	end
 	self.ScopeCD = CurTime() + 0.2
 
-	if self.ScopeState == 0 then
+	if Scope == 0 then
 		self.Owner:SetFOV(0,0.1)
-	elseif self.ScopeState == 1 then
+	elseif Scope == 1 then
 		self.Owner:SetFOV(50,0.1)
-	elseif self.ScopeState == 2 then
+	elseif Scope == 2 then
 		self.Owner:SetFOV(25,0.1)
-	elseif self.ScopeState == 3 then
+	elseif Scope == 3 then
 		self.Owner:SetFOV(10,0.1)
 	end
 
+	self:SetNWInt("ScopeState",Scope)
 	self.Owner:EmitSound("weapons/zoom.wav")
 end
 
 function SWEP:Reload()
-	if self.ScopeState > 0 then
+	if SERVER and game.SinglePlayer() then self:CallOnClient("Reload") end -- Make sure that it runs on the CLIENT!
+
+	if self:GetNWInt("ScopeState") > 0 then
 		self.Owner:SetFOV(0,0.1)
-		self.ScopeState = 0
+		self:SetNWInt("ScopeState",0)
 		self.ScopeCD = CurTime() + 0.2
 		self.Owner:EmitSound("weapons/zoom.wav")
 		self.NextReloadTime = CurTime() + 0.5
