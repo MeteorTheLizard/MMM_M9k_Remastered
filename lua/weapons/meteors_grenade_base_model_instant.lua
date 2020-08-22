@@ -48,7 +48,8 @@ function SWEP:PrimaryAttack()
 
 		local vm = self.Owner:GetViewModel()
 		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			if not IsFirstTimePredicted() or game.SinglePlayer() then return end -- Fixes weird prediction bugs
+			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs
+			timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex) -- Prevent the animation from being overwritten by the idle thing
 			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or 0.5)
 
 			if CLIENT then
