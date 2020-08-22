@@ -252,7 +252,7 @@ function SWEP:IronSight()
 	if self.Owner:KeyPressed(IN_ATTACK2) and not self.IronSightState then
 		self.Owner:SetFOV(80,0.2)
 		self.IronSightState = true
-		--self.DrawCrosshair = false
+		self.DrawCrosshair = false
 	elseif self.Owner:KeyReleased(IN_ATTACK2) then
 		self.Owner:SetFOV(0,0.1)
 		self.IronSightState = false
