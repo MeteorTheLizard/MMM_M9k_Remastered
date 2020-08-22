@@ -34,12 +34,16 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 	self.OurIndex = self:EntIndex()
 
-	if CLIENT and self.Owner == LocalPlayer() then
-		self:SendWeaponAnim(ACT_VM_IDLE)
+	if CLIENT then
+		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
 
-		if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-			self:Equip()
-			self:Deploy()
+		if self.Owner == LocalPlayer() then
+			self:SendWeaponAnim(ACT_VM_IDLE)
+
+			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+				self:Equip()
+				self:Deploy()
+			end
 		end
 	end
 end
