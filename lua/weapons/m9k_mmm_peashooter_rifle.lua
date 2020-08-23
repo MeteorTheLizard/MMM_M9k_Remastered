@@ -39,6 +39,13 @@ function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
 	self.OurIndex = self:EntIndex()
 
+	if SERVER and game.SinglePlayer() then -- In singleplayer we need to force the weapon to be equipped after spawning
+		timer.Simple(0,function()
+			if not IsValid(self) then return end -- We need to abort when the owner already had the weapon!
+			self.Owner:SelectWeapon(self:GetClass())
+		end)
+	end
+
 	if CLIENT and self.Owner == LocalPlayer() then
 		self:SendWeaponAnim(ACT_VM_IDLE)
 

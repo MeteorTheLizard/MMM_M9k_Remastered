@@ -38,6 +38,13 @@ function SWEP:Initialize()
 	self.OurIndex = self:EntIndex()
 	self:SetNWInt("ScopeState",0)
 
+	if SERVER and game.SinglePlayer() then -- In singleplayer we need to force the weapon to be equipped after spawning
+		timer.Simple(0,function()
+			if not IsValid(self) then return end -- We need to abort when the owner already had the weapon!
+			self.Owner:SelectWeapon(self:GetClass())
+		end)
+	end
+
 	if CLIENT then
 		self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_l85")
 
