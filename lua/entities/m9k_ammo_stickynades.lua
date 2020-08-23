@@ -52,6 +52,7 @@ if SERVER then
 			if Activator:GetWeapon("m9k_sticky_grenade") == NULL then
 				Activator:Give("m9k_sticky_grenade")
 				Activator:GiveAmmo(4,"StickyGrenade")
+				Activator:SelectWeapon("m9k_sticky_grenade") -- Has no effect in multiplayer in this case but is required in singleplayer!
 			else
 				Activator:GiveAmmo(5,"StickyGrenade")
 			end

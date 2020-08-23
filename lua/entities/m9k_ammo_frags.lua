@@ -52,6 +52,7 @@ if SERVER then
 			if Activator:GetWeapon("m9k_m61_frag") == NULL then
 				Activator:Give("m9k_m61_frag")
 				Activator:GiveAmmo(4,"Grenade")
+				Activator:SelectWeapon("m9k_m61_frag") -- Has no effect in multiplayer in this case but is required in singleplayer!
 			else
 				Activator:GiveAmmo(5,"Grenade")
 			end

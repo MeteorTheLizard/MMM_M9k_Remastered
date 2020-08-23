@@ -54,6 +54,7 @@ if SERVER then
 			if Activator:GetWeapon("m9k_nerve_gas") == NULL then
 				Activator:Give("m9k_nerve_gas")
 				Activator:GiveAmmo(4,"NerveGas")
+				Activator:SelectWeapon("m9k_nerve_gas") -- Has no effect in multiplayer in this case but is required in singleplayer!
 			else
 				Activator:GiveAmmo(5,"NerveGas")
 			end

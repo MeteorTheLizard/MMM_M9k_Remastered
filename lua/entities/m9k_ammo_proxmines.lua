@@ -52,6 +52,7 @@ if SERVER then
 			if Activator:GetWeapon("m9k_proxy_mine") == NULL then
 				Activator:Give("m9k_proxy_mine")
 				Activator:GiveAmmo(4,"ProxMine")
+				Activator:SelectWeapon("m9k_proxy_mine") -- Has no effect in multiplayer in this case but is required in singleplayer!
 			else
 				Activator:GiveAmmo(5,"ProxMine")
 			end
