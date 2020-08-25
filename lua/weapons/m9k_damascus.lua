@@ -17,7 +17,6 @@ SWEP.DoNotUseWorldModel = true -- We tell the base to draw the default worldmode
 SWEP.DeploySound = "weapons/knife/knife_draw_x.mp3"
 
 local damageInfo = DamageInfo()
-damageInfo:SetDamageType(DMG_SLASH)
 
 function SWEP:PrimaryAttack() -- Stabby stab stab
 	if self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() then
@@ -51,6 +50,7 @@ function SWEP:PrimaryAttack() -- Stabby stab stab
 						damageInfo:SetDamage(45 + math.random(-5,5))
 						damageInfo:SetAttacker(self.Owner)
 						damageInfo:SetInflictor(self)
+						damageInfo:SetDamageType(DMG_SLASH)
 
 						if IsValid(tTrace.Entity) and (tTrace.Entity:IsPlayer() or tTrace.Entity:IsNPC() or tTrace.Entity:GetClass() == "prop_ragdoll") then
 							self:EmitSound(Brutal and "weapons/blades/nastystab.mp3" or "weapons/blades/slash.mp3")

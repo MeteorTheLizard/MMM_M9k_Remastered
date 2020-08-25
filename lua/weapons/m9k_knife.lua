@@ -38,7 +38,6 @@ local VectorCache1 = Vector(0,500,0)
 
 if SERVER then
 	local damageInfo = DamageInfo()
-	damageInfo:SetDamageType(DMG_SLASH)
 
 	function SWEP:StabLogic(Brutal)
 		local Pos = self.Owner:EyePos()
@@ -54,6 +53,7 @@ if SERVER then
 			damageInfo:SetDamage((Brutal and 60 or 30) + math.random(-5,5))
 			damageInfo:SetAttacker(self.Owner)
 			damageInfo:SetInflictor(self)
+			damageInfo:SetDamageType(DMG_SLASH)
 
 			if IsValid(tTrace.Entity) and (tTrace.Entity:IsPlayer() or tTrace.Entity:IsNPC() or tTrace.Entity:GetClass() == "prop_ragdoll") then
 				self:EmitSound(Brutal and "weapons/blades/nastystab.mp3" or "weapons/blades/slash.mp3")
