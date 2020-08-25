@@ -36,7 +36,7 @@ function SWEP:Initialize()
 
 	if SERVER and game.SinglePlayer() then -- In singleplayer we need to force the weapon to be equipped after spawning
 		timer.Simple(0,function()
-			if not IsValid(self) then return end -- We need to abort when the owner already had the weapon!
+			if not IsValid(self) or not IsValid(self.Owner) then return end -- We need to abort when the owner already had the weapon!
 			self.Owner:SelectWeapon(self:GetClass())
 		end)
 	end
@@ -221,7 +221,7 @@ if SERVER then
 
 			-- HACK!! At the time of coding this, WEAPON:OwnerChanged does not work for the first spawn and drop! (Which causes issues!!)
 			-- https://github.com/Facepunch/garrysmod-issues/issues/4639
-			if IsValid(self.LastOwner) then -- This is done to fix the viewmodel after dropping
+			if IsValid(self) and IsValid(self.LastOwner) and IsValid(self.OurIndex) then -- This is done to fix the viewmodel after dropping
 				self.LastOwner:SendLua("local Ent = Entity(" .. self.OurIndex .. "); if IsValid(Ent) then Ent:Holster() end")
 			end
 		end
