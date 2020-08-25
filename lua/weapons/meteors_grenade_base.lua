@@ -221,7 +221,7 @@ if SERVER then
 
 			-- HACK!! At the time of coding this, WEAPON:OwnerChanged does not work for the first spawn and drop! (Which causes issues!!)
 			-- https://github.com/Facepunch/garrysmod-issues/issues/4639
-			if IsValid(self) and IsValid(self.LastOwner) and IsValid(self.OurIndex) then -- This is done to fix the viewmodel after dropping
+			if IsValid(self) and IsValid(self.LastOwner) and isnumber(self.OurIndex) then -- This is done to fix the viewmodel after dropping
 				self.LastOwner:SendLua("local Ent = Entity(" .. self.OurIndex .. "); if IsValid(Ent) then Ent:Holster() end")
 			end
 		end
