@@ -145,6 +145,7 @@ function SWEP:IronSight()
 		self.Owner:SetFOV(80,0.2)
 		self.IronSightState = true
 		self.DrawCrosshair = false
+		self.LastCurTick = RealTime()
 	elseif self.Owner:KeyReleased(IN_ATTACK2) then
 		self.Owner:SetFOV(0,0.1)
 		self.IronSightState = false
