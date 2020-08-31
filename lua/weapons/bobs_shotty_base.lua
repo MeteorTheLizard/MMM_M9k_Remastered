@@ -7,22 +7,6 @@ SWEP.ShellTime = 0.35
 SWEP.InsertingShell = false
 SWEP.CanceledReloadSuccess = false
 
-local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
-	["m9k_m3"] = true,
-	["m9k_browningauto5"] = true,
-	["m9k_dbarrel"] = true,
-	["m9k_ithacam37"] = true,
-	["m9k_mossberg590"] = true,
-	["m9k_jackhammer"] = true,
-	["m9k_remington870"] = true,
-	["m9k_spas12"] = true,
-	["m9k_striker12"] = true,
-	["m9k_1897winchester"] = true,
-	["m9k_1887winchester"] = true,
-	["m9k_usas"] = true,
-	["m9k_mossberg590_admin"] = true
-}
-
 function SWEP:Deploy()
 	if SERVER and game.SinglePlayer() then self:CallOnClient("Deploy") end -- Make sure that it runs on the CLIENT!
 	self:SetHoldType(self.HoldType)
@@ -84,7 +68,7 @@ function SWEP:PrimaryAttack()
 	elseif self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() and not self.InsertingShell then
 		local Spread = self.Primary.Spread
 
-		if not BannedClasses[self:GetClass()] then
+		if self.ShouldDoMoveSpread then
 			if self.Owner:GetVelocity():Length() > 100 then
 				Spread = self.Primary.Spread * 6
 			elseif self.Owner:KeyDown(IN_DUCK) then
@@ -110,7 +94,9 @@ function SWEP:CanPrimaryAttack() -- Required for Singleplayer
 		self:EmitSound("Weapon_Pistol.Empty")
 		self:SetNextPrimaryFire(CurTime() + 0.2)
 
-		if SERVER then
+		if SERVER and game.SinglePlayer() then
+			self:Reload()
+		else -- We want to call reload in both realms if it is multiplayer, otherwise we can reload out of prediction and cause problems!
 			self:Reload()
 		end
 

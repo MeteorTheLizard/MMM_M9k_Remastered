@@ -7,10 +7,10 @@ SWEP.HoldType = "melee"
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.ViewModelFOV = 55
+SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/cstrike/c_knife_t.mdl" -- Does not require any game apart from Garry's Mod even though it is from CS:S
 SWEP.WorldModel = "models/props_junk/harpoon002a.mdl" -- We make our own since the original is horrible
-SWEP.ViewModelFlip = false
-SWEP.ViewModelFOV = 55
 
 SWEP.Primary.Ammo = "Harpoon"
 

@@ -27,6 +27,7 @@ SWEP.Primary.Spread = .01
 
 SWEP.IronSightsPos = Vector(3.5,-2.21,2.115)
 SWEP.IronSightsAng = Vector(-3.701,0,0)
+SWEP.ShouldDoMoveSpread = false
 
 local MetaP = FindMetaTable("Player")
 local IsDeveloperExists = MetaP.IsDeveloper or false

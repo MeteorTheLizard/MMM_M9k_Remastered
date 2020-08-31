@@ -25,6 +25,7 @@ SWEP.Primary.Spread = .20
 SWEP.IronSightsPos = Vector(4.519,-2.159,1.039)
 SWEP.IronSightsAng = Vector(0.072,0.975,0)
 
+SWEP.ShouldDoMoveSpread = false
 SWEP.IsUSASReloading = false
 
 local OurClass = "m9k_usas"

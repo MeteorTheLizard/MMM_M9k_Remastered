@@ -6,9 +6,9 @@ SWEP.Slot = 1
 SWEP.HoldType = "revolver"
 SWEP.Spawnable = true
 
+SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_flaregun.mdl"
 SWEP.WorldModel = "models/weapons/w_357.mdl"
-SWEP.ViewModelFlip = false
 
 SWEP.Primary.Sound = "weapons/mmm/flaregun-fire.mp3"
 SWEP.Primary.RPM = 20

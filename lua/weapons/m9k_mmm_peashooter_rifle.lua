@@ -5,12 +5,12 @@ SWEP.PrintName = "Peashooter Rifle"
 SWEP.Slot = 2
 SWEP.HoldType = "ar2"
 SWEP.Spawnable = true
+SWEP.UseHands = true
 
+SWEP.ViewModelFOV = 50
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/c_irifle.mdl"
 SWEP.WorldModel = "models/weapons/w_irifle.mdl"
-SWEP.ViewModelFOV = 50
-SWEP.UseHands = true
 
 SWEP.Primary.Sound = "weapons/mmm/peashooter-fire.mp3"
 SWEP.Primary.RPM = 600

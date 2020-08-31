@@ -23,5 +23,5 @@ SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 31
 SWEP.Primary.Spread = .022
 
-SWEP.IronSightsPos = Vector(-3.096,-3.695,1.815)
+SWEP.IronSightsPos = Vector(-3.096,-1.695,1.815)
 SWEP.IronSightsAng = Vector(0.039,0,0)

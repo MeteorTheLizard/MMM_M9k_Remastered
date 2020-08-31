@@ -6,10 +6,10 @@ SWEP.Slot = 4
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.ViewModelFOV = 55
+SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/cstrike/c_eq_fraggrenade.mdl"
 SWEP.WorldModel = "models/weapons/w_m61_fraggynade.mdl"
-SWEP.ViewModelFlip = false
-SWEP.ViewModelFOV = 55
 
 SWEP.Primary.Ammo = "Grenade"
 

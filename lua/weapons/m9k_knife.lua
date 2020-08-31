@@ -7,10 +7,10 @@ SWEP.HoldType = "knife"
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.ViewModelFOV = 55
+SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/cstrike/c_knife_t.mdl" -- Does not require any game apart from Garry's Mod even though it is from CS:S
 SWEP.WorldModel = "models/weapons/w_extreme_ratio.mdl" -- We make our own since the original is horrible, ^ same goes for viewmodel
-SWEP.ViewModelFlip = false
-SWEP.ViewModelFOV = 55
 
 SWEP.WorldModelScale = Vector(1,1,1)
 SWEP.ModelWorldForwardMult = -1

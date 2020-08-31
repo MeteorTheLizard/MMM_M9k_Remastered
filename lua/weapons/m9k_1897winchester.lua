@@ -23,3 +23,5 @@ SWEP.Primary.Ammo = "buckshot"
 SWEP.ShellTime = .6
 
 SWEP.IronSightsPos = Vector(2.85,0,2)
+
+SWEP.ShouldDoMoveSpread = false

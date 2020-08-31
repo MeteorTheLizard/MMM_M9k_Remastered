@@ -1,5 +1,0 @@
-"vertexlitgeneric"
-{
-	"$basetexture"	"models\player\t_phoenix\t_phoenix"
-	 "$bumpmap" "models/player/t_phoenix\t_phoenix_normal"
-}

@@ -6,10 +6,10 @@ SWEP.Slot = 4
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.ViewModelFOV = 70
+SWEP.ViewModelFlip = true
 SWEP.ViewModel = "models/weapons/v_sticky_grenade.mdl"
 SWEP.WorldModel = "models/weapons/w_sticky_grenade.mdl"
-SWEP.ViewModelFlip = true
-SWEP.ViewModelFOV = 70
 
 SWEP.Primary.Ammo = "StickyGrenade"
 

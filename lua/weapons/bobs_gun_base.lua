@@ -42,27 +42,9 @@ SWEP.CanReload = false
 SWEP.AimMul = 0.2
 SWEP.LastCurTick = 0
 SWEP.PrimaryAnimationInt = 0
+SWEP.ShouldDoMoveSpread = true
 
 local effectData = EffectData()
-
-local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
-	["m9k_m3"] = true,
-	["m9k_browningauto5"] = true,
-	["m9k_dbarrel"] = true,
-	["m9k_ithacam37"] = true,
-	["m9k_mossberg590"] = true,
-	["m9k_jackhammer"] = true,
-	["m9k_remington870"] = true,
-	["m9k_spas12"] = true,
-	["m9k_striker12"] = true,
-	["m9k_1897winchester"] = true,
-	["m9k_1887winchester"] = true,
-	["m9k_usas"] = true,
-	["m9k_remington1858"] = true,
-	["m9k_hk45_admin"] = true,
-	["m9k_l85_admin"] = true,
-	["m9k_amd65_admin"] = true
-}
 
 local EjectShellTypes = { -- This is needed to simulate shell ejections when aiming down the sights.
 	["pistol"] = "ShellEject",
@@ -148,7 +130,7 @@ function SWEP:PrimaryAttack()
 	if self:CanPrimaryAttack() and (self:GetNextPrimaryFire() < CurTime() or game.SinglePlayer()) then
 		local Spread = self.Primary.Spread
 
-		if not BannedClasses[self:GetClass()] then
+		if self.ShouldDoMoveSpread then
 			if self.Owner:GetVelocity():Length() > 100 then
 				Spread = self.Primary.Spread * 6
 			elseif self.Owner:KeyDown(IN_DUCK) then
@@ -163,21 +145,28 @@ function SWEP:PrimaryAttack()
 
 			if (CLIENT or (SERVER and game.SinglePlayer())) and IsFirstTimePredicted() then
 				local vm = self.Owner:GetViewModel()
+				local vmAttachment = vm:GetAttachment("1")
 
-				effectData:SetAttachment(1)
-				effectData:SetMagnitude(0)
-				effectData:SetScale(1)
-				effectData:SetFlags(0)
-				effectData:SetEntity(vm)
-				util.Effect("CS_MuzzleFlash",effectData)
+				if istable(vmAttachment) then
+					effectData:SetScale(1)
+					effectData:SetEntity(vm)
+					effectData:SetMagnitude(1)
+					effectData:SetAttachment(1)
+					effectData:SetOrigin(vmAttachment.Pos)
+					effectData:SetAngles(vmAttachment.Ang)
+					util.Effect("CS_MuzzleFlash",effectData)
 
-				local Shell = EjectShellTypes[self.HoldType] or false
-				if Shell then
-					local Attachment = vm:GetAttachment("2")
-					effectData:SetAttachment(2)
-					effectData:SetOrigin(Attachment.Pos)
-					effectData:SetAngles(Attachment.Ang)
-					util.Effect(Shell,effectData,true,true)
+					local Shell = EjectShellTypes[self.HoldType] or false
+					if Shell then
+						vmAttachment = vm:GetAttachment("2")
+
+						if istable(vmAttachment) then
+							effectData:SetAttachment(2)
+							effectData:SetOrigin(vmAttachment.Pos)
+							effectData:SetAngles(vmAttachment.Ang)
+							util.Effect(Shell,effectData)
+						end
+					end
 				end
 			end
 
@@ -290,6 +279,7 @@ function SWEP:IronSight()
 		self.Owner:SetFOV(80,0.2)
 		self.IronSightState = true
 		self.DrawCrosshair = false
+		self.LastCurTick = RealTime()
 	elseif self.Owner:KeyReleased(IN_ATTACK2) then
 		self.Owner:SetFOV(0,0.1)
 		self.IronSightState = false
@@ -302,12 +292,23 @@ function SWEP:Think()
 end
 
 if CLIENT then
-	function SWEP:GetViewModelPosition(pos,ang)
-		if not self.IronSightsPos then return pos, ang end
+	function SWEP:CalcViewModelView(ViewModel,pos,ang,EyePos,EyeAng)
+		if not IsValid(self.Owner) then return end
+
+		if not self.IronSightState and not self.IronSightsPos or (not self.IronSightState and self.AimMul <= 0) then -- This reduces the non-ironsighted sway
+			pos:SetUnpacked(pos.x + (EyePos.x - pos.x) * 0.75,pos.y + (EyePos.y - pos.y) * 0.75,pos.z + (EyePos.z - pos.z) * 0.75)
+			ang:SetUnpacked(ang.p + (EyeAng.p - ang.p) * 0.75,ang.y + (EyeAng.y - ang.y) * 0.75,ang.r + EyeAng.r * 0.75)
+
+			return pos, ang
+		end
+
+		-- We do want a bit of sway just not so extreme
+		pos:SetUnpacked(pos.x + (EyePos.x - pos.x) * 0.05,pos.y + (EyePos.y - pos.y) * 0.05,pos.z + (EyePos.z - pos.z) * 0.05)
+		ang:SetUnpacked(ang.p + (EyeAng.p - ang.p) * 0.25,ang.y + (EyeAng.y - ang.y) * 0.25,ang.r + EyeAng.r * 0.25)
 
 		self.AimMul = self.IronSightState and (self.AimMul + math.abs(self.LastCurTick - RealTime())*5) or (self.AimMul - math.abs(self.LastCurTick - RealTime())*5)
 
-		self.AimMul = math.Clamp(self.AimMul,0.2,1)
+		self.AimMul = math.Clamp(self.AimMul,0,1)
 		self.LastCurTick = RealTime()
 
 		if self.IronSightsAng then
@@ -329,13 +330,19 @@ if CLIENT then
 
 	function SWEP:FireAnimationEvent(_,_,event)
 		if event == 5001 or event == 5011 or event == 5021 or event == 5031 then
-			if self.Owner:GetViewEntity() ~= self.Owner then return end
+			if self.Owner:GetViewEntity() ~= self.Owner then return true end
+			local vm = self.Owner:GetViewModel()
+			if not IsValid(vm) then return end
+
+			local vmAttachment = vm:GetAttachment("1")
+			if not istable(vmAttachment) then return end
 
 			effectData:SetAttachment(1)
-			effectData:SetMagnitude(0)
+			effectData:SetEntity(vm)
 			effectData:SetScale(1)
-			effectData:SetFlags(0)
-			effectData:SetEntity(self.Owner:GetViewModel())
+			effectData:SetMagnitude(1)
+			effectData:SetOrigin(vmAttachment.Pos)
+			effectData:SetAngles(vmAttachment.Ang)
 			util.Effect("CS_MuzzleFlash",effectData)
 
 			return true

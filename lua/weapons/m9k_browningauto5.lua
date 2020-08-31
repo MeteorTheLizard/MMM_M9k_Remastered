@@ -22,3 +22,5 @@ SWEP.Primary.Spread = .15
 SWEP.ShellTime = .35
 
 SWEP.IronSightsPos = Vector(1.953,0,1.388)
+
+SWEP.ShouldDoMoveSpread = false

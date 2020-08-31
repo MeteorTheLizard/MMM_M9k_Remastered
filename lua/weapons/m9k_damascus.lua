@@ -7,10 +7,10 @@ SWEP.HoldType = "melee2"
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.ViewModelFOV = 55
+SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_dmascus.mdl"
 SWEP.WorldModel = "models/weapons/w_damascus_sword.mdl"
-SWEP.ViewModelFlip = false
-SWEP.ViewModelFOV = 55
 
 SWEP.DoNotUseViewModel = true -- We tell the base to draw the default viewmodel (Needs to be set to true)
 SWEP.DoNotUseWorldModel = true -- We tell the base to draw the default worldmodel (Needs to be set to true)

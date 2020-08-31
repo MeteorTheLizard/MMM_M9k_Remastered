@@ -20,7 +20,9 @@ SWEP.Primary.Ammo = "buckshot"
 SWEP.Primary.NumShots = 27
 SWEP.Primary.Damage = 4
 SWEP.Primary.Spread = .15
+
 SWEP.ShellTime = .5
+SWEP.ShouldDoMoveSpread = false
 
 SWEP.Secondary.Sound = "dbarrel_dblast"
 

@@ -149,3 +149,27 @@ function SWEP:Reload()
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 	end
 end
+
+if CLIENT then
+	local effectData = EffectData()
+
+	function SWEP:FireAnimationEvent(_,_,event)
+		if event == 5001 or event == 5011 or event == 5021 or event == 5031 then
+			if self.Owner:GetViewEntity() ~= self.Owner or self:GetNWInt("ScopeState") > 0 then return true end
+			local vm = self.Owner:GetViewModel()
+			if not IsValid(vm) then return end
+
+			local vmAttachment = vm:GetAttachment("1")
+
+			effectData:SetAttachment(1)
+			effectData:SetEntity(vm)
+			effectData:SetScale(1)
+			effectData:SetMagnitude(1)
+			effectData:SetOrigin(vmAttachment.Pos)
+			effectData:SetAngles(vmAttachment.Ang)
+			util.Effect("CS_MuzzleFlash",effectData)
+
+			return true
+		end
+	end
+end

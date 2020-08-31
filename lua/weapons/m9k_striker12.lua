@@ -24,3 +24,5 @@ SWEP.ShellTime = .3
 
 SWEP.IronSightsPos = Vector(3.805,-1.045,1.805)
 SWEP.IronSightsAng = Vector(2.502,3.431,0)
+
+SWEP.ShouldDoMoveSpread = false
