@@ -89,23 +89,6 @@ function SWEP:PrimaryAttack()
 	end
 end
 
-function SWEP:CanPrimaryAttack() -- Required for Singleplayer
-	if self:Clip1() <= 0 then
-		self:EmitSound("Weapon_Pistol.Empty")
-		self:SetNextPrimaryFire(CurTime() + 0.2)
-
-		if SERVER and game.SinglePlayer() then
-			self:Reload()
-		elseif not game.SinglePlayer() then  -- We want to call reload in both realms if it is multiplayer, otherwise we can reload out of prediction and cause problems!
-			self:Reload()
-		end
-
-		return false
-	end
-
-	return true
-end
-
 function SWEP:Reload()
 	if self.CanReload and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and not self.InsertingShell and self:Clip1() < self.Primary.ClipSize then
 		if self.IronSightState then
