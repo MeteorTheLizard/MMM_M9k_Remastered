@@ -12,6 +12,7 @@ function ENT:CanTool() return false end
 if SERVER then
 	local CachedVector1 = Vector(0,0,1)
 	local CachedVector2 = Vector(0,0,-25)
+	local effectData = EffectData()
 
 	function ENT:Initialize()
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -24,8 +25,6 @@ if SERVER then
 	function ENT:Think()
 		if self.TimeLeft < CurTime() then
 			local Pos = self:GetPos()
-			local effectData = EffectData()
-
 			effectData:SetNormal(CachedVector1)
 			effectData:SetEntity(self)
 			effectData:SetOrigin(Pos)

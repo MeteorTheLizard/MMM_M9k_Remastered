@@ -15,7 +15,6 @@ if SERVER then
 	local vector_zero = Vector(0,0,0) -- Imagine having MMM
 	local VectorCache1 = Vector(0,10,0)
 	local effectData = EffectData()
-	effectData:SetScale(1)
 
 	local BodyHitSounds = {
 		"physics/metal/metal_grenade_impact_hard1.wav",
@@ -68,6 +67,8 @@ if SERVER then
 			if IsValid(tTrace.Entity) then
 				local CachedOwner = self:GetOwner()
 				local vOwner = CPPIExists and IsValid(tTrace.Entity:CPPIGetOwner()) and tTrace.Entity:CPPIGetOwner() or IsValid(tTrace.Entity:GetOwner()) and tTrace.Entity:GetOwner() or NULL
+
+				effectData:SetScale(1)
 
 				if tTrace.Entity:IsPlayer() and (MMM and tTrace.Entity:IsPVP() and self.Owner:IsPVP() or not MMM) then -- If we hit a player
 					timer.Simple(0,function()

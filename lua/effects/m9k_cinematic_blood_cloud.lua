@@ -1,53 +1,43 @@
 function EFFECT:Init(data)
-	self.Entity = data:GetEntity()
 	self.Pos = data:GetOrigin()
-	self.Scale = data:GetScale()
-	self.Radius = data:GetRadius() or 1
 	self.DirVec = data:GetNormal()
-	self.PenVec = data:GetStart()
-	self.Particles = data:GetMagnitude()
-	self.Angle = self.DirVec:Angle()
-	self.DebrizzlemyNizzle = 10 + data:GetScale()
-	self.Size = 5 * self.Scale
-	self.Emitter = ParticleEmitter(self.Pos)
-	sound.Play("physics/flesh/flesh_squishy_impact_hard" .. math.random(1,4) .. ".wav",self.Pos,180,100)
-	self.Mat = math.ceil(self.Radius)
-	self:Blood()
-end
 
-function EFFECT:Blood()
-	for i = 0,30 * self.Scale do
+	sound.Play("physics/flesh/flesh_squishy_impact_hard" .. math.random(1,4) .. ".wav",self.Pos,180,100)
+
+	self.Emitter = ParticleEmitter(self.Pos)
+
+	for i = 0,30 do
 		local Smoke = self.Emitter:Add("particle/particle_composite",self.Pos)
 
 		if Smoke then
-			Smoke:SetVelocity(VectorRand():GetNormalized() * math.random(100,600) * self.Scale)
+			Smoke:SetVelocity(VectorRand():GetNormalized() * math.random(100,600))
 			Smoke:SetDieTime(math.Rand(1,2))
 			Smoke:SetStartAlpha(80)
 			Smoke:SetEndAlpha(0)
-			Smoke:SetStartSize(30 * self.Scale)
-			Smoke:SetEndSize(100 * self.Scale)
+			Smoke:SetStartSize(30)
+			Smoke:SetEndSize(100)
 			Smoke:SetRoll(math.Rand(150,360))
 			Smoke:SetRollDelta(math.Rand(-2,2))
 			Smoke:SetAirResistance(400)
-			Smoke:SetGravity(Vector(math.Rand(-50,50) * self.Scale,math.Rand(-50,50) * self.Scale,math.Rand(0,-200)))
+			Smoke:SetGravity(Vector(math.Rand(-50,50),math.Rand(-50,50),math.Rand(0,-200)))
 			Smoke:SetColor(70,35,35)
 		end
 	end
 
-	for i = 0,20 * self.Scale do
+	for i = 0,20 do
 		local Smoke = self.Emitter:Add("particle/smokesprites_000" .. math.random(1,9),self.Pos)
 
 		if Smoke then
-			Smoke:SetVelocity(VectorRand():GetNormalized() * math.random(200,600) * self.Scale)
+			Smoke:SetVelocity(VectorRand():GetNormalized() * math.random(200,600))
 			Smoke:SetDieTime(math.Rand(1,4))
 			Smoke:SetStartAlpha(120)
 			Smoke:SetEndAlpha(0)
-			Smoke:SetStartSize(30 * self.Scale)
-			Smoke:SetEndSize(100 * self.Scale)
+			Smoke:SetStartSize(30)
+			Smoke:SetEndSize(100)
 			Smoke:SetRoll(math.Rand(150,360))
 			Smoke:SetRollDelta(math.Rand(-2,2))
 			Smoke:SetAirResistance(400)
-			Smoke:SetGravity(Vector(math.Rand(-50,50) * self.Scale,math.Rand(-50,50) * self.Scale,math.Rand(-50,-300)))
+			Smoke:SetGravity(Vector(math.Rand(-50,50),math.Rand(-50,50),math.Rand(-50,-300)))
 			Smoke:SetColor(70,35,35)
 		end
 	end
@@ -61,7 +51,7 @@ function EFFECT:Blood()
 			Flash:SetDieTime(0.15)
 			Flash:SetStartAlpha(255)
 			Flash:SetEndAlpha(0)
-			Flash:SetStartSize(self.Scale * 300)
+			Flash:SetStartSize(300)
 			Flash:SetEndSize(0)
 			Flash:SetRoll(math.Rand(180,480))
 			Flash:SetRollDelta(math.Rand(-1,1))
@@ -69,11 +59,11 @@ function EFFECT:Blood()
 		end
 	end
 
-	for i = 1,20 * self.Scale do
+	for i = 1,20 do
 		local Debris = self.Emitter:Add("effects/fleck_cement" .. math.random(1,2),self.Pos - (self.DirVec * 5))
 
 		if Debris then
-			Debris:SetVelocity(VectorRand():GetNormalized() * 400 * self.Scale)
+			Debris:SetVelocity(VectorRand():GetNormalized() * 400)
 			Debris:SetDieTime(math.random(0.3,0.6))
 			Debris:SetStartAlpha(255)
 			Debris:SetEndAlpha(0)
@@ -92,4 +82,7 @@ end
 
 function EFFECT:Think()
 	return false
+end
+
+function EFFECT:Render() -- Required, otherwise there will be a 1 tick error model!
 end

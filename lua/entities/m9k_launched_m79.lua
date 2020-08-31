@@ -9,18 +9,9 @@ ENT.DisableDuplicator = true
 
 if SERVER then
 	local VectorCache1 = Vector(0,0,-0.111)
+	local VectorCache2 = Vector(0,0,1)
 	local AngleCache1 = Angle(90,0,0)
-	local effectdataWorld = EffectData()
-	effectdataWorld:SetScale(1.3)
-	effectdataWorld:SetMagnitude(14)
-	local effectdataBody = EffectData()
-	effectdataBody:SetScale(1)
-	effectdataBody:SetMagnitude(10)
-	local effectdataExplo = EffectData()
-	effectdataExplo:SetNormal(Vector(0,0,1))
-	effectdataExplo:SetScale(1.3)
-	effectdataExplo:SetRadius(67)
-	effectdataExplo:SetMagnitude(14)
+	local effectData = EffectData()
 
 	function ENT:Initialize()
 		self.flightvector = self:GetUp() * ((75 * 52.5) / 66)
@@ -45,11 +36,14 @@ if SERVER then
 
 			if Tr.MatType ~= 70 and Tr.MatType ~= 50 then
 				util.BlastDamage(self,self.Owner,Tr.HitPos,350,150)
-				effectdataWorld:SetOrigin(Tr.HitPos)
-				effectdataWorld:SetNormal(Tr.HitNormal)
-				effectdataWorld:SetEntity(self)
-				effectdataWorld:SetRadius(Tr.MatType)
-				util.Effect("m9k_gdcw_cinematicboom",effectdataWorld)
+
+				effectData:SetScale(1.3)
+				effectData:SetMagnitude(14)
+				effectData:SetOrigin(Tr.HitPos)
+				effectData:SetNormal(Tr.HitNormal)
+				effectData:SetRadius(Tr.MatType)
+				util.Effect("m9k_gdcw_cinematicboom",effectData)
+
 				util.ScreenShake(Tr.HitPos,10,5,1,3000)
 				util.Decal("Scorch",Tr.HitPos + Tr.HitNormal,Tr.HitPos - Tr.HitNormal)
 				self:Remove()
@@ -58,12 +52,12 @@ if SERVER then
 					Tr.Entity:TakeDamage(150,self.Owner,self)
 				end
 
-				effectdataBody:SetOrigin(Tr.HitPos)
-				effectdataBody:SetNormal(Tr.HitNormal)
-				effectdataBody:SetEntity(self)
-				effectdataBody:SetRadius(Tr.MatType)
+				effectData:SetScale(1)
+				effectData:SetOrigin(Tr.HitPos)
+				effectData:SetNormal(Tr.HitNormal)
+				util.Effect("m9k_cinematic_blood_cloud",effectData)
+
 				Tr.Entity:EmitSound("physics/flesh/flesh_squishy_impact_hard" .. math.random(1,4) .. ".wav",500,100)
-				util.Effect("m9k_cinematic_blood_cloud",effectdataBody)
 				self:SetMoveType(MOVETYPE_VPHYSICS)
 				self:SetPos(Tr.HitPos)
 				self:PhysWake()
@@ -94,9 +88,14 @@ if SERVER then
 		end
 
 		util.BlastDamage(self,self.Owner,self:GetPos(),350,150)
-		effectdataExplo:SetOrigin(self:GetPos())
-		effectdataExplo:SetEntity(self)
-		util.Effect("m9k_gdcw_cinematicboom",effectdataExplo)
+
+		effectData:SetNormal(VectorCache2)
+		effectData:SetScale(1.3)
+		effectData:SetRadius(67)
+		effectData:SetMagnitude(14)
+		effectData:SetOrigin(self:GetPos())
+		util.Effect("m9k_gdcw_cinematicboom",effectData)
+
 		util.ScreenShake(self:GetPos(),10,5,1,3000)
 		self:Remove()
 	end

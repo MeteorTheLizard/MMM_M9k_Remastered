@@ -35,10 +35,9 @@ SWEP.ModelViewBlacklistedBones = {
 SWEP.DeploySound = "weapons/knife/knife_draw_x.mp3"
 
 local VectorCache1 = Vector(0,500,0)
+local damageInfo = DamageInfo()
 
 if SERVER then
-	local damageInfo = DamageInfo()
-
 	function SWEP:StabLogic()
 		local Pos = self.Owner:EyePos()
 		local tTrace = util.TraceHull({
@@ -50,10 +49,10 @@ if SERVER then
 		if tTrace.Hit then
 			--local eyeTrace = self.Owner:GetEyeTrace()
 
-			damageInfo:SetDamage(60 + math.random(-5,5))
+			damageInfo:SetDamageType(DMG_SLASH)
 			damageInfo:SetAttacker(self.Owner)
 			damageInfo:SetInflictor(self)
-			damageInfo:SetDamageType(DMG_SLASH)
+			damageInfo:SetDamage(60 + math.random(-5,5))
 
 			if IsValid(tTrace.Entity) and (tTrace.Entity:IsPlayer() or tTrace.Entity:IsNPC() or tTrace.Entity:GetClass() == "prop_ragdoll") then
 				self:EmitSound(Brutal and "weapons/blades/nastystab.mp3" or "weapons/blades/slash.mp3")

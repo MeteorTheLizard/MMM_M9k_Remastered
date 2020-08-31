@@ -9,9 +9,7 @@ ENT.DisableDuplicator = true
 
 if SERVER then
 	local VectorCache1 = Vector(0,0,-0.111)
-	local effectdata = EffectData()
-	effectdata:SetMagnitude(18)
-	effectdata:SetScale(1.3)
+	local effectData = EffectData()
 
 	function ENT:Initialize()
 		self.flightvector = self:GetForward() * ((115*52.5)/66)
@@ -43,15 +41,17 @@ if SERVER then
 		})
 
 		if Tr.Hit then
-			effectdata:SetOrigin(Tr.HitPos)
-			effectdata:SetNormal(Tr.HitNormal)
-			effectdata:SetEntity(self)
-			effectdata:SetRadius(Tr.MatType)
 			util.BlastDamage(self,self.Owner,Tr.HitPos,600,150)
-			util.Effect("m9k_gdcw_tpaboom",effectdata)
+
+			effectData:SetMagnitude(18)
+			effectData:SetScale(1.3)
+			effectData:SetOrigin(Tr.HitPos)
+			effectData:SetNormal(Tr.HitNormal)
+			effectData:SetRadius(Tr.MatType)
+			util.Effect("m9k_gdcw_tpaboom",effectData)
+
 			util.ScreenShake(Tr.HitPos,10,5,1,3000)
 			util.Decal("Scorch",Tr.HitPos + Tr.HitNormal,Tr.HitPos - Tr.HitNormal)
-			self:SetNWBool("smoke",false)
 			self:Remove()
 		end
 

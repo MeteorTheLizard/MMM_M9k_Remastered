@@ -9,9 +9,7 @@ ENT.AdminOnly = false
 
 if SERVER then
 	local VectorCache1 = Vector(0,0,10)
-	local effectdata = EffectData()
-	effectdata:SetMagnitude(18)
-	effectdata:SetScale(1.3)
+	local effectData = EffectData()
 
 	function ENT:Initialize()
 		self.Owner = self:GetCreator()
@@ -79,11 +77,14 @@ if SERVER then
 
 			self:EmitSound("physics/wood/wood_plank_break" .. math.random(2,4) .. ".wav")
 
-			effectdata:SetOrigin(Pos)
-			effectdata:SetEntity(self)
-			effectdata:SetRadius(1)
 			util.BlastDamage(self,self.Owner,Pos,600,150)
-			util.Effect("m9k_gdcw_tpaboom",effectdata)
+
+			effectData:SetMagnitude(18)
+			effectData:SetScale(1.3)
+			effectData:SetOrigin(Pos)
+			effectData:SetRadius(1)
+
+			util.Effect("m9k_gdcw_tpaboom",effectData)
 			util.ScreenShake(Pos,10,5,1,3000)
 			util.Decal("Scorch",Pos + VectorCache1,Pos - VectorCache1,self)
 

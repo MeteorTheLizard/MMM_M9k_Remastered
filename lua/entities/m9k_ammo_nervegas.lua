@@ -11,9 +11,6 @@ if SERVER then
 	local MetaE = FindMetaTable("Entity")
 	local CPPIExists = MetaE.CPPISetOwner and true or false
 	local VectorCache1 = Vector(0,0,10)
-	local effectdata = EffectData()
-	effectdata:SetMagnitude(18)
-	effectdata:SetScale(1.3)
 
 	function ENT:Initialize()
 		self.Owner = self:GetCreator()

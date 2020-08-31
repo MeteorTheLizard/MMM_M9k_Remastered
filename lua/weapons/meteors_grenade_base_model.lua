@@ -110,6 +110,11 @@ if CLIENT then
 
 		if self.Owner == LocalPlayer() then
 			hook.Add("Tick","m9k_mmm_hidebasemodel",function() -- We make a hook since we have to wait for the viewmodel to become valid!
+				if not IsValid(self) or not IsValid(self.Owner) then -- This can rarely happen when an unavailable weapon is given
+					hook.Remove("Tick","m9k_mmm_hidebasemodel")
+					return
+				end
+
 				local vm = self.Owner:GetViewModel()
 
 				if IsValid(vm) then

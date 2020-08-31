@@ -1,10 +1,9 @@
 function EFFECT:Init(data)
-	self.Entity = data:GetEntity()
-	local pos = data:GetOrigin()
-	self.Emitter = ParticleEmitter(pos)
+	self.Pos = data:GetOrigin()
+	self.Emitter = ParticleEmitter(self.Pos)
 
 	for i = 1,50 do
-		local particle = self.Emitter:Add("particle/smokesprites_000" .. math.random(1,9),pos)
+		local particle = self.Emitter:Add("particle/smokesprites_000" .. math.random(1,9),self.Pos)
 
 		if particle then
 			particle:SetVelocity(VectorRand():GetNormalized() * math.Rand(100,300))
@@ -31,4 +30,7 @@ end
 
 function EFFECT:Think()
 	return false
+end
+
+function EFFECT:Render() -- Required, otherwise there will be a 1 tick error model!
 end

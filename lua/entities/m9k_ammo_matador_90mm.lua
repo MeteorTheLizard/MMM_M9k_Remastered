@@ -11,9 +11,7 @@ if SERVER then
 	local VectorCache1 = Vector(0,0,-0.111)
 	local AngleCache1 = Angle(90,0,0)
 	local ColorCache1 = Color(45,55,40,255)
-	local effectdata = EffectData()
-	effectdata:SetScale(1.8)
-	effectdata:SetMagnitude(18)
+	local effectData = EffectData()
 
 	function ENT:Initialize()
 		self.flightvector = self:GetUp() * ((250 * 52.5) / 66)
@@ -48,12 +46,15 @@ if SERVER then
 				return
 			end
 
-			effectdata:SetOrigin(Tr.HitPos)
-			effectdata:SetNormal(Tr.HitNormal)
-			effectdata:SetEntity(self)
-			effectdata:SetRadius(Tr.MatType)
-			util.Effect("m9k_gdcw_cinematicboom",effectdata)
 			util.BlastDamage(self,self.Owner,Tr.HitPos,450,150)
+
+			effectData:SetScale(1.8)
+			effectData:SetMagnitude(18)
+			effectData:SetOrigin(Tr.HitPos)
+			effectData:SetNormal(Tr.HitNormal)
+			effectData:SetRadius(Tr.MatType)
+			util.Effect("m9k_gdcw_cinematicboom",effectData)
+
 			util.ScreenShake(Tr.HitPos,10,5,1,3000)
 			util.Decal("Scorch",Tr.HitPos + Tr.HitNormal,Tr.HitPos - Tr.HitNormal)
 			self:SetNWBool("smoke",false)

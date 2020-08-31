@@ -43,6 +43,8 @@ SWEP.AimMul = 0.2
 SWEP.LastCurTick = 0
 SWEP.PrimaryAnimationInt = 0
 
+local effectData = EffectData()
+
 local BannedClasses = { -- These weapons use the gun_base but shouldn't be affected by moving spread
 	["m9k_m3"] = true,
 	["m9k_browningauto5"] = true,
@@ -162,14 +164,19 @@ function SWEP:PrimaryAttack()
 			if (CLIENT or (SERVER and game.SinglePlayer())) and IsFirstTimePredicted() then
 				local vm = self.Owner:GetViewModel()
 
-				local effectData = EffectData()
+				effectData:SetAttachment(1)
+				effectData:SetMagnitude(0)
+				effectData:SetScale(1)
+				effectData:SetFlags(0)
 				effectData:SetEntity(vm)
 				util.Effect("CS_MuzzleFlash",effectData)
 
 				local Shell = EjectShellTypes[self.HoldType] or false
 				if Shell then
-					effectData:SetOrigin(vm:GetAttachment("2").Pos)
-					effectData:SetAngles(vm:GetAttachment("2").Ang)
+					local Attachment = vm:GetAttachment("2")
+					effectData:SetAttachment(2)
+					effectData:SetOrigin(Attachment.Pos)
+					effectData:SetAngles(Attachment.Ang)
 					util.Effect(Shell,effectData,true,true)
 				end
 			end
@@ -199,7 +206,7 @@ function SWEP:ShootBullet(damage,_,num_bullets,aimcone)
 		Src = self.Owner:GetShootPos(),
 		Dir = self.Owner:GetAimVector(),
 		Spread = Vector(aimcone,aimcone,0),
-		Tracer = 3,
+		Tracer = TRACER_LINE_AND_WHIZ,
 		TracerName = "Tracer",
 		Force = damage * 0.3,
 		Damage = damage
@@ -320,15 +327,14 @@ if CLIENT then
 		return pos, ang
 	end
 
-	local effectData = EffectData() -- We don't have to re-create this
-	effectData:SetAttachment(1)
-	effectData:SetScale(1)
-	effectData:SetFlags(0)
-
 	function SWEP:FireAnimationEvent(_,_,event)
 		if event == 5001 or event == 5011 or event == 5021 or event == 5031 then
 			if self.Owner:GetViewEntity() ~= self.Owner then return end
 
+			effectData:SetAttachment(1)
+			effectData:SetMagnitude(0)
+			effectData:SetScale(1)
+			effectData:SetFlags(0)
 			effectData:SetEntity(self.Owner:GetViewModel())
 			util.Effect("CS_MuzzleFlash",effectData)
 

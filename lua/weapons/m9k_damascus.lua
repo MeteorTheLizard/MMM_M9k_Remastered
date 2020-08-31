@@ -47,10 +47,10 @@ function SWEP:PrimaryAttack() -- Stabby stab stab
 					if tTrace.Hit then
 						--local eyeTrace = self.Owner:GetEyeTrace()
 
-						damageInfo:SetDamage(45 + math.random(-5,5))
+						damageInfo:SetDamageType(DMG_SLASH)
 						damageInfo:SetAttacker(self.Owner)
 						damageInfo:SetInflictor(self)
-						damageInfo:SetDamageType(DMG_SLASH)
+						damageInfo:SetDamage(45 + math.random(-5,5))
 
 						if IsValid(tTrace.Entity) and (tTrace.Entity:IsPlayer() or tTrace.Entity:IsNPC() or tTrace.Entity:GetClass() == "prop_ragdoll") then
 							self:EmitSound(Brutal and "weapons/blades/nastystab.mp3" or "weapons/blades/slash.mp3")

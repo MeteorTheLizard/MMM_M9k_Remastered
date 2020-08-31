@@ -20,16 +20,14 @@ local mats = {
 }
 
 function EFFECT:Init(data)
-	self.Entity = data:GetEntity()
 	self.Pos = data:GetOrigin()
 	self.Scale = data:GetScale()
-	self.Radius = data:GetRadius() or 1
 	self.DirVec = data:GetNormal()
-	self.PenVec = data:GetStart()
 	self.Particles = data:GetMagnitude()
 	self.Angle = self.DirVec:Angle()
 	self.DebrizzlemyNizzle = 10 + data:GetScale()
 	self.Size = 5 * self.Scale
+
 	self.Emitter = ParticleEmitter(self.Pos)
 
 	if self.Scale < 1.2 then
@@ -39,7 +37,7 @@ function EFFECT:Init(data)
 		sound.Play("ambient/explosions/explode_" .. math.random(1,4) .. ".wav",self.Pos,100,100)
 	end
 
-	self.Mat = math.ceil(self.Radius)
+	self.Mat = math.ceil(data:GetRadius() or 1)
 	local foundTheMat = false
 
 	for k,v in pairs(mats) do
@@ -831,4 +829,7 @@ end
 
 function EFFECT:Think()
 	return false
+end
+
+function EFFECT:Render() -- Required, otherwise there will be a 1 tick error model!
 end

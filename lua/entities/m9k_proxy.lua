@@ -8,11 +8,7 @@ ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
 if SERVER then
-	local effectdataBase = EffectData()
-	local effectdata = EffectData()
-	effectdata:SetScale(1)
-	effectdata:SetRadius(67)
-	effectdata:SetMagnitude(18)
+	local effectData = EffectData()
 
 	function ENT:Initialize()
 		self:SetModel("models/weapons/w_px_planted.mdl")
@@ -57,14 +53,18 @@ if SERVER then
 		self.Explosion = nil -- Do not call this twice.. ever
 		self.OnTakeDamage = nil -- Stack overflow protection.
 
-		effectdataBase:SetOrigin(self.OurPos)
-		util.Effect("HelicopterMegaBomb",effectdataBase)
-		util.Effect("ThumperDust",effectdataBase)
-		util.Effect("Explosion",effectdataBase)
-		effectdata:SetOrigin(self.OurPos)
-		effectdata:SetEntity(self)
-		util.Effect("m9k_gdcw_cinematicboom",effectdata)
 		util.BlastDamage(self,self.Owner,self.OurPos,200,250)
+
+		effectData:SetOrigin(self.OurPos)
+		util.Effect("HelicopterMegaBomb",effectData)
+		util.Effect("ThumperDust",effectData)
+		util.Effect("Explosion",effectData)
+
+		effectData:SetScale(1) -- We can re-use the EffectData object here
+		effectData:SetRadius(67)
+		effectData:SetMagnitude(18)
+		util.Effect("m9k_gdcw_cinematicboom",effectData)
+
 		util.ScreenShake(self.OurPos,2000,255,2.5,1250)
 		self:EmitSound("ambient/explosions/explode_" .. math.random(1,4) .. ".wav",self.Pos,100,100)
 		self:Remove()
