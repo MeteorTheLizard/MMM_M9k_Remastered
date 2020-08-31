@@ -96,7 +96,7 @@ function SWEP:CanPrimaryAttack() -- Required for Singleplayer
 
 		if SERVER and game.SinglePlayer() then
 			self:Reload()
-		else -- We want to call reload in both realms if it is multiplayer, otherwise we can reload out of prediction and cause problems!
+		elseif not game.SinglePlayer() then  -- We want to call reload in both realms if it is multiplayer, otherwise we can reload out of prediction and cause problems!
 			self:Reload()
 		end
 
