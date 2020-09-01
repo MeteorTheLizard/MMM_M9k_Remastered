@@ -55,8 +55,6 @@ It is highly recommended to uninstall all non-M9k Remastered packs before instal
 
 # Credits
 
-Models, Materials and Sounds are made by the Original Creator(s). **I do not claim copyright over them.**
+Models, Materials, and Sounds are made by the Original Creator(s). I do not claim copyright over them.
 
 This project is licensed under the GPL-3.0 License. Do note that only the script files (*.lua) fall under this license. Models, Materials and Sounds are not subject to this License and belong to the Original Creator(s).
-
-The Original Creator(s) may request the deletion of Models, Materials, and Sounds from this Repository and the Workshop File.
