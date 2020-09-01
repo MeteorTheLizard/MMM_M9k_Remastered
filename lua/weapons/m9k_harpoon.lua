@@ -114,11 +114,10 @@ function SWEP:SecondaryAttack() -- This is defined here since we have a specific
 			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs.
 			local Dur = vm:SequenceDuration() - 1.25
 
-			if CLIENT then
-				timer.Simple(0.1,function()
-					self.ShouldDraw = false
-				end)
-			end
+			timer.Simple(0.1,function()
+				if not IsValid(self) then return end
+				self:SetNWBool("ShouldDraw",false)
+			end)
 
 			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,Dur,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
@@ -137,8 +136,8 @@ function SWEP:SecondaryAttack() -- This is defined here since we have a specific
 					end
 				end
 
-				timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,0.3,1,function()
-					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+				timer.Simple(0.3,function() -- No overwrites/cancels
+					if not IsValid(self) or not IsValid(self.Owner) then return end
 
 					if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then
 						if SERVER then
@@ -150,9 +149,7 @@ function SWEP:SecondaryAttack() -- This is defined here since we have a specific
 						self:SetClip1(1)
 					end
 
-					if CLIENT then
-						self.ShouldDraw = true
-					end
+					self:SetNWBool("ShouldDraw",true)
 				end)
 			end)
 		end
