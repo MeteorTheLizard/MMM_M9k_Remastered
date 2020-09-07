@@ -26,8 +26,6 @@ SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 SWEP.ScopeScale = 0.7
 SWEP.ReticleScale = 0.6
 
-local OurClass = "m9k_m98b"
-
 function SWEP:PrimaryAttack()
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
 		self:EmitSound("Weapon_Pistol.Empty")
@@ -56,7 +54,7 @@ function SWEP:PrimaryAttack()
 			self.ScopeCD = CurTime() + 1.9
 
 			timer.Create("m9k_resetscope_" .. self.OurIndex,1.9,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 				self:SetNWInt("ScopeState",OldScopeState - 1)
 				self:SecondaryAttack()  -- Shitty but effective hack
 			end)

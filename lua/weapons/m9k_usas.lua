@@ -28,7 +28,6 @@ SWEP.IronSightsAng = Vector(0.072,0.975,0)
 SWEP.ShouldDoMoveSpread = false
 SWEP.IsUSASReloading = false
 
-local OurClass = "m9k_usas"
 local ReloadSound = "Weapon_usas.draw"
 
 function SWEP:CanPrimaryAttack()
@@ -62,12 +61,12 @@ function SWEP:Reload() -- This function has some serious and crappy workarounds,
 
 		local TimerName = "USAS_Reload_" .. self.OurIndex
 		timer.Create(TimerName,0.65,1,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 			self:EmitSound(ReloadSound)
 
 			timer.Create(TimerName,0.3,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 				self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
 

@@ -22,7 +22,6 @@ SWEP.Primary.NumShots = 0
 SWEP.Primary.Damage = 0
 SWEP.Primary.Spread = 0
 
-local OurClass = "m9k_proxy_mine"
 local AngleCache1 = Angle(90,180,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPIGetOwner and true or false
@@ -39,7 +38,7 @@ function SWEP:PrimaryAttack()
 
 		local plant = self.Owner:GetViewModel():SequenceDuration()
 		timer.Simple(plant,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not self.Owner:Alive() or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then
+			if not IsValid(self) or not IsValid(self.Owner) or not self.Owner:Alive() or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then
 				return
 			end
 

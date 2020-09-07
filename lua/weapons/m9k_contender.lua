@@ -21,13 +21,10 @@ SWEP.Primary.Ammo = "SniperPenetratedRound"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 75
 SWEP.Primary.Spread = .30
-SWEP.Primary.SpreadZoomed = .001
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.7
 SWEP.ReticleScale = 0.6
-
-local OurClass = "m9k_contender"
 
 function SWEP:Holster() -- Make sure the special reload animation gets canceled
 	if not SERVER and self.Owner ~= LocalPlayer() then return end
@@ -77,7 +74,7 @@ function SWEP:PrimaryAttack()
 
 			local TimerName = "Contender_Reload_" .. self.OurIndex
 			timer.Create(TimerName,1.6,1,function() -- Seems to be a tiny bit faster than the viewmodel animation which is what we want
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 				self:SetClip1(1)
 				self.Owner:RemoveAmmo(1,self.Primary.Ammo)

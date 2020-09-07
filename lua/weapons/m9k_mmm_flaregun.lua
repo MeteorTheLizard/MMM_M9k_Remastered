@@ -26,7 +26,6 @@ SWEP.Primary.Spread = 0
 SWEP.IronSightsPos = Vector(-5.7,0,2)
 SWEP.IronSightsAng = Vector(2,0,0)
 
-local OurClass = "m9k_mmm_flaregun"
 local CachedColor1 = Color(255,93,0,255)
 local AngleCache1 = Angle(90,0,0)
 local VectorCache1 = Vector(0,0,1)
@@ -179,7 +178,7 @@ function SWEP:Reload()
 
 		timer.Remove("MMM_Flaregun_Reload_" .. self.OurIndex)
 		timer.Create("MMM_Flaregun_Reload_" .. self.OurIndex,2.6,1,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 			self:SendWeaponAnim(ACT_VM_DRAW)
 			self.ReloadingTime = 0
 		end)

@@ -7,6 +7,7 @@ SWEP.ScopeCD = 0
 SWEP.ScopeScale = 0.5
 SWEP.ReticleScale = 0.5
 SWEP.NextReloadTime = 0
+SWEP.HasZoomStages = true
 
 function SWEP:Initialize()
 	self:SetHoldType(self.HoldType)
@@ -114,7 +115,7 @@ function SWEP:SecondaryAttack()
 	local Scope = self:GetNWInt("ScopeState")
 
 	Scope = Scope  + 1
-	if Scope > 3 then
+	if (self.HasZoomStages and Scope > 3) or (not self.HasZoomStages and Scope > 1) then
 		Scope = 0
 	end
 	self.ScopeCD = CurTime() + 0.2
@@ -135,6 +136,7 @@ end
 
 function SWEP:Reload()
 	if SERVER and game.SinglePlayer() then self:CallOnClient("Reload") end -- Make sure that it runs on the CLIENT!
+	timer.Remove("m9k_resetscope_" .. self.OurIndex) -- Needed for bolt-action sniper rifles to prevent the restoring of the zoom level
 
 	if self:GetNWInt("ScopeState") > 0 then
 		self.Owner:SetFOV(0,0.1)

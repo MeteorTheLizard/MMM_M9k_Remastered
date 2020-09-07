@@ -25,7 +25,6 @@ SWEP.IronSightsAng = Vector(-0.1801,0.985,0)
 
 SWEP.M202IsReloading = false
 
-local OurClass = "m9k_m202"
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPIGetOwner and true or false
 local VectorCache1 = Vector(0,0,1)
@@ -42,7 +41,7 @@ function SWEP:Deploy()
 
 		local Dur = vm:SequenceDuration() + 0.1
 		timer.Create("M202_DeployFix_" .. self.OurIndex,Dur,1,function() -- Fixes buggy hand position after deploying
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 			self:SendWeaponAnim(ACT_VM_IDLE)
 			self:SetNWBool("CanIronSights",true)
 			self.CanReload = true
@@ -166,14 +165,14 @@ if SERVER then
 
 			local TimerName = "M202_Reload_" .. self.OurIndex
 			timer.Create(TimerName,0.7,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 				self.Owner:DoAnimationEvent(ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE)
 				self.Owner:ViewPunch(ViewPunchUp)
 				self.Owner:EmitSound("weapons/iceaxe/iceaxe_swing1.wav")
 
 				timer.Create(TimerName,0.15,1,function()
-					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 					self.M202IsReloading = 2
 
@@ -206,7 +205,7 @@ if SERVER then
 					self:DefaultReload(ACT_VM_DRAW)
 
 					timer.Create("M202_DeployFix_" .. self.OurIndex,self.Owner:GetViewModel():SequenceDuration() + 0.1,1,function() -- Fixes buggy hand position after deploying
-						if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+						if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 						self:SendWeaponAnim(ACT_VM_IDLE)
 						self.M202IsReloading = false
 					end)

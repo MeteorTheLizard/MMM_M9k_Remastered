@@ -20,8 +20,16 @@ SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "40mmGrenade"
 SWEP.ShellTime = .45
 
-SWEP.IronSightsPos = Vector(2.8,-0.03,1.654)
-SWEP.IronSightsAng = Vector(1.432,2.7,0)
+SWEP.IronSightsPos = Vector(2.635,-0.03,2.04)
+SWEP.IronSightsAng = Vector(-2,2.7,0)
+
+SWEP.ViewModelScale = Vector(1,1,1)
+SWEP.ModelViewForwardMult = -12
+SWEP.ModelViewRightMult = -9.35
+SWEP.ModelViewUpMult = 0.75
+SWEP.ModelViewAngForward = 90
+SWEP.ModelViewAngRight = 5
+SWEP.ModelViewAngUp = 0
 
 local AngleCache1 = Angle(90,0,0)
 local VectorCache1 = Vector(0,0,1)
@@ -95,5 +103,72 @@ end
 if CLIENT then
 	function SWEP:FireAnimationEvent(_,_,event) -- No shell ejection
 		if event == 20 then return true end
+	end
+
+	function SWEP:CreateViewModel() -- We need to create these like that since a player could join and these would be invalid!
+		if IsValid(self.ViewEnt) then self.ViewEnt:Remove() end
+
+		self.ViewEnt = ClientsideModel("models/wystan/attachments/eotech557sight.mdl",RENDERGROUP_VIEWMODEL_TRANSLUCENT)
+		self.ViewEnt:SetPos(self:GetPos())
+		self.ViewEnt:SetAngles(self:GetAngles())
+		self.ViewEnt:SetParent(self)
+		self.ViewEnt:SetNoDraw(true)
+
+		self.ViewMatrix = Matrix()
+		self.ViewMatrix:Scale(self.ViewModelScale)
+	end
+
+	function SWEP:Initialize()
+		self:SetHoldType(self.HoldType)
+		self.OurIndex = self:EntIndex()
+
+		if CLIENT then
+			self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_milkormgl")
+
+			if self.Owner == LocalPlayer() then
+				self:SendWeaponAnim(ACT_VM_IDLE)
+
+				self:CreateViewModel()
+
+				if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
+					self:Equip()
+					self:Deploy()
+				end
+			end
+		end
+	end
+
+	function SWEP:ViewModelDrawn()
+		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
+		local vm = self.Owner:GetViewModel()
+
+		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("body") -- This is faster than looking it up every frame!
+		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
+		if not mMatrix then return end -- Required to fix a one-time error
+		local Pos, Ang = mMatrix:GetTranslation(), mMatrix:GetAngles()
+		Ang:SetUnpacked(Ang.p + 180,Ang.y,Ang.r) -- This is needed to fix the really weird bone angles
+
+		self.ViewEnt:SetPos(Pos + Ang:Forward() * self.ModelViewForwardMult + Ang:Right() * self.ModelViewRightMult + Ang:Up() * self.ModelViewUpMult)
+		Ang:RotateAroundAxis(Ang:Forward(),self.ModelViewAngForward)
+		Ang:RotateAroundAxis(Ang:Right(),self.ModelViewAngRight)
+		Ang:RotateAroundAxis(Ang:Up(),self.ModelViewAngUp)
+
+		self.ViewEnt:SetAngles(Ang)
+		self.ViewEnt:EnableMatrix("RenderMultiply",self.ViewMatrix)
+		self.ViewEnt:DrawModel()
+	end
+
+	function SWEP:Holster()
+		if IsValid(self.ViewEnt) then
+			self.ViewEnt:SetNoDraw(true)
+		end
+
+		return true
+	end
+
+	function SWEP:OnRemove()
+		if IsValid(self.ViewEnt) then
+			self.ViewEnt:Remove()
+		end
 	end
 end

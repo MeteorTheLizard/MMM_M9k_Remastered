@@ -25,7 +25,6 @@ SWEP.MatadorIsReloading = false
 SWEP.ScopeScale = 1.25
 SWEP.ReticleScale = 0.5
 
-local OurClass = "m9k_matador"
 local AngleCache1 = Angle(90,0,0)
 local MetaE = FindMetaTable("Entity")
 local CPPIExists = MetaE.CPPIGetOwner and true or false
@@ -115,12 +114,12 @@ function SWEP:PrimaryAttack()
 		self.MatadorIsReloading = true
 		local TimerName = "Matador_Reload_" .. self.OurIndex
 		timer.Create(TimerName,0.1,1,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 			self:SendWeaponAnim(ACT_VM_RELOAD)
 
 			timer.Create(TimerName,0.5,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 				local EffectEnt = ents.Create("prop_physics")
 				EffectEnt:SetPos(self.Owner:GetShootPos() + (self.Owner:GetRight() * 15))

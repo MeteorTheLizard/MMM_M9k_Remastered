@@ -28,7 +28,6 @@ SWEP.Primary.Spread = 0.05
 SWEP.IronSightsPos = Vector(-6.025,0,3.11)
 SWEP.IronSightsAng = Vector(0,-1.15,1.1)
 
-local OurClass = "m9k_mmm_peashooter"
 local CachedColor1 = Color(255,235,0)
 local ViewPunchUp = Angle(-13,0,0)
 local MetaE = FindMetaTable("Entity")
@@ -98,25 +97,25 @@ function SWEP:PrimaryAttack()
 		if SERVER then -- The following is a serverside thing
 			timer.Remove("m9k_peashooter_returntoidle_" .. self.OurIndex)
 			timer.Create("m9k_peashooter_returntoidle_" .. self.OurIndex,0.3,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 				self:SendWeaponAnim(ACT_VM_IDLE)
 			end)
 		end
 	elseif SERVER and self:Clip1() <= 0 then
 		timer.Simple(0.1,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 			self:SetHoldType("melee")
 
 			timer.Simple(0.7,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
 				self.Owner:DoAnimationEvent(ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE)
 				self.Owner:ViewPunch(ViewPunchUp)
 				self.Owner:EmitSound("weapons/iceaxe/iceaxe_swing1.wav")
 
 				timer.Simple(0.15,function()
-					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= OurClass then return end
+					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 					self:SetHoldType("normal")
 
 					local EffectEnt = ents.Create("prop_physics")

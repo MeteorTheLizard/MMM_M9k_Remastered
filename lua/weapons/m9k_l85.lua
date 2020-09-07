@@ -26,6 +26,7 @@ SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.5
 SWEP.ReticleScale = 0.6
+SWEP.HasZoomStages = false
 
 if CLIENT then
 	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_closedsight")

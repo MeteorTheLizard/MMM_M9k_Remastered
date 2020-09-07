@@ -41,8 +41,6 @@ Not all Weapons have made it back.
  * Orbital Strike Canon
  * Suicide bomb
 
-Some models that used to have scopes no longer have scopes. This was done to streamline assault rifles and heavy weapons to fit their weapon base (Nobody used the scopes on them anyway).
-
 **Hard to notice changes for non-developers:**
  * Every single script file has been optimized and modernized drastically. Around 70% of original code lines were removed since they basically do nothing or are not required anymore.
  * A massload of bugfixes, especially involving shotguns and weapons from the specialties pack.

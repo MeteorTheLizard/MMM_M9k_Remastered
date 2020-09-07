@@ -26,6 +26,7 @@ SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
 SWEP.ScopeScale = 0.5
 SWEP.ReticleScale = 0.6
+SWEP.HasZoomStages = false -- This weapon does not have variable zooms (No zoom stages)
 
 if CLIENT then
 	local CachedTextureID1 = surface.GetTextureID("scope/aimpoint")
