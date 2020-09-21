@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_milkor_mgl1.mdl"
 SWEP.Primary.Sound = "40mmGrenade.Single"
 SWEP.Primary.RPM = 125
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 12
 
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 3

@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_auga3.mdl"
 SWEP.Primary.Sound = "aug_a3.Single"
 SWEP.Primary.RPM = 345
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2.5
 SWEP.Primary.KickDown = 1.9

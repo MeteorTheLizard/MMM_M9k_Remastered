@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_mossberg_590.mdl"
 SWEP.Primary.Sound = "Mberg_590.Single"
 SWEP.Primary.RPM = 45
 SWEP.Primary.ClipSize = 8
+SWEP.Primary.DefaultClip = 24
 
 SWEP.Primary.KickUp = 5
 SWEP.Primary.KickDown = 2

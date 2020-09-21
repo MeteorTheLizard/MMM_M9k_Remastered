@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_fn_scar_h.mdl"
 SWEP.Primary.Sound = "Wep_fnscarh.single"
 SWEP.Primary.RPM = 390
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2.2
 SWEP.Primary.KickDown = 1.35

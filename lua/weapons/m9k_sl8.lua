@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_hk_sl8.mdl"
 SWEP.Primary.Sound = "Weapon_hksl8.Single"
 SWEP.Primary.RPM = 410
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1.4
 SWEP.Primary.KickDown = 0.9

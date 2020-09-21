@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_sw_model_500.mdl"
 SWEP.Primary.Sound = "Model_500.Single"
 SWEP.Primary.RPM = 100
 SWEP.Primary.ClipSize = 5
+SWEP.Primary.DefaultClip = 15
 
 SWEP.Primary.KickUp = 15
 SWEP.Primary.KickDown = 5

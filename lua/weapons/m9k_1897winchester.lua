@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_winchester_1897_trench.mdl"
 SWEP.Primary.Sound = "Trench_97.Single"
 SWEP.Primary.RPM = 55
 SWEP.Primary.ClipSize = 4
+SWEP.Primary.DefaultClip = 12
 
 SWEP.Primary.KickUp = 2
 SWEP.Primary.KickDown = 1

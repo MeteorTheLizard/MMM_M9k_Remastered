@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_m29_satan.mdl"
 SWEP.Primary.Sound = "weapon_satan1.single"
 SWEP.Primary.RPM = 85
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 18
 
 SWEP.Primary.KickUp = 7
 SWEP.Primary.KickDown = 1

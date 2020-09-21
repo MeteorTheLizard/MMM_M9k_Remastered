@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_l85a2.mdl"
 SWEP.Primary.Sound = "Weapon_l85.Single"
 SWEP.Primary.RPM = 325
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2.5
 SWEP.Primary.KickDown = 1.3

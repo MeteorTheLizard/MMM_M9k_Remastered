@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_sig_229r.mdl"
 SWEP.Primary.Sound = "Sauer1_P228.Single"
 SWEP.Primary.RPM = 285
 SWEP.Primary.ClipSize = 12
+SWEP.Primary.DefaultClip = 36
 
 SWEP.Primary.KickUp = 1.8
 SWEP.Primary.KickDown = 0.9

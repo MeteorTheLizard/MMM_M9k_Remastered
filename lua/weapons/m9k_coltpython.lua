@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_colt_python.mdl"
 SWEP.Primary.Sound = "Weapon_ColtPython.Single"
 SWEP.Primary.RPM = 105
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 18
 
 SWEP.Primary.KickUp = 8
 SWEP.Primary.KickDown = 3

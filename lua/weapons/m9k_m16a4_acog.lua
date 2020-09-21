@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_dmg_m16ag.mdl"
 SWEP.Primary.Sound = "Dmgfok_M16A4.Single"
 SWEP.Primary.RPM = 360
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2.3
 SWEP.Primary.KickDown = 1.3

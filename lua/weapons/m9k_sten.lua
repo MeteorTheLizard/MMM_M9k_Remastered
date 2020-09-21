@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_sten.mdl"
 SWEP.Primary.Sound = "Weaponsten.Single"
 SWEP.Primary.RPM = 300
 SWEP.Primary.ClipSize = 32
+SWEP.Primary.DefaultClip = 96
 
 SWEP.Primary.KickUp = 1.53
 SWEP.Primary.KickDown = 0.78

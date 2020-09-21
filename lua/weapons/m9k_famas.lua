@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_tct_famas.mdl"
 SWEP.Primary.Sound = "Weapon_FAMTC.Single"
 SWEP.Primary.RPM = 485
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1.5
 SWEP.Primary.KickDown = 1.1

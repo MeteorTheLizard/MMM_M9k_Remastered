@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_tct_ak47.mdl"
 SWEP.Primary.Sound = "Tactic_AK47.Single"
 SWEP.Primary.RPM = 415
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2.7
 SWEP.Primary.KickDown = 1.7

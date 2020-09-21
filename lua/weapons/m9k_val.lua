@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_dmg_vally.mdl"
 SWEP.Primary.Sound = "Dmgfok_vally.Single"
 SWEP.Primary.RPM = 445
 SWEP.Primary.ClipSize = 20
+SWEP.Primary.DefaultClip = 60
 
 SWEP.Primary.KickUp = 1.7
 SWEP.Primary.KickDown = 0.56

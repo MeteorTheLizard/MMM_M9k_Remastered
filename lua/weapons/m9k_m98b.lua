@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_barrett_m98b.mdl"
 SWEP.Primary.Sound = "M98.Single"
 SWEP.Primary.RPM = 30
 SWEP.Primary.ClipSize = 10
+SWEP.Primary.DefaultClip = 30
 
 SWEP.Primary.KickUp = 3
 SWEP.Primary.KickDown = 6

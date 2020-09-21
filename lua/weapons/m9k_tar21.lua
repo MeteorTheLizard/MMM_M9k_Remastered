@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_imi_tar21.mdl"
 SWEP.Primary.Sound = "Wep_imitavor.single"
 SWEP.Primary.RPM = 390
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1.85
 SWEP.Primary.KickDown = 1.3

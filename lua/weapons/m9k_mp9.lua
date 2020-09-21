@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_brugger_thomet_mp9.mdl"
 SWEP.Primary.Sound = "Weapon_mp9.Single"
 SWEP.Primary.RPM = 800
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = 0.7

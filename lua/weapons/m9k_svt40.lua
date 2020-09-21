@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_svt_40.mdl"
 SWEP.Primary.Sound = "Weapon_SVT40.single"
 SWEP.Primary.RPM = 300
 SWEP.Primary.ClipSize = 10
+SWEP.Primary.DefaultClip = 30
 
 SWEP.Primary.KickUp = 3
 SWEP.Primary.KickDown = 1

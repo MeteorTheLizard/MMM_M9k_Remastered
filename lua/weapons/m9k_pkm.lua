@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_mach_russ_pkm.mdl"
 SWEP.Primary.Sound = "pkm.Single"
 SWEP.Primary.RPM = 675
 SWEP.Primary.ClipSize = 100
+SWEP.Primary.DefaultClip = 300
 
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = 0.8

@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_fn_fal.mdl"
 SWEP.Primary.Sound = "fnfal.Single"
 SWEP.Primary.RPM = 250
 SWEP.Primary.ClipSize = 20
+SWEP.Primary.DefaultClip = 60
 
 SWEP.Primary.KickUp = 7
 SWEP.Primary.KickDown = 3

@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_beretta_m92.mdl"
 SWEP.Primary.Sound = "Weapon_m92b.Single"
 SWEP.Primary.RPM = 350
 SWEP.Primary.ClipSize = 15
+SWEP.Primary.DefaultClip = 45
 
 SWEP.Primary.KickUp = 1.9
 SWEP.Primary.KickDown = 1.7

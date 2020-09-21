@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_rif_an_94.mdl"
 SWEP.Primary.Sound = "an94.Single"
 SWEP.Primary.RPM = 250
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 3
 SWEP.Primary.KickDown = 0.5

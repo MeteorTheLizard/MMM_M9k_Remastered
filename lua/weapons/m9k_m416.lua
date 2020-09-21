@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_hk_416.mdl"
 SWEP.Primary.Sound = "hk416weapon.UnsilSingle"
 SWEP.Primary.RPM = 395
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1.3
 SWEP.Primary.KickDown = 0.8

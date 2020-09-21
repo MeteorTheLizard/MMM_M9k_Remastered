@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_mp7_silenced.mdl"
 SWEP.Primary.Sound = "Weapon_MP7.single"
 SWEP.Primary.RPM = 600
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = .6

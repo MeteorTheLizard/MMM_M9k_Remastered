@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_snip_m24_6.mdl"
 SWEP.Primary.Sound = "Dmgfok_M24SN.Single"
 SWEP.Primary.RPM = 40
 SWEP.Primary.ClipSize = 5
+SWEP.Primary.DefaultClip = 15
 
 SWEP.Primary.KickUp = 6
 SWEP.Primary.KickDown = 2

@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_raging_bull_scoped.mdl"
 SWEP.Primary.Sound = "weapon_r_bull.single"
 SWEP.Primary.RPM = 115
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 18
 
 SWEP.Primary.KickUp = 9
 SWEP.Primary.KickDown = 4

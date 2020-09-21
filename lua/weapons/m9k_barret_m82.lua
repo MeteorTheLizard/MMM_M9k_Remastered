@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_barret_m82.mdl"
 SWEP.Primary.Sound = "BarretM82.Single"
 SWEP.Primary.RPM = 60
 SWEP.Primary.ClipSize = 10
+SWEP.Primary.DefaultClip = 30
 
 SWEP.Primary.KickUp = 3
 SWEP.Primary.KickDown = 5

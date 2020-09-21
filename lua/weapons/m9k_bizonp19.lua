@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_pp19_bizon.mdl"
 SWEP.Primary.Sound = "Weapon_P19.Single"
 SWEP.Primary.RPM = 700
 SWEP.Primary.ClipSize = 64
+SWEP.Primary.DefaultClip = 128
 
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = 1

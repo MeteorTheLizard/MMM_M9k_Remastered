@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_intratec_tec9.mdl"
 SWEP.Primary.Sound = "Weapon_Tec9.Single"
 SWEP.Primary.RPM = 400
 SWEP.Primary.ClipSize = 32
+SWEP.Primary.DefaultClip = 96
 
 SWEP.Primary.KickUp = 2.5
 SWEP.Primary.KickDown = 1.3

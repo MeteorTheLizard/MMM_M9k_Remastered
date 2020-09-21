@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_fn_f2000.mdl"
 SWEP.Primary.Sound = "Weapon_F2000.Single"
 SWEP.Primary.RPM = 355
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2
 SWEP.Primary.KickDown = 1.3

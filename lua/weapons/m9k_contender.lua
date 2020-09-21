@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_g2_contender.mdl"
 SWEP.Primary.Sound = "contender_g2.Single"
 SWEP.Primary.RPM = 45
 SWEP.Primary.ClipSize = 1
+SWEP.Primary.DefaultClip = 5
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 3
 SWEP.Primary.KickHorizontal = 5

@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_357.mdl"
 SWEP.Primary.Sound = "weapons/mmm/flaregun-fire.mp3"
 SWEP.Primary.RPM = 20
 SWEP.Primary.ClipSize = 1
+SWEP.Primary.DefaultClip = 5
 
 SWEP.Primary.KickUp = 12
 SWEP.Primary.KickDown = 5

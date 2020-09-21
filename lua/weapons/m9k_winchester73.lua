@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_winchester_1873.mdl"
 SWEP.Primary.Sound = "Weapon_73.Single"
 SWEP.Primary.RPM = 55
 SWEP.Primary.ClipSize = 12
+SWEP.Primary.DefaultClip = 36
 
 SWEP.Primary.KickUp = 6
 SWEP.Primary.KickDown = 2

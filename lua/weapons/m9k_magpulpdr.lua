@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_magpul_pdr.mdl"
 SWEP.Primary.Sound = "MAG_PDR.Single"
 SWEP.Primary.RPM = 625
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 0.9
 SWEP.Primary.KickDown = 0.5

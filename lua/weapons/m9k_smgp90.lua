@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_fn_p90.mdl"
 SWEP.Primary.Sound = "P90_weapon.single"
 SWEP.Primary.RPM = 800
 SWEP.Primary.ClipSize = 50
+SWEP.Primary.DefaultClip = 150
 
 SWEP.Primary.KickUp = 0.8
 SWEP.Primary.KickDown = 0.6

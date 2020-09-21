@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_tommy_gun.mdl"
 SWEP.Primary.Sound = "Weapon_tmg.Single"
 SWEP.Primary.RPM = 700
 SWEP.Primary.ClipSize = 85
+SWEP.Primary.DefaultClip = 170
 
 SWEP.Primary.KickUp = 0.8
 SWEP.Primary.KickDown = 0.5

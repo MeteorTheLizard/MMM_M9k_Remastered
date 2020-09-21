@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_hk_psg1.mdl"
 SWEP.Primary.Sound = "Weapon_psg_1.Single"
 SWEP.Primary.RPM = 150
 SWEP.Primary.ClipSize = 10
+SWEP.Primary.DefaultClip = 30
 
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2

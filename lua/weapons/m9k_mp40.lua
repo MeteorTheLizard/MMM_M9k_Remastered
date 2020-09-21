@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_mp40smg.mdl"
 SWEP.Primary.Sound = "mp40.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 32
+SWEP.Primary.DefaultClip = 96
 
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = 0.8

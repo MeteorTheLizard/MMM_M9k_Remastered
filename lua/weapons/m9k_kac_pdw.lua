@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_kac_pdw.mdl"
 SWEP.Primary.Sound = "KAC_PDW.Single"
 SWEP.Primary.RPM = 500
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 2.1
 SWEP.Primary.KickDown = 1.9

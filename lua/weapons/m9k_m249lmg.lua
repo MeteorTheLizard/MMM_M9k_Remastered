@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_m249_machine_gun.mdl"
 SWEP.Primary.Sound = "Weapon_249M.Single"
 SWEP.Primary.RPM = 755
 SWEP.Primary.ClipSize = 150
+SWEP.Primary.DefaultClip = 450
 
 SWEP.Primary.KickUp = 1.3
 SWEP.Primary.KickDown = 0.7

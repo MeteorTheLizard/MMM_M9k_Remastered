@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_uzi_imi.mdl"
 SWEP.Primary.Sound = "Weapon_uzi.single"
 SWEP.Primary.RPM = 725
 SWEP.Primary.ClipSize = 32
+SWEP.Primary.DefaultClip = 96
 
 SWEP.Primary.KickUp = 1
 SWEP.Primary.KickDown = 0.7

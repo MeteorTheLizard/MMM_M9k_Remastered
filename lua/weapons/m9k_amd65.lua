@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_amd_65.mdl"
 SWEP.Primary.Sound = "amd65.single"
 SWEP.Primary.RPM = 395
 SWEP.Primary.ClipSize = 20
+SWEP.Primary.DefaultClip = 60
 
 SWEP.Primary.KickUp = 1.9
 SWEP.Primary.KickDown = 1.1

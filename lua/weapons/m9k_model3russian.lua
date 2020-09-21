@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_model_3_rus.mdl"
 SWEP.Primary.Sound = "Model3.Single"
 SWEP.Primary.RPM = 110
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 18
 
 SWEP.Primary.KickUp = 7
 SWEP.Primary.KickDown = 5

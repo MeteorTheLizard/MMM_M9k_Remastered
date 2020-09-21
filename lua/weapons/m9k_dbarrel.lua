@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_double_barrel_shotgun.mdl"
 SWEP.Primary.Sound = "Double_Barrel.Single"
 SWEP.Primary.RPM = 180
 SWEP.Primary.ClipSize = 2
+SWEP.Primary.DefaultClip = 10
 
 SWEP.Primary.KickUp = 7
 SWEP.Primary.KickDown = 5

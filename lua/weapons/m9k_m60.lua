@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_m60_machine_gun.mdl"
 SWEP.Primary.Sound = "Weapon_M_60.Single"
 SWEP.Primary.RPM = 465
 SWEP.Primary.ClipSize = 200
+SWEP.Primary.DefaultClip = 500
 
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = 0.7

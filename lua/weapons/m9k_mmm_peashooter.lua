@@ -15,6 +15,7 @@ SWEP.Primary.Sound = "weapons/mmm/peashooter-fire.mp3"
 SWEP.Primary.RPM = 350
 SWEP.Primary.ClipSize = 32
 SWEP.Primary.DefaultClip = 32
+SWEP.Primary.DefaultClip = 96
 
 SWEP.Primary.KickUp = 0.5
 SWEP.Primary.KickDown = 0.5

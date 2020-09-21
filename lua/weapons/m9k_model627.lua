@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_sw_model_627.mdl"
 SWEP.Primary.Sound = "model_627perf.Single"
 SWEP.Primary.RPM = 96
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 18
 
 SWEP.Primary.KickUp = 7.5
 SWEP.Primary.KickDown = 3

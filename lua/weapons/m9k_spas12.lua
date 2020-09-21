@@ -11,6 +11,7 @@ SWEP.ViewModelFOV = 60
 SWEP.Primary.Sound = "spas_12_shoty.Single"
 SWEP.Primary.RPM = 165
 SWEP.Primary.ClipSize = 8
+SWEP.Primary.DefaultClip = 24
 
 SWEP.Primary.KickUp = 5
 SWEP.Primary.KickDown = 2

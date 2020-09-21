@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_m4a1_iron.mdl"
 SWEP.Primary.Sound = "Dmgfok_M4A1.Single"
 SWEP.Primary.RPM = 345
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 3
 SWEP.Primary.KickDown = 1.8

@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/s_dmgf_co1911.mdl"
 SWEP.Primary.Sound = "Dmgfok_co1911.Single"
 SWEP.Primary.RPM = 350
 SWEP.Primary.ClipSize = 7
+SWEP.Primary.DefaultClip = 21
 
 SWEP.Primary.KickUp = 1.8
 SWEP.Primary.KickDown = 0.9

@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_aac_honeybadger.mdl"
 SWEP.Primary.Sound = "Weapon_HoneyB.single"
 SWEP.Primary.RPM = 335
 SWEP.Primary.ClipSize = 30
+SWEP.Primary.DefaultClip = 90
 
 SWEP.Primary.KickUp = 1.5
 SWEP.Primary.KickDown = .7

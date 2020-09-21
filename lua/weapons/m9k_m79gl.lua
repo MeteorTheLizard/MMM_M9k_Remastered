@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_m79_grenadelauncher.mdl"
 
 SWEP.Primary.Sound = "40mmGrenade.Single"
 SWEP.Primary.ClipSize = 1
+SWEP.Primary.DefaultClip = 5
 
 SWEP.Primary.KickUp = 6
 SWEP.Primary.KickDown = 3

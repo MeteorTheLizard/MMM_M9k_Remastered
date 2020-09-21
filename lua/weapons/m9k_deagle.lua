@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_tcom_deagle.mdl"
 SWEP.Primary.Sound = "Weapon_TDegle.Single"
 SWEP.Primary.RPM = 165
 SWEP.Primary.ClipSize = 7
+SWEP.Primary.DefaultClip = 21
 
 SWEP.Primary.KickUp = 7
 SWEP.Primary.KickDown = 2

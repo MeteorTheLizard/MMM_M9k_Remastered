@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_dmg_glock.mdl"
 SWEP.Primary.Sound = "Dmgfok_glock.Single"
 SWEP.Primary.RPM = 650
 SWEP.Primary.ClipSize = 32
+SWEP.Primary.DefaultClip = 96
 
 SWEP.Primary.KickUp = 1.9
 SWEP.Primary.KickDown = 1.3

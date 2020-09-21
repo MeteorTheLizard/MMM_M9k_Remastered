@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_remington_870_tact.mdl"
 SWEP.Primary.Sound = "WepRem870.Single"
 SWEP.Primary.RPM = 60
 SWEP.Primary.ClipSize = 8
+SWEP.Primary.DefaultClip = 24
 
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2

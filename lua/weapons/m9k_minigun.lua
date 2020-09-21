@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_m134_minigun.mdl"
 SWEP.Primary.Sound = "BlackVulcan.Single"
 SWEP.Primary.RPM = 600
 SWEP.Primary.ClipSize = 150
+SWEP.Primary.DefaultClip = 300
 
 SWEP.Primary.KickUp = 1.6
 SWEP.Primary.KickDown = 0.8

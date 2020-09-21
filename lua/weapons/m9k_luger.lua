@@ -11,6 +11,7 @@ SWEP.WorldModel = "models/weapons/w_luger_p08.mdl"
 SWEP.Primary.Sound = "weapon_luger.single"
 SWEP.Primary.RPM = 825
 SWEP.Primary.ClipSize = 8
+SWEP.Primary.DefaultClip = 24
 
 SWEP.Primary.KickUp = 1.4
 SWEP.Primary.KickDown = 0.7

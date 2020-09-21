@@ -12,6 +12,7 @@ SWEP.ViewModelFOV = 60
 SWEP.Primary.Sound = "7615p_remington.Single"
 SWEP.Primary.RPM = 40
 SWEP.Primary.ClipSize = 10
+SWEP.Primary.DefaultClip = 30
 
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 2

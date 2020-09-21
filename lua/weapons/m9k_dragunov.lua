@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_svd_dragunov.mdl"
 SWEP.Primary.Sound = "Weapon_svd01.Single"
 SWEP.Primary.RPM = 125
 SWEP.Primary.ClipSize = 10
+SWEP.Primary.DefaultClip = 30
 
 SWEP.Primary.KickUp = 5
 SWEP.Primary.KickDown = 3

@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_kriss_vector.mdl"
 SWEP.Primary.Sound = "kriss_vector.Single"
 SWEP.Primary.RPM = 800
 SWEP.Primary.ClipSize = 54
+SWEP.Primary.DefaultClip = 162
 
 SWEP.Primary.KickUp = 0.77
 SWEP.Primary.KickDown = 0.4

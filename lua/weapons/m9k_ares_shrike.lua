@@ -14,6 +14,7 @@ SWEP.WorldModel = "models/weapons/w_ares_shrike.mdl"
 SWEP.Primary.Sound = "Weapon_shrk.Single"
 SWEP.Primary.RPM = 650
 SWEP.Primary.ClipSize = 200
+SWEP.Primary.DefaultClip = 200
 
 SWEP.Primary.KickUp = 1.2
 SWEP.Primary.KickDown = 0.9

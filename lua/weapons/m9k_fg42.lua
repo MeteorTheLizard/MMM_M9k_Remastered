@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_fg42.mdl"
 SWEP.Primary.Sound = "FG42_weapon.Single"
 SWEP.Primary.RPM = 250
 SWEP.Primary.ClipSize = 20
+SWEP.Primary.DefaultClip = 60
 
 SWEP.Primary.KickUp = 2.3
 SWEP.Primary.KickDown = 1.5

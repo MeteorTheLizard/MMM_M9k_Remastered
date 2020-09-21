@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_m1918_bar.mdl"
 SWEP.Primary.Sound = "Weapon_bar1.Single"
 SWEP.Primary.RPM = 450
 SWEP.Primary.ClipSize = 20
+SWEP.Primary.DefaultClip = 60
 
 SWEP.Primary.KickUp = 2.3
 SWEP.Primary.KickDown = 1.5

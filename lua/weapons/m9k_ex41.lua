@@ -12,6 +12,7 @@ SWEP.WorldModel = "models/weapons/w_ex41.mdl"
 
 SWEP.Primary.Sound = "40mmGrenade.Single"
 SWEP.Primary.ClipSize = 3
+SWEP.Primary.DefaultClip = 9
 SWEP.Primary.KickUp = 5
 SWEP.Primary.KickDown = 3
 SWEP.Primary.KickHorizontal = 4

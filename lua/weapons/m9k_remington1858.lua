@@ -13,6 +13,7 @@ SWEP.WorldModel = "models/weapons/w_remington_1858.mdl"
 SWEP.Primary.Sound = "Remington.single"
 SWEP.Primary.RPM = 157
 SWEP.Primary.ClipSize = 6
+SWEP.Primary.DefaultClip = 18
 
 SWEP.Primary.KickUp = 5
 SWEP.Primary.KickDown = 3
