@@ -232,7 +232,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:CanPrimaryAttack() -- Required for Singleplayer
-	if self:Clip1() <= 0 then
+	if self:Clip1() <= 0 and IsFirstTimePredicted() then
 		self:EmitSound("Weapon_Pistol.Empty")
 		self:SetNextPrimaryFire(CurTime() + 0.2)
 
