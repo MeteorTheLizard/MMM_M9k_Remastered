@@ -54,7 +54,7 @@ if SERVER then
 			util.BlastDamage(self,self.Owner,Pos,220,220)
 			util.ScreenShake(Pos,500,500,1.25,500)
 
-			self:EmitSound("ambient/explosions/explode_" .. math.random(1,4) .. ".wav",Pos,100)
+			self:EmitSound("ambient/explosions/explode_" .. math.random(1,4) .. ".wav",100)
 			self:Remove()
 		end
 	end
