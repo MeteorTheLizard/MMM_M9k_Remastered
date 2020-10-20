@@ -23,3 +23,5 @@ SWEP.Primary.Damage = 3
 SWEP.Primary.Spread = .19
 
 SWEP.IronSightsPos = Vector(4.026,-2.296,0.917)
+
+SWEP.ShouldDoMoveSpread = false
