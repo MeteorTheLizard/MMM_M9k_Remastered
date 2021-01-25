@@ -7,6 +7,8 @@ SWEP.HoldType = "melee2"
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.Primary.Automatic = true
+
 SWEP.ViewModelFOV = 55
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_dmascus.mdl"
@@ -63,7 +65,7 @@ function SWEP:PrimaryAttack() -- Stabby stab stab
 							self:EmitSound("weapons/blades/hitwall.mp3")
 
 							if not tTrace.HitWorld then
-								damageInfo:SetDamageForce(tTrace.Normal * 100)
+								damageInfo:SetDamageForce(-tTrace.Normal * 100)
 								tTrace.Entity:TakeDamageInfo(damageInfo)
 							end
 

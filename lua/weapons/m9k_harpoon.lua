@@ -7,6 +7,8 @@ SWEP.HoldType = "melee"
 SWEP.Spawnable = true
 SWEP.UseHands = true
 
+SWEP.Primary.Automatic = true
+
 SWEP.ViewModelFOV = 55
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/cstrike/c_knife_t.mdl" -- Does not require any game apart from Garry's Mod even though it is from CS:S
@@ -79,7 +81,7 @@ function SWEP:PrimaryAttack() -- Stabby stab stab
 							self:EmitSound("weapons/blades/hitwall.mp3")
 
 							if not tTrace.HitWorld then
-								damageInfo:SetDamageForce(tTrace.Normal * 100)
+								damageInfo:SetDamageForce(-tTrace.Normal * 100)
 								tTrace.Entity:TakeDamageInfo(damageInfo)
 							end
 
