@@ -162,6 +162,7 @@ if CLIENT then
 			if not IsValid(vm) then return end
 
 			local vmAttachment = vm:GetAttachment("1")
+			if not istable(vmAttachment) then return end
 
 			effectData:SetAttachment(1)
 			effectData:SetEntity(vm)
