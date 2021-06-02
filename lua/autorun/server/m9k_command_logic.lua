@@ -11,7 +11,7 @@ if SERVER then
 
 	hook.Add("WeaponEquip","m9k_ammo_logic",function(eWep,ePly)
 		timer.Simple(0,function() -- Needs to happen in the next tick due to prediction stuffs
-			if not IsValid(eWep) or not IsValid(ePly) then return end
+			if not IsValid(eWep) or not IsValid(ePly) or not eWep._IsM9kRemasteredBased then return end
 
 			if cVar_M9k_WeaponsSpawnWithAmmo:GetInt() == 1 then
 				eWep:SetClip1(eWep.Primary.ClipSize or 0)

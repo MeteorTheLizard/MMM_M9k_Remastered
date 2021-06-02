@@ -44,6 +44,8 @@ SWEP.LastCurTick = 0
 SWEP.PrimaryAnimationInt = 0
 SWEP.ShouldDoMoveSpread = true
 
+SWEP._IsM9kRemasteredBased = true -- Required for the m9k_command_logic.lua
+
 local effectData = EffectData()
 
 local EjectShellTypes = { -- This is needed to simulate shell ejections when aiming down the sights.
