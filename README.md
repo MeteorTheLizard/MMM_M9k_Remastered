@@ -11,6 +11,14 @@ It includes all original M9k extensions:
 
 They have been merged together and heavily optimized. Some features were removed, some were changed, and some were added.
 
+**Console Commands**
+> 0 = Disabled - 1 = Enabled
+- m9k_spawn_with_ammo ( 0 / 1 ) - When enabled, weapons start with ammo in magazines.
+- m9k_spawn_with_reserve ( 0 / 1 ) - When enabled, spawning a weapon supplies the player with additional ammo.
+- m9k_annoying_serverprint ( 0 / 1 ) - Turns off the annoying informational console print on server start.
+
+All of the commands above are enabled by default!! ( **You might have to disable them for your roleplay server!** )
+
 **Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!**
 
 **This Addon is being maintained and updated constantly. Reported bugs WILL be fixed, so if you find one, please report it!**
