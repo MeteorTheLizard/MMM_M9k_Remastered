@@ -104,10 +104,12 @@ function SWEP:Reload()
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 		self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_START)
 
-		timer.Remove("ShotgunReload_" .. self.OurIndex)
-		timer.Create("ShotgunReload_" .. self.OurIndex,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
+		local sTimer = "ShotgunReload_" .. self.OurIndex
+
+		timer.Remove(sTimer)
+		timer.Create(sTimer,self.ShellTime + 0.05,self.Primary.ClipSize - self:Clip1(),function()
 			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then
-				timer.Remove("ShotgunReload_" .. self.OurIndex)
+				timer.Remove(sTimer) -- self can become invalid, so we cache the timer string
 				return
 			end
 
