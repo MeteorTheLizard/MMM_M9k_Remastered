@@ -23,3 +23,10 @@ SWEP.Primary.Damage = 13
 SWEP.Primary.Spread = .035
 
 SWEP.IronSightsPos = Vector(4.073,-3.438,1.259)
+
+function SWEP:FireAnimationEvent(_,_,event)
+	if event == 5001 or event == 5011 or event == 5021 or event == 5031 then
+
+		return true
+	end
+end

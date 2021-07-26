@@ -120,16 +120,18 @@ end
 function SWEP:PrimaryAttack()
 	if SERVER and game.SinglePlayer() then self:CallOnClient("PrimaryAttack") end -- Make sure that it runs on the CLIENT!
 
+	local iCurTime = CurTime()
+
 	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
 		if SERVER then
 			self:EmitSound("Weapon_Pistol.Empty")
 		end
 
-		self:SetNextPrimaryFire(CurTime() + 0.2)
+		self:SetNextPrimaryFire(iCurTime + 0.2)
 		return
 	end
 
-	if self:CanPrimaryAttack() and (self:GetNextPrimaryFire() < CurTime() or game.SinglePlayer()) then
+	if self:CanPrimaryAttack() and (self:GetNextPrimaryFire() < iCurTime or game.SinglePlayer()) then
 		local Spread = self.Primary.Spread
 
 		if self.ShouldDoMoveSpread then
@@ -140,7 +142,7 @@ function SWEP:PrimaryAttack()
 			end
 		end
 
-		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
+		self:SetNextPrimaryFire(iCurTime + (1 / (self.Primary.RPM / 60)))
 
 		if self.IronSightState then -- Let us not play messy fire animations while aiming down the sights.. WE WANT TO SEE DAMMIT!
 			self:SendWeaponAnim(ACT_VM_IDLE) -- Unfortunately this gets rid of the muzzleflash and brass ejection (So we need to simulate it.)

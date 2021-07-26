@@ -107,11 +107,12 @@ function SWEP:PrimaryAttack()
 			rocket:Spawn()
 			rocket:Activate()
 
-			SafeRemoveEntityDelayed(rocket,30)
+			SafeRemoveEntityDelayed(rocket,10)
 
 			local Phys = rocket:GetPhysicsObject()
 			if IsValid(Phys) then
-				Phys:SetVelocity(self.Owner:GetAimVector() * 1500)
+				Phys:SetVelocity(self.Owner:GetAimVector() * 2500)
+				Phys:SetDragCoefficient(10)
 			end
 		end
 

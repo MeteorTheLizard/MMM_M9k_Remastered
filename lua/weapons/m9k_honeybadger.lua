@@ -50,6 +50,8 @@ if CLIENT then
 	local CachedTextureID2 = surface.GetTextureID("scope/gdcw_closedsight")
 
 	function SWEP:DrawHUD()
+		if self.Owner:GetViewEntity() ~= self.Owner then return end
+
 		if self:GetNWInt("ScopeState") > 0 then
 			if self.DrawCrosshair then -- Only set the vars once (this is faster)
 				self.Owner:DrawViewModel(false)

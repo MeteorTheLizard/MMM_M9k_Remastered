@@ -80,6 +80,45 @@ function SWEP:Initialize()
 end
 
 function SWEP:Think()
+	local eViewEnt = self.Owner:GetViewEntity()
+		self.Owner.m9k_lastViewEnt = self.Owner.m9k_lastViewEnt or eViewEnt
+
+	if self.OverrideZoomToggle and self.Owner:KeyReleased(IN_ATTACK2) then
+		self:SetNWInt("ScopeState",0)
+
+		local Scope = self:GetNWInt("ScopeState")
+
+		if Scope == 0 then
+			self.Owner:SetFOV(0,0.1)
+		elseif Scope == 1 then
+			self.Owner:SetFOV(50,0.1)
+		elseif Scope == 2 then
+			self.Owner:SetFOV(25,0.1)
+		elseif Scope == 3 then
+			self.Owner:SetFOV(10,0.1)
+		end
+	end
+
+	if self.Owner.m9k_lastViewEnt ~= eViewEnt then
+		if self.Owner:GetViewEntity() ~= self.Owner then
+			self.Owner:SetFOV(0)
+		else
+			local Scope = self:GetNWInt("ScopeState")
+
+			if Scope == 0 then
+				self.Owner:SetFOV(0)
+			elseif Scope == 1 then
+				self.Owner:SetFOV(50)
+			elseif Scope == 2 then
+				self.Owner:SetFOV(25)
+			elseif Scope == 3 then
+				self.Owner:SetFOV(10)
+			end
+		end
+
+		self.Owner.m9k_lastViewEnt = eViewEnt
+	end
+
 	if self:GetNWInt("ScopeState") > 0 and self.Owner:GetVelocity():Length() < 100 then
 		self.Primary.Spread = self.Primary.SpreadZoomed
 	else
@@ -111,11 +150,47 @@ function SWEP:AdjustMouseSensitivity()
 end
 
 function SWEP:SecondaryAttack()
+	if not IsFirstTimePredicted() then return end
+
+	if CLIENT then
+
+		-- We want to predict the overlay so that it doesn't appear delayed, disappearing cannot be predicted
+		local Scope = self:GetNWInt("ScopeState")
+
+		Scope = Scope  + 1
+
+		if Scope == 0 then
+			self.Owner:SetFOV(0,0.1)
+		elseif Scope == 1 then
+			self.Owner:SetFOV(50,0.1)
+		elseif Scope == 2 then
+			self.Owner:SetFOV(25,0.1)
+		elseif Scope == 3 then
+			self.Owner:SetFOV(10,0.1)
+		end
+
+		self:SetNWInt("ScopeState",Scope)
+
+		return -- The client has no business here past this point
+	end
+
+
+
 	if self.ScopeCD > CurTime() or self.Owner:GetViewEntity() ~= self.Owner then return false end
 	local Scope = self:GetNWInt("ScopeState")
+	local bOverride = false
 
-	Scope = Scope  + 1
-	if (self.HasZoomStages and Scope > 3) or (not self.HasZoomStages and Scope > 1) then
+	if self.OverrideMaxZoomStage then
+		if Scope ~= 0 then
+			bOverride = true
+		end
+
+		Scope = (self.HasZoomStages and 3 or 1)
+	else
+		Scope = Scope  + 1
+	end
+
+	if bOverride or (self.HasZoomStages and Scope > 3) or (not self.HasZoomStages and Scope > 1) then
 		Scope = 0
 	end
 	self.ScopeCD = CurTime() + 0.2
@@ -138,7 +213,7 @@ function SWEP:Reload()
 	if SERVER and game.SinglePlayer() then self:CallOnClient("Reload") end -- Make sure that it runs on the CLIENT!
 	timer.Remove("m9k_resetscope_" .. self.OurIndex) -- Needed for bolt-action sniper rifles to prevent the restoring of the zoom level
 
-	if self:GetNWInt("ScopeState") > 0 then
+	if SERVER and (not self.OverrideZoomToggle and self:GetNWInt("ScopeState") > 0) then
 		self.Owner:SetFOV(0,0.1)
 		self:SetNWInt("ScopeState",0)
 		self.ScopeCD = CurTime() + 0.2
