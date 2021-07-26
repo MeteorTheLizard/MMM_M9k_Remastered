@@ -2,8 +2,8 @@
 
 Workshop Link: https://steamcommunity.com/sharedfiles/filedetails/?id=2169649722
 
-This is a Remastered version of the 'Original' M9k weapons pack.
-It includes all original M9k extensions:
+This is a Remastered version of the Legacy M9k Weapon packs.
+It includes all Legacy M9k extensions:
  * Small arms pack
  * Heavy weapons pack
  * Assault rifles pack
@@ -11,19 +11,25 @@ It includes all original M9k extensions:
 
 They have been merged together and heavily optimized. Some features were removed, some were changed, and some were added.
 
-**Console Commands**
+Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!
+
+This Addon is being maintained and updated constantly. Reported bugs WILL be fixed, so if you find one, please report it!
+
+# Console Commands
 > 0 = Disabled - 1 = Enabled
 - m9k_spawn_with_ammo ( 0 / 1 ) - When enabled, weapons start with ammo in magazines.
 - m9k_spawn_with_reserve ( 0 / 1 ) - When enabled, spawning a weapon supplies the player with additional ammo.
 - m9k_annoying_serverprint ( 0 / 1 ) - Turns off the annoying informational console print on server start.
+- m9k_zoomtoggle ( 0 / 1 ) - When enabled, scopes will use a toggle behavior instead of a hold behavior. ( Counter-Strike vs Legacy M9k )
+- m9k_zoomstages ( 0 / 1 ) - Whether scoped weapons should make use of their zoom stages, when set to 0, scoped weapons will use their maximum zoom stage. ( Counter-Strike vs Legacy M9k )
 
-All of the commands above are enabled by default!! ( **You might have to disable them for your roleplay server!** )
+**IMPORTANT:**
 
-**Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!**
+**m9k_spawn_with_ammo** and **m9k_spawn_with_reserve** are enabled by default. If you're running a roleplay gamemode then you might want to disable these.
 
-**This Addon is being maintained and updated constantly. Reported bugs WILL be fixed, so if you find one, please report it!**
+By default, scopes will us the Legacy M9k behavior, hold and without zoom stages. Set both m9k_zoomtoggle and m9k_zoomstages to 1 in the server console for the remastered behavior.
 
-**Most noticeable changes:**
+# Most noticeable changes
 
 Dynamic weapon accuracy (Similar to how weapons behave in CS:S or CS:GO)
  * All weapons have been changed to be more accurate while standing still and to be even more accurate while crouching and being still.
@@ -36,8 +42,8 @@ Shotguns are actual shotguns now as they all shoot "birdshot" rounds instead of 
  * NumShots drastically increased, damage drastically reduced.
 
 Scopes have received QoL updates:
- * Changed max zooms for every scoped base weapon from 2 to 3.
- * Can now 'unzoom' by pressing the Reload key.
+ * Changed max zooms for every scoped base weapon from 2 to 3. ( When **m9k_zoomstages** is set to 1 )
+ * Can now 'unzoom' by pressing the Reload key. ( When **m9k_zoomtoggle** is set to 1 )
  
 Not all Weapons have made it back.
  * Some weapons have been removed but MIGHT be re-added in the future.
