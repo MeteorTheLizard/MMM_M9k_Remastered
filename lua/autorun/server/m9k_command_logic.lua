@@ -26,10 +26,13 @@ if SERVER then
 		if iNew <= 0 then iNew = 0 end
 		if iNew >= 1 then iNew = 1 end
 
+		local bState = (iNew == 0 and true or false)
+
 		-- Here we update all currently existing weapons
 		for k,v in ipairs(ents.GetAll()) do
 			if v:IsWeapon() and string.Left(v:GetClass(),4) == "m9k_" then
-				v.OverrideMaxZoomStage = (iNew == 0 and true or false)
+				v:SetNWBool("M9kr_OvrZoomStage",bState) -- This needs to be networked to clients for some code
+				v.OverrideMaxZoomStage = bState
 			end
 		end
 	end,"m9k_zoomstages_callback")
@@ -71,6 +74,7 @@ if SERVER then
 			end
 
 			if cVar_M9k_WeaponsNoZooms:GetInt() == 0 then -- Zooms are disabled, so all weapons only have ONE zoom which is their max!
+				eWep:SetNWBool("M9kr_OvrZoomStage",true)
 				eWep.OverrideMaxZoomStage = true
 			end
 

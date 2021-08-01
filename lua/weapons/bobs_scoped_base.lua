@@ -151,11 +151,12 @@ end
 
 function SWEP:SecondaryAttack()
 	if not IsFirstTimePredicted() then return end
+	if self.ScopeCD > CurTime() or self.Owner:GetViewEntity() ~= self.Owner then return false end
+	local Scope = self:GetNWInt("ScopeState")
 
 	if CLIENT then
 
 		-- We want to predict the overlay so that it doesn't appear delayed, disappearing cannot be predicted
-		local Scope = self:GetNWInt("ScopeState")
 
 		Scope = Scope  + 1
 
@@ -174,14 +175,10 @@ function SWEP:SecondaryAttack()
 		return -- The client has no business here past this point
 	end
 
-
-
-	if self.ScopeCD > CurTime() or self.Owner:GetViewEntity() ~= self.Owner then return false end
-	local Scope = self:GetNWInt("ScopeState")
 	local bOverride = false
 
 	if self.OverrideMaxZoomStage then
-		if Scope ~= 0 then
+		if Scope ~= 0 and not self.Owner:KeyDown(IN_ATTACK2) then
 			bOverride = true
 		end
 
@@ -213,12 +210,15 @@ function SWEP:Reload()
 	if SERVER and game.SinglePlayer() then self:CallOnClient("Reload") end -- Make sure that it runs on the CLIENT!
 	timer.Remove("m9k_resetscope_" .. self.OurIndex) -- Needed for bolt-action sniper rifles to prevent the restoring of the zoom level
 
-	if SERVER and (not self.OverrideZoomToggle and self:GetNWInt("ScopeState") > 0) then
+	if self:GetNWInt("ScopeState") > 0 then
 		self.Owner:SetFOV(0,0.1)
 		self:SetNWInt("ScopeState",0)
 		self.ScopeCD = CurTime() + 0.2
 		self.Owner:EmitSound("weapons/zoom.wav")
-		self.NextReloadTime = CurTime() + 0.5
+
+		if not self.OverrideMaxZoomStage then -- We don't want a force reload on hold
+			self.NextReloadTime = CurTime() + 0.5
+		end
 	end
 
 	if self.CanReload and self.NextReloadTime < CurTime() and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then

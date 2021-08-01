@@ -57,11 +57,11 @@ function SWEP:PrimaryAttack()
 			timer.Create("m9k_resetscope_" .. self.OurIndex,1.4,1,function()
 				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self.ClassName then return end
 
-				if not self.OverrideMaxZoomStage then
+				if (self:GetNWBool("M9kr_OvrZoomStage") and self.Owner:KeyDown(IN_ATTACK2)) or not self:GetNWBool("M9kr_OvrZoomStage") then
 					self:SetNWInt("ScopeState",OldScopeState - 1)
-				end
 
-				self:SecondaryAttack()  -- Shitty but effective hack
+					self:SecondaryAttack()  -- Shitty but effective hack
+				end
 			end)
 		end
 
