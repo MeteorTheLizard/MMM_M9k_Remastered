@@ -29,7 +29,7 @@ if SERVER then
 		local bState = (iNew == 0 and true or false)
 
 		-- Here we update all currently existing weapons
-		for k,v in ipairs(ents.GetAll()) do
+		for _,v in ipairs(ents.GetAll()) do
 			if v:IsWeapon() and string.Left(v:GetClass(),4) == "m9k_" then
 				v:SetNWBool("M9kr_OvrZoomStage",bState) -- This needs to be networked to clients for some code
 				v.OverrideMaxZoomStage = bState
@@ -48,8 +48,9 @@ if SERVER then
 		if iNew >= 1 then iNew = 1 end
 
 		-- Here we update all currently existing weapons
-		for k,v in ipairs(ents.GetAll()) do
+		for _,v in ipairs(ents.GetAll()) do
 			if v:IsWeapon() and string.Left(v:GetClass(),4) == "m9k_" then
+				v:SetNWBool("M9kr_OvrZoomToggl",bState) -- This needs to be networked to clients for some code
 				v.OverrideZoomToggle = (iNew == 0 and true or false)
 			end
 		end
@@ -79,6 +80,7 @@ if SERVER then
 			end
 
 			if cVar_M9k_WeaponsNoToggleZooms:GetInt() == 0 then -- If set to 0, scoped weapons will only remain scoped while holding the secondary attack key
+				eWep:SetNWBool("M9kr_OvrZoomToggl",true)
 				eWep.OverrideZoomToggle = true
 			end
 		end)

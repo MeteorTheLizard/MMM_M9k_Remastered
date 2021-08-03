@@ -153,6 +153,7 @@ function SWEP:SecondaryAttack()
 	if not IsFirstTimePredicted() then return end
 	if self.ScopeCD > CurTime() or self.Owner:GetViewEntity() ~= self.Owner then return false end
 	local Scope = self:GetNWInt("ScopeState")
+	local ScopeT = Scope
 
 	if CLIENT then
 
@@ -202,13 +203,22 @@ function SWEP:SecondaryAttack()
 		self.Owner:SetFOV(10,0.1)
 	end
 
-	self:SetNWInt("ScopeState",Scope)
-	self.Owner:EmitSound("weapons/zoom.wav")
+	if Scope ~= ScopeT then -- Only network stuff and play the sound when stuff actually changed
+		self:SetNWInt("ScopeState",Scope)
+		self.Owner:EmitSound("weapons/zoom.wav")
+	end
 end
 
 function SWEP:Reload()
 	if SERVER and game.SinglePlayer() then self:CallOnClient("Reload") end -- Make sure that it runs on the CLIENT!
 	timer.Remove("m9k_resetscope_" .. self.OurIndex) -- Needed for bolt-action sniper rifles to prevent the restoring of the zoom level
+
+	local bCanReload = (self.CanReload and self.NextReloadTime < CurTime() and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1())
+
+	if self:GetNWBool("M9kr_OvrZoomToggl") and not bCanReload then
+
+		return -- We bail here since we don't want reloading to reset the scope unless we can actually reload
+	end
 
 	if self:GetNWInt("ScopeState") > 0 then
 		self.Owner:SetFOV(0,0.1)
@@ -221,7 +231,7 @@ function SWEP:Reload()
 		end
 	end
 
-	if self.CanReload and self.NextReloadTime < CurTime() and self.Owner:GetAmmoCount(self.Primary.Ammo) >= 1 and self:Clip1() < self:GetMaxClip1() then
+	if bCanReload then
 		self:DefaultReload(ACT_VM_RELOAD)
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 	end
