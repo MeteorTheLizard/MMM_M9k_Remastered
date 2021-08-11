@@ -236,10 +236,15 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:CanPrimaryAttack() -- Required for Singleplayer
+	if self.NextReloadClicksound and self.NextReloadClicksound > CurTime() then
+		return
+	end -- We don't want the click sound to destroy our ears when we don't have any ammo in the weapon and in reserve
+
 	if self:Clip1() <= 0 then
 		if IsFirstTimePredicted() then
 			self:EmitSound("Weapon_Pistol.Empty")
 			self:SetNextPrimaryFire(CurTime() + 0.2)
+			self.NextReloadClicksound = CurTime() + 0.2
 
 			if SERVER and game.SinglePlayer() then
 				self:Reload()

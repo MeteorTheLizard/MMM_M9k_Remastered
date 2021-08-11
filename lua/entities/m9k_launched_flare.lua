@@ -31,14 +31,20 @@ if SERVER then
 
 		SafeRemoveEntityDelayed(burnFX,10)
 
-		local sSound = CreateSound(burnFX,"weapons/flaregun/burn.wav")
-			sSound:Play()
+		self.sSound = CreateSound(burnFX,"weapons/flaregun/burn.wav")
+			self.sSound:Play()
 
-		timer.Simple(10,function()
-			if sSound then
-				sSound:Stop()
-			end
+		timer.Simple(0,function() -- For some dumb reason this has to happen in the next tick
+			if not IsValid(self) then return end
+
+			ParticleEffectAttach("Rocket_Smoke_Trail",PATTACH_ABSORIGIN_FOLLOW,self,0)
 		end)
+	end
+
+	function ENT:OnRemove()
+		if self.sSound then
+			self.sSound:Stop()
+		end
 	end
 
 	local BurnEntity = function(Ent,Target)
@@ -52,6 +58,15 @@ if SERVER then
 		SafeRemoveEntityDelayed(burnFX,10)
 
 		Target:Ignite(10)
+
+		local sSound = CreateSound(burnFX,"weapons/flaregun/burn.wav")
+			sSound:Play()
+
+		timer.Simple(10,function()
+			if sSound then
+				sSound:Stop()
+			end
+		end)
 
 		Ent:Remove()
 	end
