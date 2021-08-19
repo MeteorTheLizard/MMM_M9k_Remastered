@@ -180,6 +180,8 @@ if CLIENT then
 end
 
 function SWEP:Deploy()
+	if not IsValid(self.Owner) then return end
+
 	if SERVER and (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Make sure we can not equip a Grenade when we do not even have one!
 		self.Owner:StripWeapon(self:GetClass())
 	end
