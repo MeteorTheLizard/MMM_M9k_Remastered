@@ -85,9 +85,10 @@ if CLIENT then
 	function SWEP:ViewModelDrawn()
 		if self.DoNotUseViewModel then return true end -- Can be used to use the default viewmodel
 		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
-		local vm = self.Owner:GetViewModel()
 
 		if not self:GetNWBool("ShouldDraw") then return end -- At some points it should not be drawn, mainly during the throw animation
+
+		local vm = self.Owner:GetViewModel()
 
 		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
 		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
@@ -116,7 +117,6 @@ if CLIENT then
 				end
 
 				local vm = self.Owner:GetViewModel()
-
 				if IsValid(vm) then
 					hook.Remove("Tick","m9k_mmm_hidebasemodel")
 

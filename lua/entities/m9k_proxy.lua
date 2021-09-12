@@ -28,6 +28,10 @@ if SERVER then
 
 	function ENT:Think()
 		if self.timeleft < CurTime() then
+			if self.DynamicPos then -- We want to update the position if the proxy mine is not mounted to a wall
+				self.OurPos = self:GetPos()
+			end
+
 			for _,v in ipairs(ents.FindInSphere(self.OurPos,200)) do
 				if v:IsPlayer() or v:IsNPC() then
 					self.Tr.endpos = v:GetPos()
@@ -49,6 +53,8 @@ if SERVER then
 			self:Remove()
 			return
 		end
+
+		self.OurPos = self:GetPos() -- Update the explosion position
 
 		self.Explosion = nil -- Do not call this twice.. ever
 		self.OnTakeDamage = nil -- Stack overflow protection.

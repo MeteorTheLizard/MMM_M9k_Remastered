@@ -75,6 +75,7 @@ function SWEP:PrimaryAttack()
 
 			if not trace.Hit then
 				proxy:SetMoveType(MOVETYPE_VPHYSICS)
+				proxy.DynamicPos = true
 			end
 		end)
 	end
