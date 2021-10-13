@@ -80,7 +80,6 @@ function SWEP:PrimaryAttack()
 			end
 
 			if IsValid( trace.Entity ) then
-				print( trace.Entity )
 				proxy:SetParent( trace.Entity )
 			end
 		end)
