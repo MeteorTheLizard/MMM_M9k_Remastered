@@ -12,7 +12,7 @@ if CLIENT then
 		if self.DoNotUseWorldModel then return end
 		if IsValid(self.WorldEnt) then self.WorldModel:Remove() end
 
-		self.WorldEnt = ClientsideModel(self.WorldModel,RENDERGROUP_VIEWMODEL_TRANSLUCENT)
+		self.WorldEnt = ClientsideModel(self.WorldModel,RENDERGROUP_OPAQUE)
 		self.WorldEnt:SetPos(self:GetPos())
 		self.WorldEnt:SetAngles(self:GetAngles())
 		self.WorldEnt:SetParent(self)
@@ -26,7 +26,7 @@ if CLIENT then
 		if self.DoNotUseViewModel then return end
 		if IsValid(self.ViewEnt) then self.ViewEnt:Remove() end
 
-		self.ViewEnt = ClientsideModel(self.WorldModel,RENDERGROUP_VIEWMODEL_TRANSLUCENT)
+		self.ViewEnt = ClientsideModel(self.WorldModel,RENDERGROUP_OPAQUE)
 		self.ViewEnt:SetPos(self:GetPos())
 		self.ViewEnt:SetAngles(self:GetAngles())
 		self.ViewEnt:SetParent(self)
@@ -82,13 +82,11 @@ if CLIENT then
 		end
 	end
 
-	function SWEP:ViewModelDrawn()
+	function SWEP:ViewModelDrawn(vm)
 		if self.DoNotUseViewModel then return true end -- Can be used to use the default viewmodel
 		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
 
 		if not self:GetNWBool("ShouldDraw") then return end -- At some points it should not be drawn, mainly during the throw animation
-
-		local vm = self.Owner:GetViewModel()
 
 		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
 		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)

@@ -39,6 +39,7 @@ if SERVER then
 
 					if Trace.Entity:IsPlayer() or Trace.Entity:IsNPC() then
 						self:Explosion()
+						break
 					end
 				end
 			end
@@ -77,7 +78,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(DMG)
-		self.health = self.health - DMG:GetDamage() or 25
+		self.health = self.health - (DMG:GetDamage() or 25)
 
 		if self.health <= 0 then
 			self:Explosion()

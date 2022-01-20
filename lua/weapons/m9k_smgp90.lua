@@ -67,9 +67,8 @@ if CLIENT then
 		end
 	end
 
-	function SWEP:ViewModelDrawn()
+	function SWEP:ViewModelDrawn(vm)
 		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
-		local vm = self.Owner:GetViewModel()
 
 		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("p90_body") -- This is faster than looking it up every frame!
 		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
