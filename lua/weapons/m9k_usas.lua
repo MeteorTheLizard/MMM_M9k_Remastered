@@ -71,6 +71,7 @@ function SWEP:Reload() -- This function has some serious and crappy workarounds,
 				self:SendWeaponAnim(ACT_SHOTGUN_RELOAD_FINISH)
 
 				timer.Create(TimerName,0.7,1,function()
+					if not IsValid(self) then return end
 					self:SetClip1(self.Owner:GetAmmoCount(self.Primary.Ammo) >= 20 and 20 or self.Owner:GetAmmoCount(self.Primary.Ammo))
 					self.IsUSASReloading = false
 
