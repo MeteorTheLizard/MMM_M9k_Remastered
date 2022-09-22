@@ -89,6 +89,7 @@ if CLIENT then
 		if not self:GetNWBool("ShouldDraw") then return end -- At some points it should not be drawn, mainly during the throw animation
 
 		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
+        if not self.CachedViewBone then return end
 		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
 		if not mMatrix then return end -- Required to fix a one-time error
 		local Pos, Ang = mMatrix:GetTranslation(), mMatrix:GetAngles()
