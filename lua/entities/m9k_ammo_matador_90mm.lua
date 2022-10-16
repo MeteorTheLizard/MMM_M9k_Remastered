@@ -1,115 +1,70 @@
 AddCSLuaFile()
 
-ENT.Type = "anim"
-ENT.PrintName = "90mm High Explosive"
-ENT.Spawnable = false
-ENT.AdminOnly = true
-ENT.DoNotDuplicate = true
-ENT.DisableDuplicator = true
+ENT.Base = "m9k_m202_rocket" -- We only have very slight changes here.
 
 if SERVER then
-	local VectorCache1 = Vector(0,0,-0.111)
-	local AngleCache1 = Angle(90,0,0)
-	local ColorCache1 = Color(45,55,40,255)
-	local effectData = EffectData()
 
-	function ENT:Initialize()
-		self.flightvector = self:GetUp() * ((250 * 52.5) / 66)
-		self.timeleft = CurTime() + 10
-		self:SetModel("models/props_junk/garbage_glassbottle001a.mdl")
-		self:SetColor(ColorCache1)
-		local Glow = ents.Create("env_sprite")
-		Glow:SetKeyValue("model","orangecore2.vmt")
-		Glow:SetKeyValue("rendercolor","255 150 100")
-		Glow:SetKeyValue("scale","0.3")
-		Glow:SetPos(self:GetPos())
-		Glow:SetParent(self)
-		Glow:Spawn()
-		Glow:Activate()
-		self:SetNWBool("smoke",true)
-	end
+	local utilTraceLine = util.TraceLine -- Optimizations
+	local mathRand = math.Rand
+	local CurTime = CurTime
+	local Vector = Vector
+
+	local vCached1 = Vector(0,0,-0.111)
+
 
 	function ENT:Think()
-		if self.timeleft < CurTime() then
+
+		if self.iLifeTime < CurTime() then
 			self:Remove()
+
+			return
 		end
 
-		local Tr = util.TraceLine({
-			start = self:GetPos(),
-			endpos = self:GetPos() + self.flightvector,
-			filter = {self,self.Owner}
+
+		local vPos = self:GetPos()
+
+		local tTrace = utilTraceLine({
+			start = vPos,
+			endpos = vPos + self.vFlight,
+			filter = self.tFilters
 		})
 
-		if Tr.Hit then
-			if not IsValid(self.Owner) then
-				self:Remove()
-				return
-			end
 
-			util.BlastDamage(self,self.Owner,Tr.HitPos,450,150)
+		if tTrace.Hit then
 
-			effectData:SetScale(1.8)
-			effectData:SetMagnitude(18)
-			effectData:SetOrigin(Tr.HitPos)
-			effectData:SetNormal(Tr.HitNormal)
-			effectData:SetRadius(Tr.MatType)
-			util.Effect("m9k_gdcw_cinematicboom",effectData)
+			local obj_EffectData = EffectData()
 
-			util.ScreenShake(Tr.HitPos,10,5,1,3000)
-			util.Decal("Scorch",Tr.HitPos + Tr.HitNormal,Tr.HitPos - Tr.HitNormal)
-			self:SetNWBool("smoke",false)
+			obj_EffectData:SetMagnitude(18)
+			obj_EffectData:SetScale(1.3)
+			obj_EffectData:SetOrigin(tTrace.HitPos)
+			obj_EffectData:SetNormal(tTrace.HitNormal)
+			obj_EffectData:SetRadius(tTrace.MatType)
+
+			util.Effect("m9k_gdcw_cinematicboom",obj_EffectData)
+
+
+			util.ScreenShake(tTrace.HitPos,10,5,1,3000)
+
+			util.Decal("Scorch",tTrace.HitPos + tTrace.HitNormal,tTrace.HitPos - tTrace.HitNormal)
+
+			util.BlastDamage(self,self.Owner,tTrace.HitPos,600,150)
+
+
 			self:Remove()
+
+
+			return
+
 		end
 
-		self.flightvector = self.flightvector - (self.flightvector / 200) + Vector(math.Rand(-0.1,0.1),math.Rand(-0.1,0.1),math.Rand(-0.05,0.05)) + VectorCache1
-		self:SetPos(self:GetPos() + self.flightvector)
-		self:SetAngles(self.flightvector:Angle() + AngleCache1)
+
+		self.vFlight = self.vFlight - (self.vFlight / 200) + Vector(mathRand(-0.1,0.1),mathRand(-0.1,0.1),mathRand(-0.05,0.05)) + vCached1
+
+		self:SetPos(vPos + self.vFlight)
+		self:SetAngles(self.vFlight:Angle())
+
 
 		self:NextThink(CurTime())
 		return true
-	end
-
-	function ENT:PhysgunPickup()
-		return false
-	end
-
-	function ENT:CanTool()
-		return false
-	end
-end
-
-if CLIENT then
-	local VectorCache1 = Vector(100,0,0)
-
-	function ENT:Draw()
-		self:DrawModel()
-	end
-
-	function ENT:Initialize()
-		self.Emitter = ParticleEmitter(self:GetPos())
-	end
-
-	function ENT:Think()
-		if self:GetNWBool("smoke") then
-			local pos = self:GetPos()
-
-			for i = 0,5 do
-				local particle = self.Emitter:Add("particle/smokesprites_000" .. math.random(1,9),pos + (self:GetUp() * -100 * i))
-
-				if particle then
-					particle:SetVelocity((self:GetUp() * -2000) + (VectorRand() * 100))
-					particle:SetDieTime(math.Rand(2,5))
-					particle:SetStartAlpha(math.Rand(5,7))
-					particle:SetEndAlpha(0)
-					particle:SetStartSize(math.Rand(30,40))
-					particle:SetEndSize(math.Rand(130,150))
-					particle:SetRoll(math.Rand(0,360))
-					particle:SetRollDelta(math.Rand(-1,1))
-					particle:SetColor(200,200,200)
-					particle:SetAirResistance(200)
-					particle:SetGravity(VectorCache1)
-				end
-			end
-		end
 	end
 end

@@ -1,36 +1,51 @@
-function EFFECT:Init(data)
-	self.Pos = data:GetOrigin()
-	self.Emitter = ParticleEmitter(self.Pos)
+local mathRand = math.Rand
+
+
+function EFFECT:Init(obj_Data)
+
+	local vPos = obj_Data:GetOrigin()
+
+
+	local eParticleEmitter = ParticleEmitter(vPos)
 
 	for i = 1,50 do
-		local particle = self.Emitter:Add("particle/smokesprites_000" .. math.random(1,9),self.Pos)
 
-		if particle then
-			particle:SetVelocity(VectorRand():GetNormalized() * math.Rand(100,300))
+		local obj_Particle = eParticleEmitter:Add("particle/smokesprites_000" .. math.random(9),vPos)
 
-			if i == 1 or i == 2 or i == 3 or i == 5 then
-				particle:SetDieTime(20)
+		if obj_Particle then
+
+			obj_Particle:SetVelocity(VectorRand():GetNormalized() * mathRand(100,300))
+
+			if i <= 5 then
+				obj_Particle:SetDieTime(20)
 			else
-				particle:SetDieTime(math.Rand(10,20))
+				obj_Particle:SetDieTime(mathRand(10,20))
 			end
 
-			particle:SetStartAlpha(math.Rand(40,60))
-			particle:SetEndAlpha(0)
-			particle:SetStartSize(math.Rand(40,50))
-			particle:SetEndSize(math.Rand(200,250))
-			particle:SetRoll(math.Rand(0,360))
-			particle:SetRollDelta(math.Rand(-1,1))
-			particle:SetColor(186,17,17)
-			particle:SetAirResistance(100)
-			particle:SetCollide(true)
-			particle:SetBounce(1)
+			obj_Particle:SetStartAlpha(mathRand(40,60))
+			obj_Particle:SetEndAlpha(0)
+			obj_Particle:SetStartSize(mathRand(40,50))
+			obj_Particle:SetEndSize(mathRand(200,250))
+			obj_Particle:SetRoll(mathRand(0,360))
+			obj_Particle:SetRollDelta(mathRand(-1,1))
+			obj_Particle:SetColor(186,17,17)
+			obj_Particle:SetAirResistance(100)
+			obj_Particle:SetCollide(true)
+			obj_Particle:SetBounce(1)
+
 		end
 	end
+
+	eParticleEmitter:Finish()
+
 end
+
 
 function EFFECT:Think()
 	return false
 end
 
-function EFFECT:Render() -- Required, otherwise there will be a 1 tick error model!
+
+function EFFECT:Render()
+
 end

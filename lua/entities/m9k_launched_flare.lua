@@ -1,107 +1,156 @@
 AddCSLuaFile()
 
 ENT.Type = "anim"
-ENT.PrintName = "MMM Launched Flare Object"
+ENT.PrintName = "Flare"
 ENT.Spawnable = false
 ENT.AdminOnly = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
+
+local fReturnFalse = function() -- Save some ram
+	return false
+end
+
+ENT.CanTool = fReturnFalse -- Restrict certain things
+ENT.CanProperty = fReturnFalse
+ENT.PhysgunPickup = fReturnFalse
+
+
 if SERVER then
-	local MetaE = FindMetaTable("Entity")
-	local CPPIExists = MetaE.CPPIGetOwner and true or false
-	local ColorCache1 = Color(255,255,255,0)
+
+	local cCached1 = Color(255,255,255,0)
+
+
+	ENT.GravGunPickupAllowed = fReturnFalse -- This is Serverside only
+
+
+	local fCreateFlare = function(self,eTarget)
+
+		if self.eBurnFX then -- Attach to new target
+			if not eTarget then return end -- No target??
+
+			self.eBurnFX:SetParent(eTarget)
+
+			self:Remove()
+
+			return
+		end
+
+
+		local eBurnFX = ents.Create("env_flare")
+			self.eBurnFX = eBurnFX
+
+			SafeRemoveEntityDelayed(eBurnFX,10)
+
+
+		if IsValid(eBurnFX) then
+
+			eBurnFX:SetPos(self:GetPos())
+			eBurnFX:SetParent(self)
+			eBurnFX:SetKeyValue("scale",3)
+			eBurnFX:SetKeyValue("duration",10)
+			eBurnFX:Spawn()
+
+
+			eBurnFX:CallOnRemove("M9kr_StopSound",function()
+				eBurnFX:StopSound("weapons/flaregun/burn.wav") -- STOP!!
+			end)
+
+
+			eBurnFX:EmitSound("weapons/flaregun/burn.wav",75)
+
+		end
+	end
+
 
 	function ENT:Initialize()
+
+		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+			self:Remove()
+
+			return
+		end
+
+
+		SafeRemoveEntityDelayed(self,10)
+
+
 		self:SetModel("models/hunter/plates/plate.mdl")
 		self:SetRenderMode(RENDERMODE_TRANSALPHA)
-		self:SetColor(ColorCache1)
+		self:SetColor(cCached1)
 
 		self:Use(self,self,USE_SET,1)
 		self:SetTrigger(true)
 
 		self:PhysicsInit(SOLID_VPHYSICS)
 
-		local burnFX = ents.Create("env_flare")
-		burnFX:SetPos(self:GetPos())
-		burnFX:SetParent(self)
-		burnFX:SetKeyValue("scale",3)
-		burnFX:SetKeyValue("duration",10)
-		burnFX:Spawn()
 
-		SafeRemoveEntityDelayed(burnFX,10)
+		fCreateFlare(self)
 
-		self.sSound = CreateSound(burnFX,"weapons/flaregun/burn.wav")
-			self.sSound:Play()
 
 		timer.Simple(0,function() -- For some dumb reason this has to happen in the next tick
 			if not IsValid(self) then return end
 
 			ParticleEffectAttach("Rocket_Smoke_Trail",PATTACH_ABSORIGIN_FOLLOW,self,0)
+
 		end)
 	end
 
-	function ENT:OnRemove()
-		if self.sSound then
-			self.sSound:Stop()
-		end
+
+	local fBurnObject = function(self,eTarget)
+
+		fCreateFlare(self,eTarget)
+
+		eTarget:Ignite(10)
+
+		self:Remove()
+
 	end
 
-	local BurnEntity = function(Ent,Target)
-		local burnFX = ents.Create("env_flare")
-		burnFX:SetPos(Ent:GetPos())
-		burnFX:SetParent(Target)
-		burnFX:SetKeyValue("scale",3)
-		burnFX:SetKeyValue("duration",10)
-		burnFX:Spawn()
 
-		SafeRemoveEntityDelayed(burnFX,10)
+	function ENT:StartTouch(eTouched)
+		if not eTouched:IsNPC() then return end
 
-		Target:Ignite(10)
-
-		local sSound = CreateSound(burnFX,"weapons/flaregun/burn.wav")
-			sSound:Play()
-
-		timer.Simple(10,function()
-			if sSound then
-				sSound:Stop()
-			end
-		end)
-
-		Ent:Remove()
-	end
-
-	function ENT:StartTouch(v)
-		if v:IsNPC() and (CPPIExists and v:CPPIGetOwner() == self.Owner or not CPPIExists) or v:IsPlayer() and (MMM and v:IsPVP() and self.Owner:IsPVP() or not MMM) then
-			BurnEntity(self,v)
-		elseif MMM and v:GetClass() == "prop_ragdoll" and ((CPPIExists and v:CPPIGetOwner() == self.Owner or not CPPIExists) or (v:GetOwner():IsPVP() and self.Owner:IsPVP())) then -- MMM Compat
-			BurnEntity(self,v)
-		end
+		fBurnObject(self,eTouched)
 	end
 end
 
+
 if CLIENT then
+
+	function ENT:Initialize()
+
+		self.obj_Light = DynamicLight(self:EntIndex()) -- Create the light.. once.
+
+		if self.obj_Light then
+			self.obj_Light.Pos = self:GetPos()
+			self.obj_Light.r = 255
+			self.obj_Light.G = 55
+			self.obj_Light.B = 55
+			self.obj_Light.Brightness = 3
+			self.obj_Light.Size = 10000
+			self.obj_Light.Decay = 1
+			self.obj_Light.DieTime = CurTime() + 10
+		end
+	end
+
+
 	function ENT:Draw()
 		self:DrawModel()
 	end
 
-	function ENT:Think()
-		local iCurTime = CurTime()
 
-		local PhysLight = DynamicLight(self:EntIndex())
-
-		if PhysLight then
-			PhysLight.Pos = self:GetPos()
-			PhysLight.r = 255
-			PhysLight.G = 55
-			PhysLight.B = 55
-			PhysLight.Brightness = 3
-			PhysLight.Size = 20000
-			PhysLight.Decay = 2500
-			PhysLight.DieTime = iCurTime + 0.1
+	function ENT:OnRemove() -- Remove the light instantly
+		if self.obj_Light then
+			self.obj_Light.DieTime = 0
 		end
+	end
 
-		self:SetNextClientThink(iCurTime)
-		return true
+
+	function ENT:Think()
+		if self.obj_Light then
+			self.obj_Light.Pos = self:GetPos()
+		end
 	end
 end

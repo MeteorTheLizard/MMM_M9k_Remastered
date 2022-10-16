@@ -1,6 +1,87 @@
---Made by MrRangerLP.
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+--[[ Dev Notes:
 
-SWEP.SlotPos = 1
+	It is recommended to look at the Default variables assigned to every SWEP as some variables may not be documented.
+
+
+	This base inherits most of the functionality of bobs_gun_base.lua
+		It is compatible with CPPI (Prop protection) Addons.
+
+	The throwing logic is taken from the TTT Gamemode but was heavily optimized.
+
+
+	Required:
+
+	SWEP.GrenadeClassEnt	- The entity class that should be thrown.
+	SWEP.GrenadeModelStr	- The model used by the thrown entity.
+	SWEP.GrenadeMaterialStr	- The material that should be applied to the thrown entity. (optional)
+
+
+	Not required:
+
+	SWEP.GrenadeThrowAng	- Starting angle of the thrown entity.
+
+	SWEP.bAlwaysTrail		- Can be set to true for a Trail to be applied to the thrown entity.
+	SWEP.GrenadeTrailCol	- Trail color.
+
+
+	SWEP.GrenadeNoPin		- Can be set to skip the pin pulling, useful for throwables that can be thrown without needing to be activated.
+	SWEP.bDontStripWeapon	- Can be set to true to prevent the Weapons from being removed when running out of ammo.
+
+
+	SWEP.iThrowAnim			- Can be set to a viewmodel sequence to use when throwing the object.
+	SWEP.iThrowDelay		- How long it takes for the object to be thrown after primary attack.
+
+
+	SWEP.ProjectileModifications - Can be set to a function to modify the projectile after creation. (SERVERSIDE ONLY)
+
+
+	CLIENT:
+
+	SWEP.PinPullEvent		- Is a function that runs when the Pin is pulled.
+	SWEP.ThrowEvent			- Is a function that runs when the Grenade was thrown.
+
+
+	Weapons have a custom animation layer that is added on top of ACT_VM sequences. This is impossibly hard to see when not playing ACT_VM_IDLE.
+	> Search: Idle Sway
+
+	-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+	Almost all SWEP functions have a function they call that you can hook into in your SWEP script.
+	Simply assign a function to (X)Hooked to make said function run on (X) event.
+
+	Note: Some Hooks may not be listed. It is best to check the source code.
+
+
+	SERVER & CLIENT - Shared
+
+	Initialize			> IntializeHooked
+	ResetInternalVars	> ResetInternalVarsHooked
+	Deploy				> DeployHooked
+	Equip				> EquipHooked
+	Think				> ThinkHooked
+
+	SERVER
+
+	OnDrop				> OnDropHooked
+	PrimaryAttack		> PrimaryAttackHooked
+
+
+	DO NOTE: Some of these functions may already be used by meteors_grenade_base_model and meteors_grenade_base_model_instant !!
+
+	-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+	meteors_grenade_base.lua makes use of networking. It transmit Integers as an identifier.
+
+	-- 1 = Deploy sound
+	-- 2 = Weapon was dropped
+	-- 3 = Pull pin
+	-- 4 = Throw
+
+]]
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+SWEP.Slot = 4
 
 SWEP.Spawnable = false
 SWEP.AdminSpawnable = false
@@ -17,6 +98,7 @@ SWEP.ViewModelFOV = 70
 SWEP.ViewModelFlip = true
 
 SWEP.HoldType = "grenade"
+SWEP.UseHands = false
 
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.DefaultClip = 1
@@ -27,227 +109,706 @@ SWEP.Primary.Ammo = "none"
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Ammo = "none"
 
-SWEP.CanPullPin = true
-SWEP.PinPulled = false
 
-function SWEP:Initialize()
-	self:SetHoldType(self.HoldType)
-	self.OurIndex = self:EntIndex()
+SWEP.bAlwaysTrail = false
 
-	if SERVER and game.SinglePlayer() then -- In singleplayer we need to force the weapon to be equipped after spawning
+
+SWEP._IsM9kRemasteredBased = true
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- Optimization
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+local sTag = "MMM_M9kr_Grenades"
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- Compatibility
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+function SWEP:AttackAnimation()
+	if not IsValid(self.Owner) then return end
+
+	self.Owner:SetAnimation(PLAYER_ATTACK1)
+end
+
+
+function SWEP:CanSecondaryAttack()
+	return false
+end
+
+
+local fBlank = function() end
+
+SWEP.SecondaryAttack = fBlank
+SWEP.ShootBullet = fBlank
+SWEP.ShootEffects = fBlank
+SWEP.DoImpactEffect = fBlank
+SWEP.SetDeploySpeed = fBlank
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- SERVER
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+if SERVER then
+
+	util.AddNetworkString(sTag)
+
+
+	angle_zero = Angle(0,0,0) -- Make sure nothing else fucked with this
+
+
+	local cColorTrailFallback = Color(255,255,255)
+
+
+	local fSaveStrip = function(self) -- This function strips the weapon when called but makes the player switch to a different one first! This is needed.
+
+		if not IsValid(self.Owner) or not self.Owner:Alive() or self.bDontStripWeapon then return end
+
+
+		local tWeapons = self.Owner:GetWeapons()
+		local eWep = NULL
+
+
+		-- Attempt to return a weapon that isn't us.
+
+		for k,v in ipairs(tWeapons) do
+			if self ~= v then
+				eWep = v
+
+				break
+			end
+		end
+
+
+		if IsValid(eWep) then -- Select a Weapon that isn't us.
+
+			self.Owner:SelectWeapon(MMM and "none" or eWep:GetClass())
+
+		else -- They don't have any other weapons. So we just give them an invalid one temporarily.
+
+			self.Owner:Give("meteors_notmounted_base")
+
+			self.Owner:SelectWeapon("meteors_notmounted_base")
+
+		end
+
+
 		timer.Simple(0,function()
-			if not IsValid(self) or not IsValid(self.Owner) then return end -- We need to abort when the owner already had the weapon!
-			self.Owner:SelectWeapon(self:GetClass())
+			if not IsValid(self) or not IsValid(self.Owner) then return end
+
+			self.Owner:StripWeapon(self:GetClass())
 		end)
 	end
 
-	if CLIENT then
+
+	local fSetDelay = function(self,iDeduct) -- Let's not have the same code like 10 times, alright?
+		if not IsValid(self.Owner) then return end
+
+
+		iDeduct = iDeduct or 0
+
+
+		local vm = self.Owner:GetViewModel()
+
+		if IsValid(vm) then
+
+			local iDur = CurTime() + vm:SequenceDuration() + 0.1 - iDeduct -- Action delay
+
+			self:SetNextPrimaryFire(iDur)
+			self:SetNextSecondaryFire(iDur)
+
+		end
+	end
+
+
+	local fCreateThrowable = function(self,vOverride)
+		if not IsValid(self) or not IsValid(self.Owner) then return end
+
+
+		local eOwner = self.Owner -- Optimization!
+
+
+		local aEye = eOwner:EyeAngles()
+		local vPos = eOwner:GetPos() + (eOwner:Crouching() and eOwner:GetViewOffsetDucked() or eOwner:GetViewOffset()) + (aEye:Forward() * 8) + (aEye:Right() * 10)
+
+
+		local aAng = (eOwner:GetEyeTraceNoCursor().HitPos - vPos):Angle()
+
+		if aAng.p < 90 then -- This should be a SetUnpacked instead ideally. But my brain capacity to translate this is just not enough right now.
+			aAng.p = -10 + aAng.p * ((90 + 10) / 90)
+		else
+			aAng.p = 360 - aAng.p
+			aAng.p = -10 + aAng.p * -((90 + 10) / 90)
+		end
+
+		aAng.p = math.Clamp(aAng.p,-90,90)
+
+
+		local vVel = math.min(800,(90 - aAng.p) * 6)
+		local vThr = aAng:Forward() * vVel + eOwner:GetVelocity()
+
+
+
+		local ent_Projectile = ents.Create(self.GrenadeClassEnt) -- Create projectile
+		if not IsValid(ent_Projectile) then return end
+
+			SafeRemoveEntityDelayed(ent_Projectile,30)
+
+		ent_Projectile:SetModel(self.GrenadeModelStr)
+
+		ent_Projectile:SetPos(vOverride or vPos)
+		ent_Projectile:SetAngles(eOwner:EyeAngles() + (self.GrenadeThrowAng or angle_zero))
+
+		if self.GrenadeMaterialStr then
+			ent_Projectile:SetMaterial(self.GrenadeMaterialStr)
+		end
+
+
+		ent_Projectile.M9kr_CreatedByWeapon = true
+
+		ent_Projectile:SetOwner(eOwner) -- Blocks collision with the thrower and IS required to fix a few bugs. (BEFORE SPAWN)
+		ent_Projectile:Spawn()
+
+
+		ent_Projectile:SetCollisionGroup(COLLISION_GROUP_WEAPON) -- Required
+
+
+		ent_Projectile.WasDropped = true -- MMM Compatibility
+		ent_Projectile.BuildZoneOverride = true
+
+
+		if self.GrenadeTrailCol and (not self.bAlwaysTrail and MMM or self.bAlwaysTrail) then -- Apply a trail if desired, forced in an MMM environment
+			util.SpriteTrail(ent_Projectile,0,self.GrenadeTrailCol or cColorTrailFallback,true,5,5,1,1 / ( 5 + 5 ) * 0.5,"trails/laser.vmt")
+		end
+
+
+		if MMM_M9k_CPPIExists then
+			ent_Projectile:CPPISetOwner(eOwner)
+		end
+
+
+		local obj_Phys = ent_Projectile:GetPhysicsObject()
+
+		if IsValid(obj_Phys) then
+			obj_Phys:SetMass(100)
+
+			obj_Phys:SetVelocity(vThr)
+			obj_Phys:AddAngleVelocity(Vector(600,math.random(-1200,1200),0))
+		end
+
+
+		if self.ProjectileModifications then
+			self:ProjectileModifications(ent_Projectile)
+		end
+	end
+
+
+	function SWEP:Initialize()
+
+		self:SetHoldType(self.HoldType)
+
+
+		-- Instead of overwriting the Initialize function, we expand on it!
+
+		if self.InitializeHooked then
+			self:InitializeHooked()
+		end
+
+
+		if MMM_M9k_IsSinglePlayer then -- In singleplayer we need to force the weapon to be equipped after spawning
+			timer.Simple(0,function()
+				if not IsValid(self) or not IsValid(self.Owner) then return end
+
+				self.Owner:SelectWeapon(self:GetClass())
+			end)
+		end
+	end
+
+
+	function SWEP:ResetInternalVars() -- Convenience
+
+		timer.Remove(sTag .. self:EntIndex())
+
+
+		self:SetHoldType(self.HoldType)
+
+
+		self.PinPulled = nil
+		self.GrenadeThrow = nil
+
+
+		if self.ResetInternalVarsHooked then
+			self:ResetInternalVarsHooked()
+		end
+	end
+
+
+	function SWEP:Deploy()
+		if not IsValid(self.Owner) then return end
+
+		if MMM_M9k_IsSinglePlayer then
+			self:CallOnClient("Deploy") -- Make sure that it runs on the CLIENT! (Singleplayer!)
+		end
+
+
+		if self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and not self.bDontStripWeapon then -- Make sure we can not equip a Grenade when we do not even have one!
+
+			fSaveStrip(self)
+
+			return
+		end
+
+
+		self:SetHoldType(self.HoldType)
+
+
+		self:SendWeaponAnim(ACT_VM_DRAW)
+
+		fSetDelay(self)
+
+
+		if self.DrawSound then -- Network Deploy Sound
+			net.Start(sTag)
+				net.WriteEntity(self)
+				net.WriteInt(1,6)
+			net.Broadcast()
+		end
+
+
+		self:ResetInternalVars()
+
+
+		if self.DeployHooked then
+			self:DeployHooked()
+		end
+
+
+		return true
+	end
+
+
+	function SWEP:Equip()
+		if not IsValid(self.Owner) then return end
+
+		if not self.Owner:IsPlayer() then -- NPCs cannot have M9kR Weapons! Also prevents invalid spawning
+			self:Remove()
+
+			return
+		end
+
+
+		if self.EquipHooked then
+			self:EquipHooked()
+		end
+	end
+
+
+	function SWEP:Holster()
+		if not IsValid(self.Owner) then return end
+
+		if MMM_M9k_IsSinglePlayer then
+			self:CallOnClient("Holster") -- Make sure that it runs on the CLIENT! (Singleplayer!)
+		end
+
+
+		if self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) > 0 then -- Refill on 0
+
+			self:SetClip1(1)
+
+			self.Owner:RemoveAmmo(1,self.Primary.Ammo)
+
+		end
+
+
+		if self.HolsterHooked then
+			self:HolsterHooked()
+		end
+
+
+		self:ResetInternalVars()
+
+
+		return true
+	end
+
+
+	function SWEP:OnDrop()
+
+
+		-- The owner died, so create an armed grenade at their spot!
+
+		if IsValid(self.Owner) and not self.Owner:Alive() and self.PinPulled then -- Depending on the environment, this most likely wont work.
+			fCreateThrowable(self,self.Owner:GetPos())
+		end
+
+
+		net.Start(sTag) -- Notify clients that this weapon was dropped
+			net.WriteEntity(self)
+			net.WriteInt(2,6)
+		net.Broadcast()
+
+
+		if self.OnDropHooked then
+			self:OnDropHooked()
+		end
+
+
+		self:ResetInternalVars()
+
+	end
+
+
+	function SWEP:PrimaryAttack()
+		if not IsValid(self.Owner) or self.PinPulled or self.GrenadeThrow then return end -- If somehow an NPC got it on their hands or similar.. this will cause huge problems! Also don't do stuff if we're already throwing!
+
+		if MMM_M9k_IsSinglePlayer then
+			self:CallOnClient("PrimaryAttack")-- Make sure that it runs on the CLIENT! (Singleplayer!)
+		end
+
+
+		if not self:CanPrimaryAttack() then return end
+
+
+		-- Animations
+		-- These need to be done for prediction
+
+		if not self.GrenadeNoPin and not self.Owner.MMM_HasOPWeapons then -- Delayed throw // MMM Compatibility
+
+			self:SendWeaponAnim(ACT_VM_PULLPIN)
+
+			self.PinPulled = true
+
+
+			fSetDelay(self)
+
+		else -- Just throw it right away
+
+			self:SendWeaponAnim(not self.iThrowAnim and ACT_VM_THROW or self.iThrowAnim)
+
+			self.GrenadeThrow = true
+
+
+			timer.Create(sTag .. self:EntIndex(),0.2,1,function() -- We still need to call this even if we skip the event internally!
+				if not IsValid(self) or not IsValid(self.Owner) or self.Owner:GetActiveWeapon() ~= self then return end
+
+				net.Start(sTag) -- PinPull event
+					net.WriteEntity(self)
+					net.WriteInt(3,6)
+				net.Broadcast()
+			end)
+
+
+			fSetDelay(self,0.5 - (self.iThrowDelay or 0))
+
+		end
+
+
+		if self.PrimaryAttackHooked then
+			self:PrimaryAttackHooked()
+		end
+	end
+
+
+	function SWEP:Think()
+
+		if not IsValid(self.Owner) then return end
+
+
+		local bAction = (self:GetNextPrimaryFire() < CurTime()) and (not self.Owner:KeyDown(IN_ATTACK) or self.GrenadeNoPin) or self.Owner.MMM_HasOPWeapons
+
+
+		if self.PinPulled and bAction then -- Throw the Grenade
+
+
+			self:SendWeaponAnim(ACT_VM_THROW)
+
+			self.PinPulled = nil
+			self.GrenadeThrow = true
+
+			fSetDelay(self,0.45)
+
+
+			net.Start(sTag) -- PinPull event
+				net.WriteEntity(self)
+				net.WriteInt(3,6)
+			net.Broadcast()
+
+
+		elseif self.GrenadeThrow and bAction then -- Create the grenade
+
+
+			self:TakePrimaryAmmo(1)
+
+
+			timer.Create(sTag .. self:EntIndex(),0.5,1,function()
+				if not IsValid(self) or not IsValid(self.Owner) or self.Owner:GetActiveWeapon() ~= self then return end
+
+				self:SendWeaponAnim(ACT_VM_DRAW)
+			end)
+
+
+			self.PinPulled = nil
+			self.GrenadeThrow = nil
+
+			fSetDelay(self,-0.5) -- This adds time to it
+
+
+			net.Start(sTag) -- Throw event
+				net.WriteEntity(self)
+				net.WriteInt(4,6)
+			net.Broadcast()
+
+
+			self:AttackAnimation()
+
+
+			self.Owner:LagCompensation(true)
+
+			fCreateThrowable(self)
+
+			self.Owner:LagCompensation(false)
+
+
+			if self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 then -- Remove Weapon when we threw the last grenade
+
+				fSaveStrip(self)
+
+				return
+
+			else
+				self.Owner:RemoveAmmo(1,self.Primary.Ammo) -- 'Equip' next grenade
+				self:SetClip1(1)
+			end
+
+		end
+
+
+		if self.ThinkHooked then
+			self:ThinkHooked()
+		end
+	end
+
+
+	function SWEP:CanPrimaryAttack()
+		if self:GetNextPrimaryFire() > CurTime() or (self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and self:Clip1() <= 0) then
+			return false
+		end
+
+		return true
+	end
+
+
+	function SWEP:OnRemove()
+		if IsValid(self.Owner) then
+			fSaveStrip(self)
+		end
+	end
+end
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- CLIENT
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+if CLIENT then
+
+	-- Optimizations
+
+	angle_zero = Angle(0,0,0) -- Make sure nothing else fucked with this
+
+	SWEP.ViewAngIdleRead = angle_zero
+	SWEP.ViewAngStart = 0
+
+
+	local cvar_LeftHanded = CreateConVar("m9k_lefthanded","0",FCVAR_ARCHIVE,"0 = Right handed - 1 = Left handed",0,1)
+
+
+	-- Networking
+
+	net.Receive(sTag,function() -- This is a mess, thanks garry!
+		local eWep = net.ReadEntity()
+		if not IsValid(eWep) or not eWep._IsM9kRemasteredBased then return end
+
+		local iEvent = net.ReadInt(6)
+
+		if iEvent == 1 and eWep.DrawSound then -- Deploy sound!
+			eWep:EmitSound(eWep.DrawSound,65)
+		elseif iEvent == 2 then -- Weapon was dropped!
+			eWep:ResetInternalVars()
+		elseif iEvent == 3 then -- Pull-pin
+			if IsValid(eWep.Owner) and (eWep.Owner ~= LocalPlayer() or eWep.Owner:GetViewEntity() ~= eWep.Owner) then
+				eWep.Owner:EmitSound(eWep.PinPullSound or "weapons/pinpull.wav",eWep.PinPullSoundVolume or 70,100,1,CHAN_ITEM)
+			end
+
+			if eWep.PinPullEvent then
+				eWep:PinPullEvent()
+			end
+		elseif iEvent == 4 then -- Throw
+			if IsValid(eWep.Owner) then
+				eWep.Owner:SetAnimation(PLAYER_ATTACK1)
+
+				if eWep.ThrowSound then
+					eWep.Owner:EmitSound(eWep.ThrowSound,eWep.ThrowSoundVolume or 70,100,1,CHAN_ITEM)
+				end
+			end
+
+			if eWep.ThrowEvent then
+				eWep:ThrowEvent()
+			end
+		end
+	end)
+
+
+	function SWEP:ResetInternalVars() -- Convenience
+
+		self:SetHoldType(self.HoldType)
+
+
+		self.ViewFlipped = false
+
+
+		if self.ResetInternalVarsHooked then
+			self:ResetInternalVarsHooked()
+		end
+	end
+
+
+	function SWEP:Initialize()
+
+		self:SetHoldType(self.HoldType)
+
+
+		self.OurIndex = self:EntIndex() -- Only needed on CLIENT for the muzzle effects
 		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
+
+
+		-- Instead of overwriting the Initialize function, we expand on it!
+
+		if self.InitializeHooked then
+			self:InitializeHooked()
+		end
+
 
 		if self.Owner == LocalPlayer() then
 			self:SendWeaponAnim(ACT_VM_IDLE)
 
-			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-				self:Equip()
+			if self.Owner:GetActiveWeapon() == self then
 				self:Deploy()
 			end
 		end
 	end
-end
 
-function SWEP:Equip()
-	self.LastOwner = self.Owner
 
-	if SERVER and not self.Owner:IsPlayer() then
-		self:Remove()
-		return
-	end
-end
+	function SWEP:Deploy()
+		if not IsValid(self.Owner) then return end
 
-function SWEP:Deploy()
-	if SERVER and (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Make sure we can not equip a Grenade when we do not even have one!
-		self.Owner:StripWeapon(self:GetClass())
-	end
+		self:SetHoldType(self.HoldType)
 
-	self:SetHoldType(self.HoldType)
-
-	local vm = self.Owner:GetViewModel()
-	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
-		self:SendWeaponAnim(ACT_VM_DRAW)
-
-		local Dur = vm:SequenceDuration() + 0.2
-		self:SetNextPrimaryFire(CurTime() + Dur)
-		self:SetNextSecondaryFire(CurTime() + Dur)
-
-		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
-		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-			self.CanPullPin = true
-		end)
-	end
-
-	return true
-end
-
-function SWEP:AttackAnimation()
-	if not IsValid(self.Owner) then return end
-	self.Owner:SetAnimation(PLAYER_ATTACK1)
-end
-
-function SWEP:PrimaryAttack()
-	if self:CanPrimaryAttack() and self.CanPullPin and self:GetNextPrimaryFire() < CurTime() then
-		self:SetNextPrimaryFire(CurTime() + 2)
-		self.CanPullPin = false
-
-		self:SendWeaponAnim(ACT_VM_PULLPIN)
 
 		local vm = self.Owner:GetViewModel()
-		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs
-			local Dur = vm:SequenceDuration() + 0.2
 
-			timer.Create("M9k_MMM_Grenade_Pullpin" .. self.OurIndex,Dur,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-				self.PinPulled = true
-			end)
-		end
-	end
-end
+		if IsValid(vm) then -- Anything past this should only run on the client that has the gun
 
-function SWEP:Think()
-	if self.PinPulled and not self.Owner:KeyDown(IN_ATTACK) then
-		self:SendWeaponAnim(self.PrimaryAttackSequence or ACT_VM_THROW)
-		self:AttackAnimation()
+			self:ResetInternalVars()
 
-		local vm = self.Owner:GetViewModel()
-		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or (game.SinglePlayer() and 0.3 or 0.5))
 
-			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,Dur,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+			if cvar_LeftHanded:GetInt() == 1 and not self.ViewFlipped and not self._UsesCustomModels then
+				self.ViewModelFlip = not self.ViewModelFlip
 
-				if SERVER then
-					self:TakePrimaryAmmo(1)
-					if self.AttacksoundPrimary then -- Could be useful for modders
-						self:EmitSound(self.AttacksoundPrimary)
-					end
-
-					local Ang = self.Owner:EyeAngles() -- Taken from TTT base grenade since it is quite good in my opinion
-					local Src = self.Owner:GetPos() + (self.Owner:Crouching() and self.Owner:GetViewOffsetDucked() or self.Owner:GetViewOffset()) + (Ang:Forward() * 8) + (Ang:Right() * 10)
-					local Target = self.Owner:GetEyeTraceNoCursor().HitPos
-					local TAng = (Target - Src):Angle()
-
-					if TAng.p < 90 then
-						TAng.p = -10 + TAng.p * ((90 + 10) / 90)
-					else
-						TAng.p = 360 - TAng.p
-						TAng.p = -10 + TAng.p * -((90 + 10) / 90)
-					end
-
-					TAng.p = math.Clamp(TAng.p,-90,90)
-					local Vel = math.min(800,(90 - TAng.p) * 6)
-					local Thr = TAng:Forward() * Vel + self.Owner:GetVelocity()
-
-					local Projectile = self:CreateGrenadeProjectile(Src)
-
-					if IsValid(Projectile) then
-						local Phys = Projectile:GetPhysicsObject()
-
-						if IsValid(Phys) then
-							Phys:SetVelocity(Thr)
-							Phys:AddAngleVelocity(Vector(600,math.random(-1200,1200),0))
-						end
-					end
-				end
-
-				timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,0.3,1,function()
-					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-
-					if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then
-						if SERVER then
-							self.CanPullPin = true -- Needs to be set so the last grenade throw does not call the OnDrop 'death' function
-							self.Owner:StripWeapon(self:GetClass())
-						end
-					else
-						self:Deploy()
-						self.Owner:RemoveAmmo(1,self.Primary.Ammo)
-						self:SetClip1(1)
-					end
-				end)
-			end)
-		end
-
-		self.PinPulled = false
-	end
-end
-
-function SWEP:Holster()
-	if not SERVER and self.Owner ~= LocalPlayer() then return end
-
-	timer.Remove("M9k_MMM_Grenade_Pullpin" .. self.OurIndex)
-	timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex)
-
-	self.CanPullPin = true
-	self.PinPulled = false
-
-	if SERVER and IsValid(self.Owner) then
-		if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Remove the grenade when its 'empty'
-			self.Owner:StripWeapon(self:GetClass())
-		elseif self:Clip1() <= 0 then -- Unless we still have some left in which case we refill the 'magazine'
-			self:SetClip1(1)
-			self.Owner:RemoveAmmo(1,self.Primary.Ammo)
-		end
-	end
-
-	return true
-end
-
---[[ This doesn't work. Why? Check the SWEP:OnDrop() function.
-if CLIENT then -- This is done to fix the viewmodel after dropping
-	function SWEP:OwnerChanged()
-		self:Holster()
-	end
-end
-]]
-
-if SERVER then
-	function SWEP:OnDrop()
-		if self.PinPulled or not self.CanPullPin then -- The owner died and the pin was pulled, so we do whatever the throwable does!
-			self.Owner = self.LastOwner
-			self:CreateGrenadeProjectile(self:GetPos())
-			self:Remove()
-		else
-			self:Holster()
-
-			-- HACK!! At the time of coding this, WEAPON:OwnerChanged does not work for the first spawn and drop! (Which causes issues!!)
-			-- https://github.com/Facepunch/garrysmod-issues/issues/4639
-			if IsValid(self) and IsValid(self.LastOwner) and isnumber(self.OurIndex) then -- This is done to fix the viewmodel after dropping
-				self.LastOwner:SendLua("local Ent = Entity(" .. self.OurIndex .. "); if IsValid(Ent) then Ent:Holster() end")
+				self.ViewFlipped = true
 			end
+
+
+			self:SendWeaponAnim(ACT_VM_DRAW)
+
+
+			local iDur = CurTime() + vm:SequenceDuration() + 0.1 -- Action delay
+
+			self:SetNextPrimaryFire(iDur)
+			self:SetNextSecondaryFire(iDur)
+
+		end
+
+
+		if self.DeployHooked then
+			self:DeployHooked()
+		end
+
+
+		return true
+	end
+
+
+	function SWEP:Equip()
+		if self.EquipHooked then
+			self:EquipHooked()
 		end
 	end
-end
 
-function SWEP:OnRemove()
-	if SERVER and IsValid(self.Owner) then
-		self.Owner:StripWeapon(self:GetClass())
-	end
-end
 
-function SWEP:CanPrimaryAttack()
-	if self:Clip1() <= 0 then
-		self:SetNextPrimaryFire(CurTime() + 0.2)
+	function SWEP:Holster()
 
-		return false
+		self:ResetInternalVars()
+
+		if self.HolsterHooked then
+			self:HolsterHooked()
+		end
+
+		return true
 	end
 
-	return true
-end
 
-function SWEP:SecondaryAttack()
-	return false
-end
+	function SWEP:Think()
+		if self.ThinkHooked then
+			self:ThinkHooked()
+		end
+	end
 
-function SWEP:Reload()
-	return false
+
+	function SWEP:PrimaryAttack()
+
+	end
+
+
+	function SWEP:CanPrimaryAttack()
+		if self:GetNextPrimaryFire() > CurTime() or (self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and self:Clip1() <= 0) then
+			return false
+		end
+
+		return true
+	end
+
+
+	function SWEP:CalcViewModelView(_,vPos,aAng,vEye,aEye)
+		if not IsValid(self.Owner) then return end
+
+
+		vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.75,vPos.y + (vEye.y - vPos.y) * 0.75,vPos.z + (vEye.z - vPos.z) * 0.75)
+		aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.75,aAng.y + (aEye.y - aAng.y) * 0.75,aAng.r + aEye.r * 0.75)
+
+
+		-- Add a bit of swaying to the viewmodel, this simulates an idle animation!
+		-- This is way better than using pre-made animations!
+		-- Idle Sway
+
+		local iCur = RealTime()
+
+		if self.ViewAngStart < iCur then
+			self.ViewAngStart = iCur + math.Rand(0.2,1.1)
+
+			self.LastViewAngTick = iCur
+
+			self.ViewAngDestination = AngleRand(-0.3,0.3)
+		end
+
+
+		self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination)
+
+		self.LastViewAngTick = iCur
+
+
+		aAng:SetUnpacked(aAng.p + self.ViewAngIdleRead.p,aAng.y + self.ViewAngIdleRead.y,aAng.r + self.ViewAngIdleRead.r)
+
+
+		return vPos, aAng
+	end
 end

@@ -7,89 +7,144 @@ ENT.AdminOnly = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
+
+local fReturnFalse = function() -- Save some ram
+	return false
+end
+
+ENT.CanTool = fReturnFalse -- Restrict certain things
+ENT.CanProperty = fReturnFalse
+ENT.PhysgunPickup = fReturnFalse
+
+
 if SERVER then
-	local effectData = EffectData()
+
+	local entsFindInSphere = ents.FindInSphere
+	local utilTraceLine = util.TraceLine
+	local CurTime = CurTime
+	local ipairs = ipairs
+
+
+	local fExplode = function(self)
+
+		if not IsValid(self.Owner) or not self.bCanExplode then
+			self:Remove()
+
+			return
+		end
+
+
+		self.bCanExplode = false -- Failsafe
+
+
+		local vPos = self:GetPos() -- Update the explosion position
+
+
+		local obj_EffectData = EffectData()
+
+		obj_EffectData:SetOrigin(vPos)
+
+		util.Effect("HelicopterMegaBomb",obj_EffectData)
+		util.Effect("ThumperDust",obj_EffectData)
+		util.Effect("Explosion",obj_EffectData)
+
+		obj_EffectData:SetScale(1) -- We can re-use the EffectData object here
+		obj_EffectData:SetRadius(67)
+		obj_EffectData:SetMagnitude(18)
+
+		util.Effect("m9k_gdcw_cinematicboom",obj_EffectData)
+
+
+		util.ScreenShake(vPos,2000,255,2.5,1250)
+
+		util.BlastDamage(self,self.Owner,vPos,200,250)
+
+
+		self:EmitSound("ambient/explosions/explode_" .. math.random(4) .. ".wav",100)
+
+
+		self:Remove()
+
+	end
+
 
 	function ENT:Initialize()
+
+		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+			self:Remove()
+
+			return
+		end
+
+
 		self:SetModel("models/weapons/w_px_planted.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
+
 		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 		self:PhysWake()
-		self.timeleft = CurTime() + 3
+
+
+		self.iLifeTime = CurTime() + 3 -- Grace period
+		self.bCanExplode = true
+
 		self.OurPos = self:GetPos()
-		self.health = 25
-		self.Tr = {
+		self.iHealth = 25
+
+		self.tTrace = {
 			start = self.OurPos,
 			endpos = self.OurPos,
 			filter = self
 		}
+
 	end
 
+
 	function ENT:Think()
-		if self.timeleft < CurTime() then
+
+		local iCur = CurTime()
+
+
+		if self.iLifeTime < iCur then
+
+
 			if self.DynamicPos then -- We want to update the position if the proxy mine is not mounted to a wall
 				self.OurPos = self:GetPos()
+
+				self.tTrace.start = self.OurPos
 			end
 
-			for _,v in ipairs(ents.FindInSphere(self.OurPos,200)) do
-				if v:IsPlayer() or v:IsNPC() then
-					self.Tr.endpos = v:GetPos()
-					local Trace = util.TraceLine(self.Tr)
 
-					if Trace.Entity:IsPlayer() or Trace.Entity:IsNPC() then
-						self:Explosion()
+			for _,v in ipairs(entsFindInSphere(self.OurPos,200)) do
+
+				if v:IsPlayer() or v:IsNPC() then
+
+					self.tTrace.endpos = v:GetPos()
+
+
+					local tTrace = utilTraceLine(self.tTrace)
+
+					if tTrace.Entity:IsPlayer() or tTrace.Entity:IsNPC() then
+						fExplode(self)
+
 						break
 					end
 				end
 			end
+
 		end
 
-		self:NextThink(CurTime() + 0.3)
+
+		self:NextThink(iCur + 0.3)
 		return true
 	end
 
-	function ENT:Explosion()
-		if not IsValid(self.Owner) then
-			self:Remove()
-			return
+
+	function ENT:OnTakeDamage(obj_DamageInfo)
+
+		self.iHealth = self.iHealth - (obj_DamageInfo:GetDamage() or 25)
+
+		if self.iHealth <= 0 then
+			fExplode(self)
 		end
-
-		self.OurPos = self:GetPos() -- Update the explosion position
-
-		self.Explosion = nil -- Do not call this twice.. ever
-		self.OnTakeDamage = nil -- Stack overflow protection.
-
-		util.BlastDamage(self,self.Owner,self.OurPos,200,250)
-
-		effectData:SetOrigin(self.OurPos)
-		util.Effect("HelicopterMegaBomb",effectData)
-		util.Effect("ThumperDust",effectData)
-		util.Effect("Explosion",effectData)
-
-		effectData:SetScale(1) -- We can re-use the EffectData object here
-		effectData:SetRadius(67)
-		effectData:SetMagnitude(18)
-		util.Effect("m9k_gdcw_cinematicboom",effectData)
-
-		util.ScreenShake(self.OurPos,2000,255,2.5,1250)
-		self:EmitSound("ambient/explosions/explode_" .. math.random(1,4) .. ".wav",self.Pos,100,100)
-		self:Remove()
-	end
-
-	function ENT:OnTakeDamage(DMG)
-		self.health = self.health - (DMG:GetDamage() or 25)
-
-		if self.health <= 0 then
-			self:Explosion()
-		end
-	end
-
-	function ENT:PhysgunPickup()
-		return false
-	end
-
-	function ENT:CanTool()
-		return false
 	end
 end

@@ -1,6 +1,8 @@
 SWEP.Base = "bobs_scoped_base"
-SWEP.Category = "M9K Assault Rifles"
+SWEP.Category = "M9kR: Assault Rifles"
 SWEP.PrintName = "L85"
+
+SWEP.DynamicLightScale = 1 -- Set to Default
 
 SWEP.Slot = 3
 SWEP.HoldType = "ar2"
@@ -9,51 +11,66 @@ SWEP.Spawnable = true
 SWEP.ViewModel = "models/weapons/v_rif_l85.mdl"
 SWEP.WorldModel = "models/weapons/w_l85a2.mdl"
 
-SWEP.Primary.Sound = "Weapon_l85.Single"
+SWEP.tReloadDynamic = {
+	{
+		sSound = "weapons/L85A2/magout.mp3",
+		iDelay = 0.40
+	},
+	{
+		sSound = "weapons/L85A2/magin.mp3",
+		iDelay = 0.40 + 0.70
+	},
+	{
+		sSound = "weapons/L85A2/tap.mp3",
+		iDelay = 0.40 + 0.70 + 0.25
+	},
+	{
+		sSound = "weapons/L85A2/boltpull.mp3",
+		iDelay = 0.40 + 0.70 + 0.25 + 0.70
+	}
+}
+
+SWEP.tDrawSoundSequence = {
+	{
+		sSound = "weapons/L85A2/cloth.mp3",
+		iDelay = 0.00
+	},
+	{
+		sSound = "weapons/L85A2/boltslap.mp3",
+		iDelay = 0.00 + 0.30
+	}
+}
+
+SWEP.Primary.Sound = "weapons/L85A2/aug-1.wav"
+
 SWEP.Primary.RPM = 325
 SWEP.Primary.ClipSize = 30
-
 SWEP.Primary.KickUp = 2.5
 SWEP.Primary.KickDown = 1.3
 SWEP.Primary.KickHorizontal = 2
 SWEP.Primary.Automatic = true
-SWEP.Primary.Ammo = "ar2"
 SWEP.Primary.NumShots = 1
 SWEP.Primary.Damage = 38
 SWEP.Primary.Spread = .02
-SWEP.Primary.SpreadZoomed = .0115
+SWEP.Primary.Ammo = "ar2"
+
 SWEP.Primary.SpreadBefore = SWEP.Primary.Spread
 
+SWEP.ScopeType = "gdcw_acog"
+SWEP.ScopeStages = 1
 SWEP.ScopeScale = 0.5
 SWEP.ReticleScale = 0.6
-SWEP.HasZoomStages = false
 
-if CLIENT then
-	local CachedTextureID1 = surface.GetTextureID("scope/gdcw_closedsight")
-	local CachedTextureID2 = surface.GetTextureID("scope/gdcw_acogchevron")
-	local CachedTextureID3 = surface.GetTextureID("scope/gdcw_acogcross")
-
-	function SWEP:DrawHUD()
-		if self.Owner:GetViewEntity() ~= self.Owner then return end
-
-		if self:GetNWInt("ScopeState") > 0 then
-			if self.DrawCrosshair then -- Only set the vars once (this is faster)
-				self.Owner:DrawViewModel(false)
-				self.DrawCrosshair = false
-			end
-
-			surface.SetDrawColor(0,0,0,255)
-			surface.SetTexture(CachedTextureID1)
-			surface.DrawTexturedRect(self.LensTable.x,self.LensTable.y,self.LensTable.w,self.LensTable.h)
-
-			surface.SetTexture(CachedTextureID2)
-			surface.DrawTexturedRect(self.ReticleTable.x,self.ReticleTable.y,self.ReticleTable.w,self.ReticleTable.h)
-
-			surface.SetTexture(CachedTextureID3)
-			surface.DrawTexturedRect(self.ReticleTable.x, self.ReticleTable.y, self.ReticleTable.w, self.ReticleTable.h)
-		elseif not self.DrawCrosshair then -- Only set the vars once (this is faster)
-			self.Owner:DrawViewModel(true)
-			self.DrawCrosshair = true
-		end
-	end
-end
+SWEP.LegacyBalance = {
+	Primary = {
+		RPM = 675,
+		ClipSize = 30,
+		KickUp = .4,
+		KickDown = .4,
+		KickHorizontal = .5,
+		Automatic = true,
+		NumShots = 1,
+		Damage = 29,
+		Spread = .023
+	}
+}

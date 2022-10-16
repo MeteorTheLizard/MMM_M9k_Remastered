@@ -7,60 +7,86 @@ ENT.AdminOnly = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
+
+local fReturnFalse = function() -- Save some ram
+	return false
+end
+
+ENT.CanTool = fReturnFalse -- Restrict certain things
+ENT.CanProperty = fReturnFalse
+ENT.PhysgunPickup = fReturnFalse
+
+
 game.AddParticles("particles/nitro_main.pcf")
 
-function ENT:CanTool() return false end
 
 if SERVER then
-	local MetaE = FindMetaTable("Entity")
-	local CPPIExists = MetaE.CPPIGetOwner and true or false
-	local CachedVector1 = Vector(0,0,-25)
-	local angle_zero = Angle(0,0,0) -- Better safe than sorry
+
+	local utilTraceLine = util.TraceLine -- Optimization
+
+	local vCached1 = Vector(0,0,-1)
+	local angle_zero = Angle(0,0,0) -- Who knows if someone messed with it.
+
 
 	function ENT:Initialize()
+
+		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+			self:Remove()
+
+			return
+		end
+
+
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self.Phys = self:GetPhysicsObject()
-	end
-
-	function ENT:Think()
 
 	end
 
-	function ENT:PhysicsCollide(Data) -- Impact sounds and logic
-		if Data.Speed > 100 and Data.DeltaTime > 0.1 then
-			self:EmitSound("GlassBottle.Break")
 
-			local Pos = self:GetPos()
+	function ENT:PhysicsCollide(obj_Data)
 
-			util.BlastDamage(self,self.Owner,Pos,300,600) -- This moves objects as well but not that much
+		if obj_Data.Speed > 100 and obj_Data.DeltaTime > 0.1 then
 
-			ParticleEffect("nitro_main_m9k",self:LocalToWorld(self:OBBCenter()),angle_zero,nil) -- This effect does not seem to be defined anywhere but it still works :thonking:
+			self.PhysicsCollide = nil -- Don't explode twice.
+
+			self:EmitSound("physics/glass/glass_bottle_break" .. math.random(2) .. ".wav")
+
+
+			local vPos = self:GetPos()
+
+
+			ParticleEffect("nitro_main_m9k",self:LocalToWorld(self:OBBCenter()),angle_zero,nil)
+
 			self:EmitSound("ambient/explosions/explode_7.wav",95)
-			util.ScreenShake(Pos,500,500,.25,500)
-			util.Decal("Scorch",Pos,Pos + CachedVector1,self)
 
-			local CachedOwner = self:GetOwner()
-			for _,v in ipairs(ents.FindInSphere(Pos,300)) do -- Explosion makes object move (this respects prop ownership and MMM PVP states)
-				local vOwner = CPPIExists and IsValid(v:CPPIGetOwner()) and v:CPPIGetOwner() or IsValid(v:GetOwner()) and v:GetOwner() or NULL
 
-				if CPPIExists and v:CPPIGetOwner() == CachedOwner or (not CPPIExists or (MMM and (IsValid(vOwner) and CachedOwner:IsPVP() and vOwner:IsPVP()))) then
-					local Phys = v:GetPhysicsObject()
+			util.ScreenShake(vPos,500,500,.25,500)
+			util.Decal("Scorch",vPos,vPos + vCached1,self)
 
-					if IsValid(Phys) then
-						local pTrace = util.TraceLine({
-							start = Pos,
-							endpos = v:GetPos(),
-							filter = self
-						})
+			util.BlastDamage(self,self.Owner,vPos,300,600)
 
-						if not pTrace.HitWorld then
-							Phys:AddVelocity(pTrace.Normal * 400)
-						end
+
+			for _,v in ipairs(ents.FindInSphere(vPos,300)) do -- Explosion makes object move (this respects prop ownership and MMM PVP states)
+
+				local obj_Phys = v:GetPhysicsObject()
+
+
+				if IsValid(obj_Phys) then
+
+					local pTrace = utilTraceLine({
+						start = vPos,
+						endpos = v:GetPos(),
+						filter = self
+					})
+
+					if not pTrace.HitWorld then
+						obj_Phys:AddVelocity(pTrace.Normal * 400)
 					end
 				end
 			end
 
+
 			self:Remove()
+
 		end
 	end
 end

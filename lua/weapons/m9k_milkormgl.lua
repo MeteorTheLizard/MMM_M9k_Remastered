@@ -1,173 +1,227 @@
 SWEP.Base = "bobs_shotty_base"
-SWEP.Category = "M9K Specialties"
+SWEP.Category = "M9kR: Specialties"
 SWEP.PrintName = "Milkor Mk1"
 
-SWEP.Slot = 5
 SWEP.HoldType = "smg"
 SWEP.Spawnable = true
 
 SWEP.ViewModel = "models/weapons/v_milkor_mgl1.mdl"
 SWEP.WorldModel = "models/weapons/w_milkor_mgl1.mdl"
 
-SWEP.Primary.Sound = "40mmGrenade.Single"
+SWEP.ReloadSound = "weapons/striker12/m3_insertshell.mp3"
+
+SWEP.Primary.Sound = "weapons/M79/40mmthump.wav"
+
 SWEP.Primary.RPM = 125
 SWEP.Primary.ClipSize = 6
-
 SWEP.Primary.KickUp = 4
 SWEP.Primary.KickDown = 3
 SWEP.Primary.KickHorizontal = 2
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "40mmGrenade"
-SWEP.ShellTime = .45
 
 SWEP.IronSightsPos = Vector(2.635,-0.03,2.04)
 SWEP.IronSightsAng = Vector(-2,2.7,0)
 
-SWEP.ViewModelScale = Vector(1,1,1)
-SWEP.ModelViewForwardMult = -12
-SWEP.ModelViewRightMult = -9.35
-SWEP.ModelViewUpMult = 0.75
-SWEP.ModelViewAngForward = 90
-SWEP.ModelViewAngRight = 5
-SWEP.ModelViewAngUp = 0
+SWEP.LegacyBalance = {
+	Primary = {
+		RPM = 250,
+		ClipSize = 6,
+		KickUp = 0,
+		KickDown = 0,
+		KickHorizontal = 0,
+		Automatic = false,
+		NumShots = 0,
+		Damage = 0,
+		Spread = 0
+	}
+}
 
-local AngleCache1 = Angle(90,0,0)
-local VectorCache1 = Vector(0,0,1)
-local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPIGetOwner and true or false
+SWEP.bBlockShellEject = true
+SWEP.bBlockMuzzleFlash = true
+SWEP.bFiresEntity = true
 
-function SWEP:PrimaryAttack()
-	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
-		self:EmitSound("Weapon_Pistol.Empty")
-		self:SetNextPrimaryFire(CurTime() + 0.2)
-		return
-	end
+SWEP._UsesCustomModels = true
 
-	if self.InsertingShell and not self.CanceledReloadSuccess then
-		self:FinishReloading()
-	elseif self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() and not self.InsertingShell then
-		self:SetNextPrimaryFire(CurTime() + 1 / (self.Primary.RPM / 60))
 
-		if SERVER then
-			self:TakePrimaryAmmo(1)
+if SERVER then
 
-			local aim = self.Owner:GetAimVector()
-			local side = aim:Cross(VectorCache1)
-			local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
+	local aCached1 = Angle(90,0,0)
+	local vCached1 = Vector(0,0,1)
 
-			local rocket = ents.Create("m9k_launched_m79")
-			rocket:SetAngles(aim:Angle() + AngleCache1)
-			rocket:SetPos(pos)
 
-			rocket:SetOwner(self.Owner)
+	function SWEP:PrimaryAttackHooked2()
 
-			if CPPIExists then
-				rocket:CPPISetOwner(self.Owner)
-			else
-				rocket:SetNWEntity("my_owner",self.Owner) -- TinyCPPI Compatibility
+		self.Owner:LagCompensation(true)
+
+		local aAim = self.Owner:GetAimVector()
+		local vSide = aAim:Cross(vCached1)
+
+
+		local eProjectile = ents.Create("m9k_launched_m79") -- We use the m79 entity here since its identical with the original MilkorGL one
+
+		if IsValid(eProjectile) then
+
+			SafeRemoveEntityDelayed(eProjectile,30)
+
+
+			eProjectile:SetAngles(aAim:Angle() + aCached1)
+			eProjectile:SetPos(self.Owner:GetShootPos() + vSide * 6 + vSide:Cross(aAim) * -5)
+
+			eProjectile:SetOwner(self.Owner)
+
+			if MMM_M9k_CPPIExists then
+				eProjectile:CPPISetOwner(self.Owner)
 			end
 
-			rocket:Spawn()
-			rocket:Activate()
+			eProjectile.M9kr_CreatedByWeapon = true -- Required
+
+			eProjectile:Spawn()
+			eProjectile:Activate()
 		end
 
-		local KickUp = self.Primary.KickUp
-		local KickDown = self.Primary.KickDown
-		local KickHorizontal = self.Primary.KickHorizontal
+		self.Owner:LagCompensation(false)
 
-		if self.Owner:KeyDown(IN_DUCK) then
-			KickUp = self.Primary.KickUp / 2
-			KickDown = self.Primary.KickDown / 2
-			KickHorizontal = self.Primary.KickHorizontal / 2
-		end
-
-		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
-		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
-
-		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
-			local eyes = self.Owner:EyeAngles()
-			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
-			self.Owner:SetEyeAngles(eyes)
-		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
-			local eyes = self.Owner:EyeAngles()
-			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
-			self.Owner:SetEyeAngles(eyes)
-		end
-
-		self:AttackAnimation()
-		self:EmitSound(self.Primary.Sound)
-		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	end
 end
 
+
 if CLIENT then
-	function SWEP:FireAnimationEvent(_,_,event) -- No shell ejection
-		if event == 20 then return true end
+
+	function SWEP:FireAnimationEvent(_,_,iEvent) -- No shell ejection
+		if iEvent == 20 then return true end
 	end
+
+
+	-- The MilkorGL has a scope slapped onto it. So we gotta draw it in the viewmodel and worldmodel!
+
+
+	local vector_one = Vector(1,1,1)
+
 
 	function SWEP:CreateViewModel() -- We need to create these like that since a player could join and these would be invalid!
 		if IsValid(self.ViewEnt) then self.ViewEnt:Remove() end
 
+
 		self.ViewEnt = ClientsideModel("models/wystan/attachments/eotech557sight.mdl",RENDERGROUP_VIEWMODEL_TRANSLUCENT)
+		if not IsValid(self.ViewEnt) then return end
+
 		self.ViewEnt:SetPos(self:GetPos())
 		self.ViewEnt:SetAngles(self:GetAngles())
 		self.ViewEnt:SetParent(self)
 		self.ViewEnt:SetNoDraw(true)
 
 		self.ViewMatrix = Matrix()
-		self.ViewMatrix:Scale(self.ViewModelScale)
+		self.ViewMatrix:Scale(vector_one)
 	end
 
-	function SWEP:Initialize()
-		self:SetHoldType(self.HoldType)
-		self.OurIndex = self:EntIndex()
-
-		if CLIENT then
-			self.WepSelectIcon = surface.GetTextureID("vgui/hud/m9k_milkormgl")
-
-			if self.Owner == LocalPlayer() then
-				self:SendWeaponAnim(ACT_VM_IDLE)
-
-				self:CreateViewModel()
-
-				if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-					self:Equip()
-					self:Deploy()
-				end
-			end
-		end
-	end
 
 	function SWEP:ViewModelDrawn(vm)
-		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
+
+		if not IsValid(self.ViewEnt) then
+			self:CreateViewModel()
+
+			return -- We gotta wait a tick!
+		end
+
 
 		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("body") -- This is faster than looking it up every frame!
+		-- This bone is always valid.
+
 		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
 		if not mMatrix then return end -- Required to fix a one-time error
-		local Pos, Ang = mMatrix:GetTranslation(), mMatrix:GetAngles()
-		Ang:SetUnpacked(Ang.p + 180,Ang.y,Ang.r) -- This is needed to fix the really weird bone angles
 
-		self.ViewEnt:SetPos(Pos + Ang:Forward() * self.ModelViewForwardMult + Ang:Right() * self.ModelViewRightMult + Ang:Up() * self.ModelViewUpMult)
-		Ang:RotateAroundAxis(Ang:Forward(),self.ModelViewAngForward)
-		Ang:RotateAroundAxis(Ang:Right(),self.ModelViewAngRight)
-		Ang:RotateAroundAxis(Ang:Up(),self.ModelViewAngUp)
 
-		self.ViewEnt:SetAngles(Ang)
+		local vPos, aAng = mMatrix:GetTranslation(), mMatrix:GetAngles()
+
+			aAng:SetUnpacked(aAng.p + 180,aAng.y,aAng.r) -- This is needed to fix the really weird bone angles
+
+
+		self.ViewEnt:SetPos(vPos + aAng:Forward() * -12 + aAng:Right() * -9.35 + aAng:Up() * 0.75)
+
+		aAng:RotateAroundAxis(aAng:Forward(),90)
+		aAng:RotateAroundAxis(aAng:Right(),5)
+
+		self.ViewEnt:SetAngles(aAng)
 		self.ViewEnt:EnableMatrix("RenderMultiply",self.ViewMatrix)
 		self.ViewEnt:DrawModel()
 	end
 
-	function SWEP:Holster()
-		if IsValid(self.ViewEnt) then
-			self.ViewEnt:SetNoDraw(true)
-		end
 
-		return true
+	function SWEP:CreateWorldModel() -- We need to create these like that since a player could join and these would be invalid!
+		if IsValid(self.WorldEnt) then self.WorldEnt:Remove() end
+
+
+		self.WorldEnt = ClientsideModel("models/wystan/attachments/eotech557sight.mdl",RENDERGROUP_VIEWMODEL_TRANSLUCENT)
+		if not IsValid(self.WorldEnt) then return end
+
+		self.WorldEnt:SetPos(self:GetPos())
+		self.WorldEnt:SetAngles(self:GetAngles())
+		self.WorldEnt:SetParent(self)
+		self.WorldEnt:SetNoDraw(true)
+
+		self.ViewMatrix = Matrix()
+		self.ViewMatrix:Scale(vector_one)
 	end
 
-	function SWEP:OnRemove()
+
+	function SWEP:DrawWorldModel()
+
+		if not IsValid(self.WorldEnt) then
+			self:CreateWorldModel()
+
+			return -- We gotta wait a tick!
+		end
+
+
+		if not IsValid(self.Owner) then -- Draw the scope on the dropped Weapon
+
+			local vPos, aAng = self:GetPos(), self:GetAngles()
+
+			self.WorldEnt:SetPos(vPos + aAng:Forward() * 18.35 + aAng:Right() * 0.5 + aAng:Up() * -5.5)
+
+			aAng:RotateAroundAxis(aAng:Up(),180)
+			aAng:RotateAroundAxis(aAng:Right(),-2)
+
+
+			self.WorldEnt:SetAngles(aAng)
+			self.WorldEnt:EnableMatrix("RenderMultiply",self.ViewMatrix)
+			self.WorldEnt:DrawModel()
+
+			self:DrawModel()
+
+			return
+		end
+
+
+		-- The Weapon is not dropped!
+
+		self.CachedWorldBone = self.CachedWorldBone or self.Owner:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
+		if not self.CachedWorldBone then return end -- Thanks to wrefgtzweve on GitHub for finding this.
+
+
+		local vPos, aAng = self.Owner:GetBonePosition(self.CachedWorldBone)
+
+		self.WorldEnt:SetPos(vPos + aAng:Forward() * -1 + aAng:Right() * 0.75 + aAng:Up() * 5.9)
+
+		aAng:RotateAroundAxis(aAng:Forward(),180)
+		aAng:RotateAroundAxis(aAng:Right(),10)
+
+		self.WorldEnt:SetAngles(aAng)
+		self.WorldEnt:EnableMatrix("RenderMultiply",self.ViewMatrix)
+		self.WorldEnt:DrawModel()
+
+		self:DrawModel()
+	end
+
+
+	function SWEP:ResetInternalVarsHooked() -- Remove the entities if the Weapon is reset!
 		if IsValid(self.ViewEnt) then
 			self.ViewEnt:Remove()
+		end
+
+		if IsValid(self.WorldEnt) then
+			self.WorldEnt:Remove()
 		end
 	end
 end

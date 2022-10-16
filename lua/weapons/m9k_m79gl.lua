@@ -1,93 +1,106 @@
 SWEP.Base = "bobs_shotty_base"
-SWEP.Category = "M9K Specialties"
+SWEP.Category = "M9kR: Specialties"
 SWEP.PrintName = "M79 GL"
 
-SWEP.Slot = 5
-SWEP.HoldType = "shotgun"
 SWEP.Spawnable = true
 
 SWEP.ViewModelFlip = false
 SWEP.ViewModel = "models/weapons/v_m79_grenadelauncher.mdl"
 SWEP.WorldModel = "models/weapons/w_m79_grenadelauncher.mdl"
 
-SWEP.Primary.Sound = "40mmGrenade.Single"
-SWEP.Primary.ClipSize = 1
+SWEP.ReloadSoundStart = "weapons/M79/barrelup.mp3"
+SWEP.ReloadSound = "weapons/M79/xm_insert.mp3"
+SWEP.ReloadSoundFinish = "weapons/M79/m79_close.mp3"
 
+SWEP.DrawSound = "weapons/M79/m79_close.mp3"
+SWEP.DrawCantHear = true
+
+SWEP.Primary.Sound = "weapons/M79/40mmthump.wav"
+
+SWEP.Primary.RPM = 34
+SWEP.Primary.ClipSize = 1
 SWEP.Primary.KickUp = 6
 SWEP.Primary.KickDown = 3
 SWEP.Primary.KickHorizontal = 5
 SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "40mmGrenade"
-SWEP.ShellTime = .5
 
 SWEP.IronSightsPos = Vector(-4.633,-7.651,2.108)
 SWEP.IronSightsAng = Vector(1.294,0.15,0)
 
-local AngleCache1 = Angle(90,0,0)
-local VectorCache1 = Vector(0,0,1)
-local MetaE = FindMetaTable("Entity")
-local CPPIExists = MetaE.CPPIGetOwner and true or false
+SWEP.bBlockShellEject = true
+SWEP.bBlockMuzzleFlash = true
+SWEP.bFiresEntity = true
 
-function SWEP:PrimaryAttack()
-	if self.Owner:WaterLevel() == 3 then -- No weapons may fire underwater
-		self:EmitSound("Weapon_Pistol.Empty")
-		self:SetNextPrimaryFire(CurTime() + 0.2)
-		return
-	end
 
-	if self.InsertingShell and not self.CanceledReloadSuccess then
-		self:FinishReloading()
-	elseif self:CanPrimaryAttack() and self:GetNextPrimaryFire() < CurTime() and not self.InsertingShell then
-		self:SetNextPrimaryFire(CurTime() + 1.75)
+-- These are required for firstperson
 
-		if SERVER then
-			self:TakePrimaryAmmo(1)
+sound.Add({
+	name = "M79_launcher.close",
+	channel = CHAN_ITEM,
+	volume = 1.0,
+	sound = "weapons/M79/m79_close.mp3"
+})
 
-			local aim = self.Owner:GetAimVector()
-			local side = aim:Cross(VectorCache1)
-			local pos = self.Owner:GetShootPos() + side * 6 + side:Cross(aim) * -5
+sound.Add({
+	name = "M79_glauncher.barrelup",
+	channel = CHAN_ITEM,
+	volume = 1.0,
+	sound = "weapons/M79/barrelup.mp3"
+})
 
-			local rocket = ents.Create("m9k_launched_m79")
-			rocket:SetAngles(aim:Angle() + AngleCache1)
-			rocket:SetPos(pos)
+sound.Add({
+	name = "M79_glauncher.InsertShell",
+	channel = CHAN_ITEM,
+	volume = 1.0,
+	sound = "weapons/M79/xm_insert.mp3"
+})
 
-			rocket:SetOwner(self.Owner)
+sound.Add({
+	name = "M79_launcher.draw",
+	channel = CHAN_ITEM,
+	volume = 1.0,
+	sound = "weapons/M79/m79_close.mp3"
+})
 
-			if CPPIExists then
-				rocket:CPPISetOwner(self.Owner)
-			else
-				rocket:SetNWEntity("my_owner",self.Owner) -- TinyCPPI Compatibility
+
+if SERVER then
+
+	local aCached1 = Angle(90,0,0)
+	local vCached1 = Vector(0,0,1)
+
+
+	function SWEP:PrimaryAttackHooked2()
+
+		self.Owner:LagCompensation(true)
+
+		local aAim = self.Owner:GetAimVector()
+		local vSide = aAim:Cross(vCached1)
+
+
+		local eProjectile = ents.Create("m9k_launched_m79")
+
+		if IsValid(eProjectile) then
+
+			SafeRemoveEntityDelayed(eProjectile,30)
+
+
+			eProjectile:SetAngles(aAim:Angle() + aCached1)
+			eProjectile:SetPos(self.Owner:GetShootPos() + vSide * 6 + vSide:Cross(aAim) * -5)
+
+			eProjectile:SetOwner(self.Owner)
+
+			if MMM_M9k_CPPIExists then
+				eProjectile:CPPISetOwner(self.Owner)
 			end
 
-			rocket:Spawn()
-			rocket:Activate()
+			eProjectile.M9kr_CreatedByWeapon = true -- Required
+
+			eProjectile:Spawn()
+			eProjectile:Activate()
 		end
 
-		local KickUp = self.Primary.KickUp
-		local KickDown = self.Primary.KickDown
-		local KickHorizontal = self.Primary.KickHorizontal
+		self.Owner:LagCompensation(false)
 
-		if self.Owner:KeyDown(IN_DUCK) then
-			KickUp = self.Primary.KickUp / 2
-			KickDown = self.Primary.KickDown / 2
-			KickHorizontal = self.Primary.KickHorizontal / 2
-		end
-
-		local SharedRandom = Angle(util.SharedRandom("m9k_gun_kick1",-KickDown,-KickUp),util.SharedRandom("m9k_gun_kick2",-KickHorizontal,KickHorizontal),0)
-		self.Owner:ViewPunch(SharedRandom) -- This needs to be shared
-
-		if SERVER and game.SinglePlayer() or SERVER and self.Owner:IsListenServerHost() then -- This is specifically for the host or when in singleplayer
-			local eyes = self.Owner:EyeAngles()
-			eyes:SetUnpacked(eyes.pitch + SharedRandom.pitch,eyes.yaw + SharedRandom.yaw,0)
-			self.Owner:SetEyeAngles(eyes)
-		elseif CLIENT and not game.SinglePlayer() then -- This is for other players in multiplayer (Or anyone on the server if dedicated)
-			local eyes = self.Owner:EyeAngles()
-			eyes:SetUnpacked(eyes.pitch + (SharedRandom.pitch/5),eyes.yaw + (SharedRandom.yaw/5),0)
-			self.Owner:SetEyeAngles(eyes)
-		end
-
-		self:AttackAnimation()
-		self:EmitSound(self.Primary.Sound)
-		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	end
 end

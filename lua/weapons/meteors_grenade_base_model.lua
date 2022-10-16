@@ -1,163 +1,178 @@
---Made by MrRangerLP.
--- This is for grenades that use custom viewmodels and worldmodels
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+--[[ Dev Notes:
+
+	It is recommended to look at the Default variables assigned to every SWEP as some variables may not be documented.
+
+
+	This base is based on meteors_grenade_base meaning that all features and Dev Notes are also valid here.
+
+	Due to the nature of prediction, there are a lot of hacky things in this base, but it works reliably according to the excessive testing that I did.
+
+
+	SWEP.ResetInternalVarsHooked2 = Can be set to a function that will be called after SWEP.ResetInternalVarsHooked - (CLIENT ONLY)
+
+
+	These flags exist since sometimes you don't want a different viewmodel or you don't want a different worldmodel.
+
+	SWEP.DoNotUseViewModel	- Can be set to true to hide the custom viewmodel.
+	SWEP.DoNotUseWorldModel	- Can be set to true to hide the custom worldmodel.
+
+
+	SWEP.WorldModelStr		- The model used for the World model.	(If unset, it will use SWEP.WorldModel)
+	SWEP.ViewModelStr		- The model used for the View model.	(If unset, it will use SWEP.WorldModel)
+
+
+	SWEP.WorldTexture		- The material used for the World model. (optional)
+	SWEP.ViewTexture		- The material used for the View model. (optional)
+
+
+	SWEP.WorldModelScale		- Vector Scale of the World model
+	SWEP.ModelWorldForwardMult	- How many units the World model is moved forwards
+	SWEP.ModelWorldRightMult	- How many units the World model is moved right
+	SWEP.ModelWorldUpMult		- How many units the World model is moved up
+	SWEP.ModelWorldAngForward	- How many units the World model is rotated forward
+	SWEP.ModelWorldAngRight		- How many units the World model is rotated right
+	SWEP.ModelWorldAngUp		- How many units the World model is rotated up
+
+	SWEP.ViewModelScale			- Vector Scale of the View model
+	SWEP.ModelViewForwardMult	- How many units the View model is moved forwards
+	SWEP.ModelViewRightMult		- How many units the View model is moved right
+	SWEP.ModelViewUpMult		- How many units the View model is moved up
+	SWEP.ModelViewAngForward	- How many units the View model is rotated forward
+	SWEP.ModelViewAngRight		- How many units the View model is rotated right
+	SWEP.ModelViewAngUp			- How many units the View model is rotated up
+
+	SWEP.ModelViewBlacklistedBones = { -- Table of bones that should be hidden from the base viewmodel used
+		["v_weapon.Flashbang_Parent"] = true, -- Example bones taken from m9k_m61_frag.lua
+		["v_weapon.strike_lever"] = true,
+		["v_weapon.safety_pin"] = true,
+		["v_weapon.pull_ring"] = true
+	}
+
+
+	SWEP.bShouldDrawModel	- Controls when the custom Viewmodel can be seen. (Used internally)
+
+
+	If you're confused about how to make a proper custom view/world model throwable, I recommend checking out m9k_m61_frag.lua
+
+]]
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
 
 SWEP.Base = "meteors_grenade_base"
 
+SWEP.UseHands = true
+
+SWEP.WorldModelScale = Vector(1,1,1)
+SWEP.ModelWorldForwardMult = 0
+SWEP.ModelWorldRightMult = 0
+SWEP.ModelWorldUpMult = 0
+SWEP.ModelWorldAngForward = 0
+SWEP.ModelWorldAngRight = 0
+SWEP.ModelWorldAngUp = 0
+
+SWEP.ViewModelScale = Vector(0.75,0.75,0.75)
+SWEP.ModelViewForwardMult = 0
+SWEP.ModelViewRightMult = 0
+SWEP.ModelViewUpMult = -0
+SWEP.ModelViewAngForward = 0
+SWEP.ModelViewAngRight = 0
+SWEP.ModelViewAngUp = 0
+SWEP.ModelViewBlacklistedBones = {}
+
+SWEP._UsesCustomModels = true
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- Compatibility
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+local sTag = "MMM_M9kr_Grenades_Model"
+
+vector_zero = Vector(0,0,0) -- MMM Compat
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- SERVER
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
+if SERVER then
+
+	local tMetaPly = FindMetaTable("Player")
+
+
+	-- We have to detour SelectWeapon since it messes with prediction and we have to let the clients know that their weapon was changed so that they don't have broken viewmodels.
+
+	tMetaPly.SelectWeaponM9krBackup = tMetaPly.SelectWeaponM9krBackup or tMetaPly.SelectWeapon
+
+	function tMetaPly:SelectWeapon(sStr) -- This function override is being used for multiple files.
+
+		local eWep = self:GetActiveWeapon() -- Cache their current Weapon
+
+
+		net.Start("MMM_M9kr_Weapons_FixMat") -- Notify client of Weapon change
+		net.Send(self)
+
+
+		self:SelectWeaponM9krBackup(sStr)
+
+
+		if IsValid(eWep) and eWep._IsM9kRemasteredBased then -- Reset stuff if their cached Weapon was M9kR based
+
+			net.Start("MMM_M9kr_Grenades") -- Pretend the Weapon was dropped which calls the Reset Variables function
+				net.WriteEntity(eWep)
+				net.WriteInt(2,6)
+			net.Broadcast()
+
+		end
+	end
+end
+
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+-- CLIENT
+-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
+
 if CLIENT then
-	local VectorCache1 = Vector(1,1,1)
-	local angle_zero = Angle(0,0,0)
-	local vector_zero = Vector(0,0,0)
 
-	function SWEP:CreateWorldModel() -- We need to create these like that since a player could join and these would be invalid!
-		if self.DoNotUseWorldModel then return end
-		if IsValid(self.WorldEnt) then self.WorldModel:Remove() end
+	angle_zero = Angle(0,0,0) -- Make sure nothing else fucked with this
 
-		self.WorldEnt = ClientsideModel(self.WorldModel,RENDERGROUP_OPAQUE)
-		self.WorldEnt:SetPos(self:GetPos())
-		self.WorldEnt:SetAngles(self:GetAngles())
-		self.WorldEnt:SetParent(self)
-		self.WorldEnt:SetNoDraw(true)
+	local vector_one = Vector(1,1,1)
 
-		self.WorldMatrix = Matrix()
-		self.WorldMatrix:Scale(self.WorldModelScale)
+
+	SWEP.bShouldDrawModel = false
+
+
+	function SWEP:InitializeHooked()
+		self.bShouldDrawModel = true
 	end
 
-	function SWEP:CreateViewModel() -- We need to create these like that since a player could join and these would be invalid!
-		if self.DoNotUseViewModel then return end
-		if IsValid(self.ViewEnt) then self.ViewEnt:Remove() end
 
-		self.ViewEnt = ClientsideModel(self.WorldModel,RENDERGROUP_OPAQUE)
-		self.ViewEnt:SetPos(self:GetPos())
-		self.ViewEnt:SetAngles(self:GetAngles())
-		self.ViewEnt:SetParent(self)
-		self.ViewEnt:SetNoDraw(true)
+	function SWEP:ResetInternalVarsHooked()
 
-		self.ViewMatrix = Matrix()
-		self.ViewMatrix:Scale(self.ViewModelScale)
-	end
+		if not self.bDeployed then -- Don't do this if we just deployed the weapon
 
-	function SWEP:Initialize()
-		self:SetHoldType(self.HoldType)
-		self.OurIndex = self:EntIndex()
+			local us = LocalPlayer() -- Did you know LocalPlayer can be invalid during a fullupdate call? Now you do.
 
-		self.WepSelectIcon = surface.GetTextureID(string.gsub("vgui/hud/name","name",self:GetClass()))
-		self:SetNWBool("ShouldDraw",true)
-		self.LastViewEntity = NULL
+			if IsValid(us) then
 
-		self:CreateWorldModel()
+				local vm = us:GetViewModel()
 
-		if self.Owner == LocalPlayer() then
-			self:SendWeaponAnim(ACT_VM_IDLE)
+				if IsValid(vm) then
 
-			self:CreateViewModel()
-
-			if self.Owner:GetActiveWeapon() == self then -- Compat/Bugfix
-				self:Equip()
-				self:Deploy()
+					for k = 0,vm:GetBoneCount() do -- Make sure to reset the bones! (very important!!)
+						vm:ManipulateBoneScale(k,vector_one)
+						vm:ManipulateBoneAngles(k,angle_zero)
+						vm:ManipulateBonePosition(k,vector_zero)
+					end
+				end
 			end
 		end
-	end
 
-	function SWEP:DrawWorldModel()
-		if self.DoNotUseWorldModel then -- Can be used to use the default worldmodel
-			self:DrawModel()
-			return true
-		end
+		self.bDeployed = nil
 
-		if not IsValid(self.WorldEnt) then self:CreateWorldModel() end
 
-		if IsValid(self.Owner) then
-			self.CachedWorldBone = self.CachedWorldBone or self.Owner:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
-			local Pos, Ang = self.Owner:GetBonePosition(self.CachedWorldBone)
+		self.LastViewEntity = nil -- Save some RAM, even if its microscopic
 
-			self.WorldEnt:SetPos(Pos + Ang:Forward() * self.ModelWorldForwardMult + Ang:Right() * self.ModelWorldRightMult + Ang:Up() * self.ModelWorldUpMult)
-			Ang:RotateAroundAxis(Ang:Forward(),self.ModelWorldAngForward)
-			Ang:RotateAroundAxis(Ang:Right(),self.ModelWorldAngRight)
-			Ang:RotateAroundAxis(Ang:Up(),self.ModelWorldAngUp)
-			self.WorldEnt:SetAngles(Ang)
-			self.WorldEnt:EnableMatrix("RenderMultiply",self.WorldMatrix)
-			self.WorldEnt:DrawModel()
-		else
-			self:DrawModel()
-		end
-	end
+		self.bShouldDrawModel = true
 
-	function SWEP:ViewModelDrawn(vm)
-		if self.DoNotUseViewModel then return true end -- Can be used to use the default viewmodel
-		if not IsValid(self.ViewEnt) then self:CreateViewModel() end
 
-		if not self:GetNWBool("ShouldDraw") then return end -- At some points it should not be drawn, mainly during the throw animation
-
-		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
-		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
-		if not mMatrix then return end -- Required to fix a one-time error
-		local Pos, Ang = mMatrix:GetTranslation(), mMatrix:GetAngles()
-
-		self.ViewEnt:SetPos(Pos + Ang:Forward() * self.ModelViewForwardMult + Ang:Right() * self.ModelViewRightMult + Ang:Up() * self.ModelViewUpMult)
-		Ang:RotateAroundAxis(Ang:Forward(),self.ModelViewAngForward)
-		Ang:RotateAroundAxis(Ang:Right(),self.ModelViewAngRight)
-		Ang:RotateAroundAxis(Ang:Up(),self.ModelViewAngUp)
-		self.ViewEnt:SetAngles(Ang)
-		self.ViewEnt:EnableMatrix("RenderMultiply",self.ViewMatrix)
-		self.ViewEnt:DrawModel()
-	end
-
-	-- Required when the user switches cameras it will undo bone changes (Or when the user draws the weapon while looking through a camera and going back to firstperson)
-	-- This is also used to hide the base initially
-	function SWEP:HideBaseViewModel()
-		if self.DoNotUseViewModel then return end
-
-		if self.Owner == LocalPlayer() then
-			hook.Add("Tick","m9k_mmm_hidebasemodel",function() -- We make a hook since we have to wait for the viewmodel to become valid!
-				if not IsValid(self) or not IsValid(self.Owner) then -- This can rarely happen when an unavailable weapon is given
-					hook.Remove("Tick","m9k_mmm_hidebasemodel")
-					return
-				end
-
-				local vm = self.Owner:GetViewModel()
-				if IsValid(vm) then
-					hook.Remove("Tick","m9k_mmm_hidebasemodel")
-
-					local IDS = { }
-					for k = 1,vm:GetBoneCount(),1 do -- Some 'bones' from the used viewmodel 'base' should be hidden
-						if self.ModelViewBlacklistedBones[vm:GetBoneName(k)] then
-							table.insert(IDS,k)
-						end
-					end
-
-					for _,v in ipairs(IDS) do
-						vm:ManipulateBoneScale(v,vector_zero)
-					end
-				end
-			end)
-		end
-	end
-
-	function SWEP:Holster()
-		local vm = IsValid(self.Owner) and self.Owner:GetViewModel() or IsValid(self.LastOwner) and self.LastOwner:GetViewModel()
-		if not IsValid(vm) or not vm:GetBoneCount() then return end
-
-		for k = 0,vm:GetBoneCount() do -- Make sure to reset the bones! (very important!!)
-			vm:ManipulateBoneScale(k,VectorCache1)
-			vm:ManipulateBoneAngles(k,angle_zero)
-			vm:ManipulateBonePosition(k,vector_zero)
-		end
-
-		timer.Remove("M9k_MMM_Grenade_Pullpin" .. self.OurIndex)
-		timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex)
-
-		self:SetNWBool("ShouldDraw",true)
-		self.CanPullPin = true
-		self.PinPulled = false
-
-		if IsValid(self.ViewEnt) then
-			self.ViewEnt:SetNoDraw(true)
-		end
-
-		return true
-	end
-
-	function SWEP:OnRemove()
 		if IsValid(self.WorldEnt) then
 			self.WorldEnt:Remove()
 		end
@@ -166,130 +181,195 @@ if CLIENT then
 			self.ViewEnt:Remove()
 		end
 
-		local vm = IsValid(self.Owner) and self.Owner:GetViewModel() or IsValid(self.LastOwner) and self.LastOwner:GetViewModel()
-		if not IsValid(vm) or not vm:GetBoneCount() then return end
 
-		for k = 0,vm:GetBoneCount() do -- Make sure to reset the bones! (very important!!)
-			vm:ManipulateBoneScale(k,VectorCache1)
-			vm:ManipulateBoneAngles(k,angle_zero)
-			vm:ManipulateBonePosition(k,vector_zero)
+		if self.ResetInternalVarsHooked2 then
+			self:ResetInternalVarsHooked2()
 		end
 	end
-end
 
-function SWEP:Deploy()
-	if SERVER and (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then -- Make sure we can not equip a Grenade when we do not even have one!
-		self.Owner:StripWeapon(self:GetClass())
+
+	function SWEP:DeployHooked()
+		self.bShouldDrawModel = true
+
+		self.bDeployed = true -- Required
+
 	end
 
-	self:SetHoldType(self.HoldType)
-	self:SetNWBool("ShouldDraw",true)
 
-	local vm = self.Owner:GetViewModel()
-	if IsValid(vm) then -- This is required since the code should only run on the server or on the player holding the gun (Causes errors otherwise)
-		self:SendWeaponAnim(ACT_VM_DRAW)
+	function SWEP:ThinkHooked()
 
-		if SERVER then -- We have to do it like this since there are cases in which Deploy is not called since SelectWeapon messes with prediction!
-			self:CallOnClient("HideBaseViewModel")
+		if not IsValid(self.Owner) then return end
 
-			if self.DeploySound then -- Might be useful for modders (also used in Knife)
-				self.Owner:EmitSound(self.DeploySound)
-			end
-		end
 
-		local Dur = vm:SequenceDuration() + 0.2
-		self:SetNextPrimaryFire(CurTime() + Dur)
-		self:SetNextSecondaryFire(CurTime() + Dur)
+		self.bDeployed = nil -- Required
 
-		timer.Remove("MMM_M9k_Deploy_" .. self.OurIndex)
-		timer.Create("MMM_M9k_Deploy_" .. self.OurIndex,Dur,1,function()
-			if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-			self.CanPullPin = true
 
-			if not self.Owner:KeyDown(IN_ATTACK) and not self.Owner:KeyDown(IN_ATTACK2) and not self.Owner:KeyDown(IN_RELOAD) then -- We make sure that we are not attacking since the idle animation can overwrite the attack animation
-				self:SendWeaponAnim(ACT_VM_IDLE) -- Some bases need this
-			end
-		end)
-	end
+		-- Re-apply hiding the base viewmodel when cameras changed
 
-	return true
-end
+		local eView = self.Owner:GetViewEntity()
 
-function SWEP:Think()
-	if CLIENT then -- Hide base viewmodel when cameras changed
-		local View = self.Owner:GetViewEntity()
-
-		if View ~= self.LastViewEntity then
+		if eView ~= self.LastViewEntity then
 			self:HideBaseViewModel()
 		end
 
-		self.LastViewEntity = View
+		self.LastViewEntity = eView
+
 	end
 
-	if self.PinPulled and not self.Owner:KeyDown(IN_ATTACK) then
-		self:SendWeaponAnim(self.PrimaryAttackSequence or ACT_VM_THROW)
-		self:AttackAnimation()
 
-		local vm = self.Owner:GetViewModel()
-		if SERVER or IsValid(vm) then -- SERVER or the CLIENT throwing the grenade
-			if not IsFirstTimePredicted() then return end -- Fixes weird prediction bugs
-			timer.Remove("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex) -- Prevent the animation from being overwritten by the idle thing
-			local Dur = vm:SequenceDuration() - (self.PrimaryAttackSequenceDelay or (game.SinglePlayer() and 0.4 or 0.5))
+	function SWEP:PinPullEvent()
+		self.bShouldDrawModel = false
+	end
 
-			self:SetNWBool("ShouldDraw",false)
+	function SWEP:ThrowEvent()
 
-			timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,Dur,1,function()
-				if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
+		timer.Create(sTag .. self:EntIndex(),0.3,1,function()
+			if not IsValid(self) or not IsValid(self.Owner) or self.Owner:GetActiveWeapon() ~= self then return end
 
-				if SERVER then
-					self:TakePrimaryAmmo(1)
-					if self.AttacksoundPrimary then -- Could be useful for modders
-						self:EmitSound(self.AttacksoundPrimary)
-					end
+			self.bShouldDrawModel = true
+		end)
+	end
 
-					local Ang = self.Owner:EyeAngles() -- Taken from TTT base grenade since it is quite good in my opinion
-					local Src = self.Owner:GetPos() + (self.Owner:Crouching() and self.Owner:GetViewOffsetDucked() or self.Owner:GetViewOffset()) + (Ang:Forward() * 8) + (Ang:Right() * 10)
-					local Target = self.Owner:GetEyeTraceNoCursor().HitPos
-					local TAng = (Target - Src):Angle()
 
-					if TAng.p < 90 then
-						TAng.p = -10 + TAng.p * ((90 + 10) / 90)
-					else
-						TAng.p = 360 - TAng.p
-						TAng.p = -10 + TAng.p * -((90 + 10) / 90)
-					end
+	function SWEP:DrawWorldModel()
 
-					TAng.p = math.Clamp(TAng.p,-90,90)
-					local Vel = math.min(800,(90 - TAng.p) * 6)
-					local Thr = TAng:Forward() * Vel + self.Owner:GetVelocity()
+		if self.DoNotUseWorldModel or not IsValid(self.Owner) then -- Can be used to use the default worldmodel // Weapon is dropped
+			self:DrawModel()
 
-					local Projectile = self:CreateGrenadeProjectile(Src)
-
-					if IsValid(Projectile) and IsValid(Projectile.Phys) then
-						Projectile.Phys:SetVelocity(Thr)
-						Projectile.Phys:AddAngleVelocity(Vector(600,math.random(-1200,1200),0))
-					end
-				end
-
-				timer.Create("M9k_MMM_Grenade_Grenadethrow" .. self.OurIndex,0.3,1,function()
-					if not IsValid(self) or not IsValid(self.Owner) or not IsValid(self.Owner:GetActiveWeapon()) or self.Owner:GetActiveWeapon():GetClass() ~= self:GetClass() then return end
-
-					if (self:Clip1() <= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0) then
-						if SERVER then
-							self.CanPullPin = true -- Needs to be set so the last grenade throw does not call the OnDrop 'death' function
-							self.Owner:StripWeapon(self:GetClass())
-						end
-					else
-						self:Deploy()
-						self.Owner:RemoveAmmo(1,self.Primary.Ammo)
-						self:SetClip1(1)
-					end
-
-					self:SetNWBool("ShouldDraw",true)
-				end)
-			end)
+			return true
 		end
 
-		self.PinPulled = false
+
+		if not IsValid(self.WorldEnt) then
+			self:CreateWorldModel()
+
+			return -- Prevent error in the same tick
+		end
+
+
+		self.CachedWorldBone = self.CachedWorldBone or self.Owner:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
+		if not self.CachedWorldBone then return end -- Thanks to wrefgtzweve on GitHub for finding this.
+
+
+		local vPos, aAng = self.Owner:GetBonePosition(self.CachedWorldBone)
+
+		self.WorldEnt:SetPos(vPos + aAng:Forward() * self.ModelWorldForwardMult + aAng:Right() * self.ModelWorldRightMult + aAng:Up() * self.ModelWorldUpMult)
+
+		aAng:RotateAroundAxis(aAng:Forward(),self.ModelWorldAngForward)
+		aAng:RotateAroundAxis(aAng:Right(),self.ModelWorldAngRight)
+		aAng:RotateAroundAxis(aAng:Up(),self.ModelWorldAngUp)
+
+		self.WorldEnt:SetAngles(aAng)
+		self.WorldEnt:EnableMatrix("RenderMultiply",self.WorldMatrix)
+		self.WorldEnt:DrawModel()
+	end
+
+
+	function SWEP:ViewModelDrawn(vm)
+		if self.DoNotUseViewModel or not self.bShouldDrawModel then return true end -- Can be used to use the default viewmodel // hides when it should not been drawn
+
+
+		if not IsValid(self.ViewEnt) then -- This is used fairly often
+
+			self:CreateViewModel()
+			self:HideBaseViewModel()
+
+			return -- Prevent error in the same tick
+		end
+
+
+		self.CachedViewBone = self.CachedViewBone or vm:LookupBone("ValveBiped.Bip01_R_Hand") -- This is faster than looking it up every frame!
+		if not self.CachedViewBone then return end -- Thanks to wrefgtzweve on GitHub for finding this.
+
+		local mMatrix = vm:GetBoneMatrix(self.CachedViewBone)
+		if not mMatrix then return end
+
+
+		local vPos, aAng = mMatrix:GetTranslation(), mMatrix:GetAngles()
+
+		self.ViewEnt:SetPos(vPos + aAng:Forward() * self.ModelViewForwardMult + aAng:Right() * self.ModelViewRightMult + aAng:Up() * self.ModelViewUpMult)
+
+		aAng:RotateAroundAxis(aAng:Forward(),self.ModelViewAngForward)
+		aAng:RotateAroundAxis(aAng:Right(),self.ModelViewAngRight)
+		aAng:RotateAroundAxis(aAng:Up(),self.ModelViewAngUp)
+
+		self.ViewEnt:SetAngles(aAng)
+		self.ViewEnt:EnableMatrix("RenderMultiply",self.ViewMatrix)
+		self.ViewEnt:DrawModel()
+	end
+
+
+	function SWEP:CreateWorldModel()
+		if self.DoNotUseWorldModel then return end
+		if IsValid(self.WorldEnt) then self.WorldEnt:Remove() end
+
+		self.WorldEnt = ClientsideModel(self.WorldModelStr or self.WorldModel,RENDERGROUP_OPAQUE)
+		self.WorldEnt:SetPos(self:GetPos())
+		self.WorldEnt:SetAngles(self:GetAngles())
+		self.WorldEnt:SetParent(self)
+		self.WorldEnt:SetNoDraw(true)
+
+		if self.WorldTexture then
+			self.WorldEnt:SetMaterial(self.WorldTexture)
+		end
+
+		self.WorldMatrix = Matrix()
+		self.WorldMatrix:Scale(self.WorldModelScale)
+	end
+
+
+	function SWEP:CreateViewModel()
+		if self.DoNotUseViewModel then return end
+		if IsValid(self.ViewEnt) then self.ViewEnt:Remove() end
+
+		self.ViewEnt = ClientsideModel(self.ViewModelStr or self.WorldModel,RENDERGROUP_OPAQUE)
+		self.ViewEnt:SetPos(self:GetPos())
+		self.ViewEnt:SetAngles(self:GetAngles())
+		self.ViewEnt:SetParent(self)
+		self.ViewEnt:SetNoDraw(true)
+
+		if self.ViewTexture then
+			self.ViewEnt:SetMaterial(self.ViewTexture)
+		end
+
+		self.ViewMatrix = Matrix()
+		self.ViewMatrix:Scale(self.ViewModelScale)
+	end
+
+
+	function SWEP:HideBaseViewModel()
+		if self.DoNotUseViewModel then return end
+
+
+		if self.Owner == LocalPlayer() then
+
+			hook.Add("Think",sTag,function() -- We make a hook since we have to wait for the viewmodel to become valid!
+				if not IsValid(self) or not IsValid(self.Owner) or self.Owner:GetActiveWeapon() ~= self then
+					hook.Remove("Think",sTag)
+					return
+				end
+
+
+				local vm = self.Owner:GetViewModel()
+
+				if IsValid(vm) then
+
+					hook.Remove("Think",sTag)
+
+
+					local tIDs = {}
+
+					for k = 1,vm:GetBoneCount() do -- Hide blacklisted bones
+						if self.ModelViewBlacklistedBones[vm:GetBoneName(k)] then
+							table.insert(tIDs,k)
+						end
+					end
+
+					for _,v in ipairs(tIDs) do
+						vm:ManipulateBoneScale(v,vector_zero)
+					end
+				end
+			end)
+		end
 	end
 end

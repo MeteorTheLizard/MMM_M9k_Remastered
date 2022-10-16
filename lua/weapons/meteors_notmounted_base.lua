@@ -1,4 +1,4 @@
--- This base can and is used by extensions for weapons that should not be spawnable
+-- This base can be and is used by extensions for weapons that should not be spawnable
 -- Commonly used for weapons that should only work when a required game is mounted
 
 SWEP.Category = "" -- Not categorized
@@ -7,14 +7,18 @@ SWEP.PrintName = "Unavailable"
 SWEP.Primary.Ammo = "" -- Needs to be defined so we do not spawn ammo!
 SWEP.Secondary.Ammo = ""
 
-if SERVER then
-	util.AddNetworkString("M9k_Spawnerror")
+local sTag = "M9kr_Weapon_Spawnerror"
 
-	local RemoveCheckFunc = function(self)
+if SERVER then
+
+	util.AddNetworkString(sTag)
+
+	local fRemove = function(self)
 		if not IsValid(self) then return end
 
-		if IsValid(self.Owner) then -- Sometimes it was spawned through the Creator or other means!
-			net.Start("M9k_Spawnerror")
+		if IsValid(self.Owner) and self.Owner:IsPlayer() then -- Sometimes it was spawned through the Creator or other means!
+
+			net.Start(sTag)
 			net.Send(self.Owner)
 
 			self.Owner:StripWeapon(self:GetClass())
@@ -24,19 +28,20 @@ if SERVER then
 	end
 
 	function SWEP:Initialize()
+
 		self:SetNoDraw(true) -- This is the true magic
 
 		timer.Simple(0,function() -- Delayed by one tick so that self.Owner becomes valid if used
-			RemoveCheckFunc(self)
+			fRemove(self)
 		end)
 	end
 
 	function SWEP:Deploy()
-		RemoveCheckFunc(self)
+		fRemove(self)
 	end
 
 	function SWEP:Equip()
-		RemoveCheckFunc(self)
+		fRemove(self)
 	end
 end
 
@@ -45,8 +50,12 @@ function SWEP:Holster()
 end
 
 if CLIENT then
-	net.Receive("M9k_Spawnerror",function()
+
+	net.Receive(sTag,function()
+
 		chat.AddText("Sorry, that weapon is unavailable!")
+
 		surface.PlaySound("buttons/button11.wav")
+
 	end)
 end

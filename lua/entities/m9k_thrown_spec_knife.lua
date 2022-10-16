@@ -7,142 +7,227 @@ ENT.AdminOnly = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
-function ENT:CanTool() return false end
+
+local fReturnFalse = function() -- Save some ram
+	return false
+end
+
+ENT.CanTool = fReturnFalse -- Restrict certain things
+ENT.CanProperty = fReturnFalse
+ENT.PhysgunPickup = fReturnFalse
+
 
 if SERVER then
-	local MetaE = FindMetaTable("Entity")
-	local CPPIExists = MetaE.CPPIGetOwner and true or false
-	local vector_zero = Vector(0,0,0) -- Imagine having MMM
-	local VectorCache1 = Vector(0,10,0)
-	local effectData = EffectData()
 
-	local BodyHitSounds = {
-		"physics/metal/metal_grenade_impact_hard1.wav",
-		"physics/metal/metal_grenade_impact_hard2.wav",
-		"physics/metal/metal_grenade_impact_hard3.wav"
-	}
+	ENT.GravGunPickupAllowed = fReturnFalse -- This is Serverside only
+
+
+	local fGetStuck = function(self,tTrace)
+
+		local obj_Phys = self:GetPhysicsObject()
+
+		if IsValid(obj_Phys) then
+			obj_Phys:EnableMotion(false)
+		end
+
+
+		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+
+
+		util.Decal("Impact.Concrete",tTrace.HitPos - tTrace.HitNormal,tTrace.HitPos + tTrace.HitNormal,self)
+
+		self:EmitSound("weapons/blades/impact.mp3")
+
+
+		-- This might seem weird but yeah, we do that here to save a lot of bytes.
+
+		if self:GetClass() == "m9k_thrown_harpoon" then -- This makes Harpoons actually stick in the surface.
+			self:SetPos(self:GetPos() + self:GetAngles():Forward() * 10)
+
+			self:SetCollisionGroup(COLLISION_GROUP_NONE) -- Make them climbable
+		end
+
+
+		self:SetOwner(nil)
+
+	end
+
+
+	local fApplyDamage = function(self,tTrace,eEnt)
+
+		local obj_EffectData = EffectData()
+		obj_EffectData:SetScale(1)
+		obj_EffectData:SetStart(tTrace.HitPos)
+		obj_EffectData:SetOrigin(tTrace.HitPos)
+
+		util.Effect("BloodImpact",obj_EffectData)
+
+		util.Decal("Blood",tTrace.HitPos - tTrace.HitNormal,tTrace.HitPos + tTrace.HitNormal,self)
+
+
+		self:EmitSound("physics/flesh/flesh_impact_bullet" .. math.random(5) .. ".wav")
+
+
+		eEnt:TakeDamage(80,self.Owner,self)
+
+
+		if (eEnt:Health() - 80) <= 0 then -- They died so we drop to the floor
+
+
+			self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+
+
+			self.Think = nil -- Stop thinking!
+			self.PhysicsCollide = nil
+
+			return
+
+		end
+
+
+		self:Remove() -- They didn't die so we remove ourselves
+
+	end
+
 
 	function ENT:Initialize()
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self.Phys = self:GetPhysicsObject()
 
-		self.InFlight = true
-		self.NextSound = CurTime()
+		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+			self:Remove()
+
+			return
+		end
+
+
+		self:PhysicsInit(SOLID_VPHYSICS)
 
 		self:SetUseType(SIMPLE_USE)
+
+
+		self.iNextSound = 0
+		self.tFilters = {self,self.Owner} -- Don't recreate this over and over again.
+
+
+		self.vStartForwardOffset = 6.5
+		self.vStartUpOffset = 6.5
+
+		self.vEndForwardOffset = 10
+		self.vEndUpOffset = 10
+
 	end
 
-	function ENT:Think()
-		if self.InFlight and self:GetAngles().p <= 55 then
-			self.Phys:AddAngleVelocity(VectorCache1)
-		end
-	end
 
-	function ENT:Use(Activator)
-		if Activator:IsPlayer() and Activator == self.PickupOwner and Activator:GetWeapon("m9k_knife") == NULL then
-			Activator:Give("m9k_knife")
+	function ENT:Use(eActivator) -- We may pick the Knife back up
+		if eActivator:IsPlayer() and eActivator:GetWeapon("m9k_knife") == NULL then
+			eActivator:Give("m9k_knife")
+
 			self:Remove()
 		end
 	end
 
-	function ENT:PhysicsCollide(Data) -- Impact sounds and logic
-		local Pos = self:GetPos()
-		local Ang = self:GetAngles()
 
-		local tTrace = util.TraceHull({
-			start = Pos,
-			endpos = Pos + Ang:Forward() * 100,
-			filter = self
+	function ENT:Think()
+
+
+		local vPos = self:GetPos()
+		local aAng = self:GetAngles()
+
+		local tTrace = util.TraceLine({
+			start = vPos + aAng:Forward() * self.vStartForwardOffset + aAng:Up() * self.vStartUpOffset,
+			endpos = vPos + aAng:Forward() * self.vEndForwardOffset + aAng:Up() * self.vEndUpOffset,
+			filter = self.tFilters
 		})
+
 
 		if tTrace.Hit then
 
-			-- The function calls are put within a one-tick timer to prevent the 'Changing collision rules within a callback is likely to cause crashes!' error
 
-			if IsValid(tTrace.Entity) then
-				local CachedOwner = self:GetOwner()
-				local vOwner = CPPIExists and IsValid(tTrace.Entity:CPPIGetOwner()) and tTrace.Entity:CPPIGetOwner() or IsValid(tTrace.Entity:GetOwner()) and tTrace.Entity:GetOwner() or NULL
+			if tTrace.HitWorld then -- Get stuck in world geometry
 
-				effectData:SetScale(1)
+				fGetStuck(self,tTrace)
 
-				if tTrace.Entity:IsPlayer() and (MMM and tTrace.Entity:IsPVP() and self.Owner:IsPVP() or not MMM) then -- If we hit a player
-					timer.Simple(0,function()
-						if not IsValid(self) or not IsValid(tTrace.Entity) then return end
-						self.InFlight = false
 
-						self.Phys:SetVelocity(vector_zero)
-						self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-
-						tTrace.Entity:TakeDamage(80,self.Owner,self)
-
-						effectData:SetStart(Data.HitPos)
-						effectData:SetOrigin(Data.HitPos)
-						util.Effect("BloodImpact",effectData)
-
-						util.Decal("Blood",Data.HitPos - Data.HitNormal,Data.HitPos + Data.HitNormal,self)
-						self:EmitSound(table.Random(BodyHitSounds))
-						self:EmitSound("weapons/blades/impact.mp3")
-					end)
-
-					self.PhysicsCollide = nil
-				elseif CPPIExists and tTrace.Entity:CPPIGetOwner() == CachedOwner or (not CPPIExists or (MMM and (IsValid(vOwner) and CachedOwner:IsPVP() and vOwner:IsPVP()))) then
-					timer.Simple(0,function()
-						if not IsValid(self) or not IsValid(tTrace.Entity) then return end
-						self.InFlight = false
-
-						self.Phys:EnableMotion(false)
-						self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-
-						tTrace.Entity:TakeDamage(80,self.Owner,self)
-
-						if tTrace.Entity:GetClass() == "prop_ragdoll" or tTrace.Entity:IsNPC() then
-							effectData:SetStart(Data.HitPos)
-							effectData:SetOrigin(Data.HitPos)
-							util.Effect("BloodImpact",effectData)
-
-							util.Decal("Blood",Data.HitPos - Data.HitNormal,Data.HitPos + Data.HitNormal,self)
-							self:EmitSound(table.Random(BodyHitSounds))
-						end
-
-						self:EmitSound("weapons/blades/impact.mp3")
-
-						if tTrace.Entity:Health() < 0 then -- If we killed the target we want to drop to the ground! ( < 0 is intentional so that it can stick to unbreakable props)
-							self.PickupOwner = self:GetOwner()
-							self.Phys:EnableMotion(true)
-							self:SetCollisionGroup(COLLISION_GROUP_NONE)
-							self.Phys:SetVelocity(vector_zero)
-						else
-							self:SetParent(tTrace.Entity)
-						end
-					end)
-
-					self.PhysicsCollide = nil
-				end
-			elseif tTrace.HitWorld then
-				timer.Simple(0,function()
-					if not IsValid(self) then return end
-					self.InFlight = false
-
-					self.Phys:EnableMotion(false)
-					self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
-
-					self.PickupOwner = self:GetOwner()
-
-					util.Decal("Impact.Concrete",Data.HitPos - Data.HitNormal,Data.HitPos + Data.HitNormal,self)
-					self:EmitSound("weapons/blades/impact.mp3")
-				end)
-
+				self.Think = nil -- Stop thinking!
 				self.PhysicsCollide = nil
+
+				return
+
 			end
-		elseif self.InFlight and Data.Speed > 10 and Data.DeltaTime > 0.1 and self.NextSound < CurTime() then -- Impact sounds
-			self:EmitSound("physics/metal/metal_grenade_impact_hard" .. math.random(1,3) .. ".wav",65)
-			self.NextSound = CurTime() + 0.2
+
+
+			-- If we hit an entity, make it take damage.
+
+			local eEnt = tTrace.Entity
+
+
+			if IsValid(eEnt) then
+
+				if eEnt:IsPlayer() or eEnt:IsNPC() then -- Blood splat
+
+					fApplyDamage(self,tTrace,eEnt)
+
+					return
+
+				else -- Get stuck in Entities
+
+					fGetStuck(self,tTrace)
+
+					self:SetParent(eEnt)
+
+
+					eEnt:TakeDamage(80,self.Owner,self) -- They got stuck so deal damage!
+
+
+					if eEnt:GetClass() == "prop_ragdoll" then -- It's a ragdoll so do blood stuff
+						fApplyDamage(self,tTrace,eEnt)
+					end
+				end
+			end
+
+
+			self.Think = nil -- Stop thinking!
+			self.PhysicsCollide = nil
+
+			return
+
+		end
+
+
+		self:NextThink(CurTime())
+		return true
+	end
+
+
+	function ENT:PhysicsCollide(obj_Data)
+
+		if self.iNextSound < CurTime() then
+			self:EmitSound("physics/metal/metal_grenade_impact_hard" .. math.random(3) .. ".wav",65)
+
+			self.iNextSound = CurTime() + 0.1
+		end
+
+
+		if IsValid(obj_Data.HitEntity) and (obj_Data.HitEntity:IsPlayer() or obj_Data.HitEntity:IsNPC()) then -- Hit a player / NPC
+			fApplyDamage(self,obj_Data,obj_Data.HitEntity)
 		end
 	end
 end
 
+
 if CLIENT then
+
 	function ENT:Draw()
+
 		self:DrawModel()
+
+		--[[ Visualize TraceLine (Requires vars to be set in ENT.Initialize on the CLIENT)
+		local vPos = self:GetPos()
+		local aAng = self:GetAngles()
+
+		cam.Start3D()
+			render.DrawLine(vPos + aAng:Forward() * self.vStartForwardOffset + aAng:Up() * self.vStartUpOffset,vPos + aAng:Forward() * self.vEndForwardOffset + aAng:Up() * self.vEndUpOffset)
+		cam.End3D()
+		]]
+
 	end
 end

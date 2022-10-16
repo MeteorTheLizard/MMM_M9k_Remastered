@@ -7,81 +7,130 @@ ENT.AdminOnly = true
 ENT.DoNotDuplicate = true
 ENT.DisableDuplicator = true
 
-function ENT:CanTool() return false end
+
+local fReturnFalse = function() -- Save some ram
+	return false
+end
+
+ENT.CanTool = fReturnFalse -- Restrict certain things
+ENT.CanProperty = fReturnFalse
+ENT.PhysgunPickup = fReturnFalse
+
 
 if SERVER then
-	local MetaE = FindMetaTable("Entity")
-	local CPPIExists = MetaE.CPPIGetOwner and true or false
-	local CachedVector1 = Vector(0,0,1)
-	local CachedVector2 = Vector(0,0,-25)
-	local effectData = EffectData()
+
+	local utilEffect = util.Effect -- Optimization
+
+	local cCached1 = Vector(0,0,1)
+	local cCached2 = Vector(0,0,-25)
+
 
 	function ENT:Initialize()
+
+		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+			self:Remove()
+
+			return
+		end
+
+
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self.Phys = self:GetPhysicsObject()
 
-		self:SetTrigger(true)
+		self:SetTrigger(true) -- Required for StartTouch
 
-		self.TimeLeft = CurTime() + 3
-		self.NextSound = CurTime()
-		self.IsSticking = false
+
+		self.iLifeTime = CurTime() + 3
+		self.iNextSound = 0
+		self.bSticking = false
+
+
+		SafeRemoveEntityDelayed(self,3.1) -- Just in case
+
 	end
+
 
 	function ENT:Think()
-		if self.TimeLeft < CurTime() then
-			local Pos = self:GetPos()
-			effectData:SetNormal(CachedVector1)
-			effectData:SetEntity(self)
-			effectData:SetOrigin(Pos)
-			effectData:SetStart(Pos)
-			util.Effect("cball_explode",effectData)
-			util.Effect("Explosion",effectData)
 
-			effectData:SetOrigin(Pos)
-			effectData:SetScale(500)
-			effectData:SetMagnitude(500)
-			util.Effect("ThumperDust",effectData)
+		if self.iLifeTime < CurTime() then
 
-			effectData:SetMagnitude(3)
-			effectData:SetRadius(8)
-			effectData:SetScale(5)
-			util.Effect("Sparks",effectData)
+			local vPos = self:GetPos()
 
-			util.BlastDamage(self,self.Owner,Pos,350,100)
-			util.ScreenShake(Pos,500,500,1.25,500)
-			util.Decal("Scorch",Pos,Pos + CachedVector2,self)
 
-			util.BlastDamage(self,self.Owner,Pos,220,220)
-			util.ScreenShake(Pos,500,500,1.25,500)
+			local obj_EffectData = EffectData()
 
-			self:EmitSound("ambient/explosions/explode_" .. math.random(1,4) .. ".wav",100)
+			obj_EffectData:SetNormal(cCached1)
+			obj_EffectData:SetEntity(self)
+			obj_EffectData:SetOrigin(vPos)
+			obj_EffectData:SetStart(vPos)
+
+			utilEffect("cball_explode",obj_EffectData)
+			utilEffect("Explosion",obj_EffectData)
+
+			obj_EffectData:SetOrigin(vPos)
+			obj_EffectData:SetScale(500)
+			obj_EffectData:SetMagnitude(500)
+
+			utilEffect("ThumperDust",obj_EffectData)
+
+			obj_EffectData:SetMagnitude(3)
+			obj_EffectData:SetRadius(8)
+			obj_EffectData:SetScale(5)
+
+			utilEffect("Sparks",obj_EffectData)
+
+
+			util.ScreenShake(vPos,500,500,1.25,500)
+
+			util.Decal("Scorch",vPos,vPos + cCached2,self)
+
+			util.BlastDamage(self,self.Owner,vPos,350,100)
+
+
+			self:EmitSound("ambient/explosions/explode_" .. math.random(4) .. ".wav",100)
+
+
 			self:Remove()
+
 		end
 	end
 
-	-- This function is heavily influenced by MMM and its PVP mode as well as CPPI functions.
-	-- This is fully compatible with non-MMM environment servers as well as with servers that do not have prop protection addon(s)
 
-	function ENT:StartTouch(Ent) -- Stick to object (Better than using PhysicsCollide)
-		if Ent == self.Owner then return end
-		local EntOwner = CPPIExists and Ent:CPPIGetOwner() or IsValid(Ent.Owner) and Ent.Owner or IsValid(Ent:GetOwner()) and Ent:GetOwner() or NULL
+	function ENT:StartTouch(eEnt) -- Stick to object (Better than using PhysicsCollide)
+		if eEnt == self.Owner then return end
 
-		if Ent:IsPlayer() and (MMM and self.Owner:IsPVP() and Ent:IsPVP() or not MMM) or (Ent:IsNPC() and (CPPIExists and Ent:CPPIGetOwner() == self:GetOwner() or not CPPIExists)) then
-			self:SetParent(Ent)
-			self:SetCollisionGroup(COLLISION_GROUP_DEBRIS) -- NPCs and Players should not get stuck inside a sticky nade!
-		elseif not self.IsSticking and (CPPIExists and Ent:CPPIGetOwner() == self:GetOwner() or (MMM and self.Owner:IsPVP() and (IsValid(EntOwner) and EntOwner:IsPVP()) or not MMM)) or not CPPIExists then
-			constraint.Weld(Ent,self,0,0,0,true)
-			self.IsSticking = true
+		self.StartTouch = nil -- We be sticking.
+
+
+		if eEnt:IsPlayer() or eEnt:IsNPC() then
+			self:SetParent(eEnt)
+			self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+
+			return
 		end
+
+
+		constraint.Weld(eEnt,self,0,0,0,true) -- Weld if Havok.
+
 	end
 
-	function ENT:PhysicsCollide(Data) -- Impact sounds
-		if Data.Speed > 100 and Data.DeltaTime > 0.1 and self.NextSound < CurTime() then
+
+	function ENT:PhysicsCollide(obj_Data)
+
+		if self.iNextSound < CurTime() and obj_Data.Speed > 100 and obj_Data.DeltaTime > 0.1 then
+
 			self:EmitSound("weapons/hegrenade/he_bounce-1.wav")
-			self.NextSound = CurTime() + 0.2
+
+			self.iNextSound = CurTime() + 0.1
+
 		end
+	end
+
+
+	function ENT:OnTakeDamage(obj_DamageInfo) -- Make it explode on taking damage
+		self.iLifeTime = 0 -- Automatically prevents all of them exploding in the same tick (Optimizations!)
 	end
 end
+
 
 if CLIENT then
 	function ENT:Draw()
