@@ -1,72 +1,87 @@
 # M9k Remastered
 
-Workshop Link: https://steamcommunity.com/sharedfiles/filedetails/?id=2169649722
+**Workshop: https://steamcommunity.com/sharedfiles/filedetails/?id=2169649722**
 
-This is a Remastered version of the Legacy M9k Weapon packs.
-It includes all Legacy M9k extensions:
- * Small arms pack
- * Heavy weapons pack
- * Assault rifles pack
- * Specialties pack
+# Description:
 
-They have been merged together and heavily optimized. Some features were removed, some were changed, and some were added.
+M9k: Remastered is a massive improvement over the original M9k addons.
 
-Can I use this to get all the Materials, Models and Sounds for other Servers? .. Yes!
+We dumped the original code and then made new modern code for maximum performance.
 
-This Addon is being maintained and updated constantly. Reported bugs WILL be fixed, so if you find one, please report it!
+⠀
 
-# Console Commands
-> 0 = Disabled - 1 = Enabled
-- m9k_spawn_with_ammo ( 0 / 1 ) - When enabled, weapons start with ammo in magazines.
-- m9k_spawn_with_reserve ( 0 / 1 ) - When enabled, spawning a weapon supplies the player with additional ammo.
-- m9k_annoying_serverprint ( 0 / 1 ) - Turns off the annoying informational console print on server start.
-- m9k_zoomtoggle ( 0 / 1 ) - When enabled, scopes will use a toggle behavior instead of a hold behavior. ( Counter-Strike vs Legacy M9k )
-- m9k_zoomstages ( 0 / 1 ) - Whether scoped weapons should make use of their zoom stages, when set to 0, scoped weapons will use their maximum zoom stage. ( Counter-Strike vs Legacy M9k )
+This addon includes all original base packs.
 
-**IMPORTANT:**
+( Small arms, Heavy weapons, Assault rifles, Specialties pack. )
 
-**m9k_spawn_with_ammo** and **m9k_spawn_with_reserve** are enabled by default. If you're running a roleplay gamemode then you might want to disable these.
+⠀
 
-By default, scopes will us the Legacy M9k behavior, hold and without zoom stages. Set both m9k_zoomtoggle and m9k_zoomstages to 1 in the server console for the remastered behavior.
+This addon can be used exclusively for the resources.
 
-# Most noticeable changes
+( Models, materials, sounds, etc.. )
 
-Dynamic weapon accuracy (Similar to how weapons behave in CS:S or CS:GO)
- * All weapons have been changed to be more accurate while standing still and to be even more accurate while crouching and being still.
- * This effect is most noticeable on sniper rifles as its nearly impossible to hit anything without being scoped in and standing still.
+⠀
 
-All weapons have been rebalanced to be more fair and more fun at the same time.
- * Damage, RPM, Spread, Recoil etc.. Has been adjusted to be more fun and fair to shoot, and play against. (Yay for roleplayers).
+**For the best experience we recommend avoiding playing in Singleplayer.**
+**Start a Multiplayer session instead.**
 
-Shotguns are actual shotguns now as they all shoot "birdshot" rounds instead of generic shotgun rounds.
- * NumShots drastically increased, damage drastically reduced.
+\> The addon was designed with Multiplayer in mind just like 99% of other addons.
 
-Scopes have received QoL updates:
- * Changed max zooms for every scoped base weapon from 2 to 3. ( When **m9k_zoomstages** is set to 1 )
- * Can now 'unzoom' by pressing the Reload key. ( When **m9k_zoomtoggle** is set to 1 )
- 
-Not all Weapons have made it back.
- * Some weapons have been removed but MIGHT be re-added in the future.
- 
- **Full list of missing weapons:**
- * Davy crockett
- * Fists
- * IED Detonator
- * Orbital Strike Canon
- * Suicide bomb
+\> We made it compatible with Singleplayer, but you might run into issues.
 
-**Hard to notice changes for non-developers:**
- * Every single script file has been optimized and modernized drastically. Around 70% of original code lines were removed since they basically do nothing or are not required anymore.
- * A massload of bugfixes, especially involving shotguns and weapons from the specialties pack.
- 
 # Compatibility
 
-This version of M9k is NOT compatible with Legacy M9k packs. Weapons and packs have to be specifically coded for this addon to function properly!
+M9k: Remastered is **not** compatible with original/legacy M9k addons.
 
-It is highly recommended to uninstall all non-M9k Remastered packs before installing this addon!
+Weapons and packs have to be coded specifically for M9k: Remastered to function properly.
+
+⠀
+
+**All non-M9k: Remastered packs have to be removed.**
+
+# Console Commands:
+
+**More commands will be added later.**
+
+Most of these commands can only be used through the **server console**.
+
+Commands | Description | ⠀ | ⠀
+:--|:--|:--|:--
+m9k_balancemode | Disable/Enable Remastered Balance.	| 0 = Legacy | 1 = Remastered
+m9k_spawn_with_ammo | Disable/Enable Remastered Balance.	| 0 = Legacy | 1 = Remastered
+m9k_spawn_with_reserve | Disable/Enable Giving Ammo on pickup.	| 0 = No Ammo | 1 = 3 Magazines on Equip
+m9k_zoomstages | Disable/Enable Zoomstages on weapons.	| 0 = One zoom level | 1 = Multiple zoom levels
+m9k_zoomtoggle | Disable/Enable Zoomtoogle on weapons.	| 0 = Hold to zoom | 1 = Toggle to zoom/unzoom
+m9k_lefthanded | Disable/Enable lefthanded weapons.	| 0 = Right-handed | 1 = Left-handed
+
+# Roleplaying:
+
+If you're using M9k: Remastered on your Roleplay server we recommend running the following commands:
+
+- m9k_balancemode 1
+- m9k_spawn_with_ammo 0
+- m9k_spawn_with_reserve 0
+
+These commands will make it so that Weapons spawn with no magazine and won't give the player ammo on picking them up.
+
+The remastered balance mode is recommended as it makes gunplay more fair and fun for everyone.
+
+# Features:
+
+- Drastically improved code that now runs a lot faster and includes countless of bug fixes.
+- Dynamic Weapon accuracy imitating recoil behavior from CS:S.
+- Balance switch that allows you to use the legacy or the Remastered Weapon balance.
+- You can un-scope by pressing the reload key. Holding it will reload the Weapon afterwards.
+- c_hands are simulated wherever possible.
+- Immersive sound handler. Every sound the gun makes is played for everyone else. (Deploy sounds, reload sounds, etc..)
+- Adjusted firing sound volumes. Silenced Weapons are actually silenced and sniper rifles are loud.. etc..
+
+Note: The "S" Bomb and Fists are not included as they're just.. not okay.
 
 # Credits
 
-Models, Materials, and Sounds are made by the Original Creator(s). I do not claim copyright over them.
+Models, Materials, and Sounds are made by the Original Creator(s).
 
-This project is licensed under the GPL-3.0 License. Do note that only the script files (*.lua) fall under this license. Models, Materials and Sounds are not subject to this License and belong to the Original Creator(s).
+*.lua and *.au3 files are made by me. MeteorTheLizard - https://www.meteorthelizard.com
+
+This project is licensed under the GPL-3.0 License. Only script files (*.lua and *.au3) fall under this license.
