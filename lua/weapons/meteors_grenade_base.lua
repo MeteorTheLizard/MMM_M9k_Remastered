@@ -33,6 +33,9 @@
 	SWEP.iThrowDelay		- How long it takes for the object to be thrown after primary attack.
 
 
+	SWEP.iPinAnim			- Can be set to a viewmodel sequence to use when pulling the pin of the grenade.
+
+
 	SWEP.ProjectileModifications - Can be set to a function to modify the projectile after creation. (SERVERSIDE ONLY)
 
 
@@ -100,12 +103,12 @@ SWEP.ViewModelFlip = true
 SWEP.HoldType = "grenade"
 SWEP.UseHands = false
 
+
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.DefaultClip = 1
-
-SWEP.Primary.Automatic = false
 SWEP.Primary.Ammo = "none"
 
+SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 0
 SWEP.Secondary.Ammo = "none"
 
@@ -265,6 +268,7 @@ if SERVER then
 
 
 		ent_Projectile.M9kr_CreatedByWeapon = true
+		ent_Projectile:SetNWBool("M9kR_Created",true) -- Mark it for Clients.
 
 		ent_Projectile:SetOwner(eOwner) -- Blocks collision with the thrower and IS required to fix a few bugs. (BEFORE SPAWN)
 		ent_Projectile:Spawn()
@@ -474,7 +478,7 @@ if SERVER then
 
 		if not self.GrenadeNoPin and not self.Owner.MMM_HasOPWeapons then -- Delayed throw // MMM Compatibility
 
-			self:SendWeaponAnim(ACT_VM_PULLPIN)
+			self:SendWeaponAnim(not self.iPinAnim and ACT_VM_PULLPIN or self.iPinAnim)
 
 			self.PinPulled = true
 
@@ -520,7 +524,7 @@ if SERVER then
 		if self.PinPulled and bAction then -- Throw the Grenade
 
 
-			self:SendWeaponAnim(ACT_VM_THROW)
+			self:SendWeaponAnim(not self.iThrowAnim and ACT_VM_THROW or self.iThrowAnim)
 
 			self.PinPulled = nil
 			self.GrenadeThrow = true
@@ -590,7 +594,7 @@ if SERVER then
 
 
 	function SWEP:CanPrimaryAttack()
-		if self:GetNextPrimaryFire() > CurTime() or (self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and self:Clip1() <= 0) then
+		if self:GetNextPrimaryFire() > CurTime() or (self.Primary.ClipSize >= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and self:Clip1() <= 0) then
 			return false
 		end
 
@@ -770,7 +774,7 @@ if CLIENT then
 
 
 	function SWEP:CanPrimaryAttack()
-		if self:GetNextPrimaryFire() > CurTime() or (self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and self:Clip1() <= 0) then
+		if self:GetNextPrimaryFire() > CurTime() or (self.Primary.ClipSize >= 0 and self.Owner:GetAmmoCount(self.Primary.Ammo) <= 0 and self:Clip1() <= 0) then
 			return false
 		end
 
@@ -782,8 +786,8 @@ if CLIENT then
 		if not IsValid(self.Owner) then return end
 
 
-		vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.75,vPos.y + (vEye.y - vPos.y) * 0.75,vPos.z + (vEye.z - vPos.z) * 0.75)
-		aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.75,aAng.y + (aEye.y - aAng.y) * 0.75,aAng.r + aEye.r * 0.75)
+		vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.55,vPos.y + (vEye.y - vPos.y) * 0.55,vPos.z + (vEye.z - vPos.z) * 0.55)
+		aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.55,aAng.y + (aEye.y - aAng.y) * 0.55,aAng.r + aEye.r * 0.55)
 
 
 		-- Add a bit of swaying to the viewmodel, this simulates an idle animation!
@@ -801,7 +805,7 @@ if CLIENT then
 		end
 
 
-		self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination)
+		self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination) + (AngleRand() * 0.00001) + (AngleRand() * 0.00001)
 
 		self.LastViewAngTick = iCur
 

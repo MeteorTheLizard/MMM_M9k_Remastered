@@ -17,6 +17,9 @@
 
 	SWEP.InitializeHooked2 - A function can be assigned to this that will run on SWEP:InitializeHooked. (CLIENT ONLY)
 
+	SWEP.PrimaryAttackHooked2 - Hook for PrimaryAttackHooked (SERVER)
+	SWEP.DeployHooked2 - Hook for DeployHooked (SERVER)
+
 	-- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
 
 	The following is NOT required! But recommended so that other players can hear the sounds as well!
@@ -73,6 +76,8 @@ SWEP.IsScoping = false
 SWEP.ScopeStage = 0
 SWEP.ScopeStages = 1 -- Default
 
+SWEP.Secondary.Automatic = false -- We don't want scope spam!
+
 
 local ConVar_ZoomStages = CreateConVar("m9k_zoomstages","0",FCVAR_ARCHIVE,"When set to 1, scoped weapons will make use of their zoom stages.",0,1)
 local ConVar_ZoomToggle = CreateConVar("m9k_zoomtoggle","0",FCVAR_ARCHIVE,"When set to 1, scoped weapons will remain scoped until the secondary attack key is pressed again.",0,1)
@@ -119,7 +124,13 @@ if SERVER then
 
 
 	function SWEP:DeployHooked()
+
 		self.ScopeViewEntity = self.Owner:GetViewEntity()
+
+
+		if self.DeployHooked2 then
+			self:DeployHooked2()
+		end
 	end
 
 
@@ -181,7 +192,14 @@ if SERVER then
 			net.Start(sTag .. "_Bolt")
 				net.WriteEntity(self)
 			net.Broadcast()
+
 		end
+
+
+		if self.PrimaryAttackHooked2 then
+			self:PrimaryAttackHooked2()
+		end
+
 	end
 
 

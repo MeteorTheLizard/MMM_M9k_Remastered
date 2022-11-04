@@ -108,7 +108,7 @@ if CLIENT then
 
 			local us = LocalPlayer() -- Did you know LocalPlayer can be invalid during a fullupdate call? Now you do.
 
-			if IsValid(us) then
+			if IsValid(us) and self.Owner == us then
 
 				local vm = us:GetViewModel()
 

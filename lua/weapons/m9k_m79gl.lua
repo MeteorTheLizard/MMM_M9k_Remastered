@@ -95,6 +95,7 @@ if SERVER then
 			end
 
 			eProjectile.M9kr_CreatedByWeapon = true -- Required
+			eProjectile:SetNWBool("M9kR_Created",true) -- Mark it for Clients.
 
 			eProjectile:Spawn()
 			eProjectile:Activate()

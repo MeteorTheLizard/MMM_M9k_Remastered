@@ -30,6 +30,9 @@
 	SWEP.Primary.SoundPumpDelay		- Delay of SoundPump. (optional)
 
 
+	SWEP.bShouldHearReload			- Can be set to true to make the holder of the Weapon hear ALL reload sounds no matter what, useful if your Viewmodel does not make use of sound scripts.
+
+
 	SWEP.ReloadInstantly			- Can be set to true to make the Weapon have a full Magazine instantly instead of putting each round in individually.
 
 	SWEP.iShellTime					- Can be set to a number for a custom shell loading delay.
@@ -59,7 +62,7 @@
 -- ----- ----- ----- ----- ------- ----- ----- ----- ----- -----
 
 SWEP.Base = "bobs_gun_base"
-SWEP.Slot = 4
+SWEP.Slot = 3
 
 SWEP.HoldType = "shotgun"
 
@@ -264,7 +267,7 @@ if CLIENT then
 
 
 		local bIsValidOwner = IsValid(eWep.Owner)
-		local bShouldHear = bIsValidOwner and ((eWep.Owner == LocalPlayer() and eWep.Owner:GetViewEntity() ~= eWep.Owner) and true) or (eWep.Owner ~= LocalPlayer() and true) or false
+		local bShouldHear = bIsValidOwner and ((eWep.Owner == LocalPlayer() and eWep.Owner:GetViewEntity() ~= eWep.Owner) and true) or (eWep.Owner ~= LocalPlayer() and true) or eWep.bShouldHearReload or false
 
 
 		local iEvent = net.ReadInt(6)

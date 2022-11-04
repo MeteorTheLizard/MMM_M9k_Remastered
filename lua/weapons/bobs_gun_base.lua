@@ -28,6 +28,7 @@
 	SWEP.bBlockShellEject	- Can be set to true to block the shell eject animation from being played.
 	SWEP.bBlockIdleSight	- Can be set to true to block ACT_VM_IDLE from playing when using the ironsights and firing the Weapon which allows you to use the PrimaryAttack animation instead.
 	SWEP.bNoTracers			- Can be set to true to make FireBullets not make any tracers. Useful for bugged Weapons (Looking at you M9k Plus..)
+	SWEP.bAr2Tracer			- Can be set to true to use AR2 Tracers.
 
 
 	SWEP._UsesCustomModels	- Can be set to true to indicate that the SWEP uses a custom Viewmodel. This is required when using a custom model.
@@ -168,8 +169,26 @@ SWEP.Primary.KickHorizontal = 0
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "none"
 
+SWEP.Secondary.Sound = ""
+SWEP.Secondary.Damage = 1
+SWEP.Secondary.Spread = 0
+SWEP.Secondary.NumShots = 1
+SWEP.Secondary.RPM = 0
+SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 0
+
+SWEP.Secondary.KickUp = 0
+SWEP.Secondary.KickDown = 0
+SWEP.Secondary.KickHorizontal = 0
+SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
+
+
+SWEP.MuzzleFlashCol = {
+	r = 255,
+	g = 175,
+	b = 0
+}
 
 
 -- Some internal vars
@@ -560,7 +579,7 @@ if SERVER then
 				Dir = self.Owner:GetAimVector(),
 				Spread = Vector(iSpread or 0,iSpread or 0,0),
 				Tracer = not self.bNoTracers and (self.Primary.NumShots == 1 and 1 or 4) or 1e9,
-				TracerName = "Tracer",
+				TracerName = not self.bAr2Tracer and "Tracer" or "AR2Tracer",
 				Force = iDamage * 0.3,
 				Damage = iDamage,
 				AmmoType = self.Primary.Ammo,
@@ -1222,7 +1241,7 @@ if CLIENT then
 			Dir = self.Owner:GetAimVector(),
 			Spread = Vector(iSpread or 0,iSpread or 0,0),
 			Tracer = not self.bNoTracers and (self.Primary.NumShots == 1 and 1 or 4) or 1e9,
-			TracerName = "Tracer",
+			TracerName = not self.bAr2Tracer and "Tracer" or "AR2Tracer",
 			Force = self.Primary.Damage * 0.3,
 			Damage = self.Primary.Damage,
 			AmmoType = self.Primary.Ammo,
@@ -1280,9 +1299,9 @@ if CLIENT then
 
 					obj_DynLight.pos = self.Owner:GetShootPos() + self.Owner:EyeAngles():Forward() * 30
 
-					obj_DynLight.r = 255
-					obj_DynLight.g = 175
-					obj_DynLight.b = 0
+					obj_DynLight.r = self.MuzzleFlashCol.r
+					obj_DynLight.g = self.MuzzleFlashCol.g
+					obj_DynLight.b = self.MuzzleFlashCol.b
 
 					obj_DynLight.brightness = 6
 					obj_DynLight.Size = 128 * (self.DynamicLightScale or 1)
@@ -1505,8 +1524,8 @@ if CLIENT then
 
 		if not self.IronSightState and not self.IronSightsPos or (not self.IronSightState and self.AimMul == 0) then -- This reduces the non-ironsighted sway
 
-			vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.75,vPos.y + (vEye.y - vPos.y) * 0.75,vPos.z + (vEye.z - vPos.z) * 0.75)
-			aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.75,aAng.y + (aEye.y - aAng.y) * 0.75,aAng.r + aEye.r * 0.75)
+			vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.55,vPos.y + (vEye.y - vPos.y) * 0.55,vPos.z + (vEye.z - vPos.z) * 0.55)
+			aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.55,aAng.y + (aEye.y - aAng.y) * 0.55,aAng.r + aEye.r * 0.55)
 
 
 			-- Add a bit of swaying to the viewmodel, this simulates an idle animation!
@@ -1520,11 +1539,11 @@ if CLIENT then
 
 				self.LastViewAngTick = iCur
 
-				self.ViewAngDestination = AngleRand(-0.3,0.3)
+				self.ViewAngDestination = AngleRand(-0.2,0.2)
 			end
 
 
-			self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination) + (AngleRand() * 0.00002) + (AngleRand() * 0.00002)
+			self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination) + (AngleRand() * 0.00001) + (AngleRand() * 0.00001)
 
 			self.LastViewAngTick = iCur
 

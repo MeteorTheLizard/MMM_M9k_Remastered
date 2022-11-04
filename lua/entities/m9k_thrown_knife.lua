@@ -5,6 +5,15 @@ ENT.PrintName = "Machete"
 
 if SERVER then
 
+	ENT.iNextSound = 0
+
+	ENT.vStartForwardOffset = 10
+	ENT.vStartUpOffset = 10
+
+	ENT.vEndForwardOffset = 15.5
+	ENT.vEndUpOffset = 19
+
+
 	function ENT:Initialize()
 
 		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
@@ -19,15 +28,7 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 
 
-		self.iNextSound = 0
 		self.tFilters = {self,self.Owner} -- Don't recreate this over and over again.
-
-
-		self.vStartForwardOffset = 10
-		self.vStartUpOffset = 10
-
-		self.vEndForwardOffset = 15.5
-		self.vEndUpOffset = 19
 
 	end
 

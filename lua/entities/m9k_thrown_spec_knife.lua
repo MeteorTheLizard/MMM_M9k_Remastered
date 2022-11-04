@@ -90,6 +90,15 @@ if SERVER then
 	end
 
 
+	ENT.iNextSound = 0
+
+	ENT.vStartForwardOffset = 6.5
+	ENT.vStartUpOffset = 6.5
+
+	ENT.vEndForwardOffset = 10
+	ENT.vEndUpOffset = 10
+
+
 	function ENT:Initialize()
 
 		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
@@ -104,15 +113,7 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 
 
-		self.iNextSound = 0
 		self.tFilters = {self,self.Owner} -- Don't recreate this over and over again.
-
-
-		self.vStartForwardOffset = 6.5
-		self.vStartUpOffset = 6.5
-
-		self.vEndForwardOffset = 10
-		self.vEndUpOffset = 10
 
 	end
 

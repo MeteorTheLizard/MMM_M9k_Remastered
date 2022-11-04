@@ -82,6 +82,7 @@ if SERVER then
 			end
 
 			eProxy.M9kr_CreatedByWeapon = true -- Required
+			eProxy:SetNWBool("M9kR_Created",true) -- Mark it for Clients.
 
 			eProxy:Spawn()
 

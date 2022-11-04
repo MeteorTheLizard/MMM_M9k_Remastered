@@ -25,6 +25,9 @@ if SERVER then
 	local vCached2 = Vector(0,0,-25)
 
 
+	ENT.iNextSound = 0
+
+
 	function ENT:Initialize()
 
 		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
@@ -38,7 +41,6 @@ if SERVER then
 
 
 		self.iLifeTime = CurTime() + 3
-		self.iNextSound = 0
 
 
 		SafeRemoveEntityDelayed(self,3.1) -- Just in case

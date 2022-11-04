@@ -66,6 +66,9 @@ if SERVER then
 	end
 
 
+	ENT.bInFlight = true
+
+
 	function ENT:Initialize()
 
 		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
@@ -82,7 +85,6 @@ if SERVER then
 
 		self.vFlight = self:GetUp() * ((75 * 52.5) / 66)
 		self.iLifeTime = CurTime() + 15
-		self.bInFlight = true
 		self.tFilters = {self,self.Owner} -- Don't recreate this over and over again.
 
 	end

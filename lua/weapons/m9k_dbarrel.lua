@@ -68,7 +68,10 @@ sound.Add({
 })
 
 
-function SWEP:SecondaryAttack() -- Secondary should make you fire both barrels.
+function SWEP:SecondaryAttack() -- Secondary should make you fire both barrels. (Needs to be shared)
+
+	if not self:CanPrimaryAttack() then return end
+
 
 	self:PrimaryAttack()
 

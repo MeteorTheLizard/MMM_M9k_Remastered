@@ -17,6 +17,7 @@
 	SWEP.ThrowDelay			- How many seconds it takes before the Weapon is thrown.
 
 	SWEP.iPrimaryAnim		- Can be set to a viewmodel animation ID to play a custom attack animation on primary attack.
+	SWEP.iPrimaryMissAnim	- Can be set to a viewmodel animation ID to play on missing a primary attack.
 
 	SWEP.tAttackSequences	- A table of sequences that are used for the viewmodel animations when attacking. (optional)
 		Example:
@@ -27,11 +28,12 @@
 		}
 
 
-	self.bCanThrow			- Can be set to true to allow a melee Weapon to be thrown when pressing the RELOAD key.
-	self.sProjectileClass	- The class of the thrown projectile.
-	self.sProjectileModel	- The model for the thrown projectile.
-	self.vProjectileForce	- The force applied to the projectile when throwing. (optional)
-	self.vForceAngle		- The angular force applied to the projectile when throwing. (optional)
+	SWEP.bCanThrow			- Can be set to true to allow a melee Weapon to be thrown when pressing the RELOAD key.
+	SWEP.sProjectileClass	- The class of the thrown projectile.
+	SWEP.sProjectileModel	- The model for the thrown projectile.
+	SWEP.vProjectileForce	- The force applied to the projectile when throwing. (optional)
+	SWEP.vForceAngle		- The angular force applied to the projectile when throwing. (optional)
+	SWEP.aProjectileOffset	- Can be set to an angle to add to the spawn angle of the projectile. (optional)
 
 
 	Weapons have a custom animation layer that is added on top of ACT_VM sequences. This is impossibly hard to see when not playing ACT_VM_IDLE.
@@ -90,15 +92,22 @@ SWEP.ViewModelFlip = true
 SWEP.HoldType = "melee"
 SWEP.UseHands = false
 
+
 SWEP.Primary.Sound = ""
-SWEP.Primary.Damage = 10
+SWEP.Primary.Damage = 1
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = 0
 
 SWEP.Primary.Automatic = true
 SWEP.Primary.Ammo = "none"
 
+
+SWEP.Secondary.Sound = ""
+SWEP.Secondary.Damage = 1
+SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 0
+
+SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 
 
@@ -315,6 +324,9 @@ if SERVER then
 	}
 
 
+	SWEP.aProjectileOffset = Angle(0,0,0)
+
+
 	function SWEP:Initialize()
 
 		self:SetHoldType(self.HoldType)
@@ -477,20 +489,55 @@ if SERVER then
 		-- Animations
 		-- These need to be done for prediction
 
-		if not self.tAttackSequences then -- Just a normal attack
 
-			self:SendWeaponAnim(not self.iPrimaryAnim and ACT_VM_PRIMARYATTACK or self.iPrimaryAnim)
+		local vShootPos = self.Owner:GetShootPos()
+		local vAimVector = self.Owner:GetAimVector()
 
-		else -- Custom sequences!
+		local tTrace
 
-			local vm = self.Owner:GetViewModel()
+		if self.Owner:WaterLevel() ~= 3 then -- We might be hitting the water surface!
 
-			if IsValid(vm) then
-				self.iAttackSequence = self.iAttackSequence or 1
-				self.iAttackSequence = self.iAttackSequence >= #self.tAttackSequences and 1 or self.iAttackSequence + 1
+			tTrace = util.TraceLine({
+				start = vShootPos,
+				endpos = vShootPos + (vAimVector * self.HitRange),
+				filter = self.Owner,
+				mask = MASK_SHOT_HULL + MASK_WATER
+			})
 
-				vm:SendViewModelMatchingSequence(vm:LookupSequence(self.tAttackSequences[self.iAttackSequence]))
+		else -- We are inside of water
+
+			tTrace = util.TraceLine({
+				start = vShootPos,
+				endpos = vShootPos + (vAimVector * self.HitRange),
+				filter = self.Owner,
+				mask = MASK_SHOT_HULL
+			})
+
+		end
+
+
+		if tTrace.Hit or tTrace.HitSky or not self.iPrimaryMissAnim then -- We hit something, play hit sequence
+
+			if not self.tAttackSequences then -- Just a normal attack
+
+				self:SendWeaponAnim(not self.iPrimaryAnim and ACT_VM_PRIMARYATTACK or self.iPrimaryAnim)
+
+			else -- Custom sequences!
+
+				local vm = self.Owner:GetViewModel()
+
+				if IsValid(vm) then
+					self.iAttackSequence = self.iAttackSequence or 1
+					self.iAttackSequence = self.iAttackSequence >= #self.tAttackSequences and 1 or self.iAttackSequence + 1
+
+					vm:SendViewModelMatchingSequence(vm:LookupSequence(self.tAttackSequences[self.iAttackSequence]))
+				end
+
 			end
+
+		elseif self.iPrimaryMissAnim then -- We missed so play the miss sequence if it exists
+
+			self:SendWeaponAnim(self.iPrimaryMissAnim)
 
 		end
 
@@ -622,7 +669,7 @@ if SERVER then
 
 						-- Are we using a blade? If so, adjust!
 
-							tMat = tMatDecalTypesBlade[tTrace.MatType] or tMat
+							tMat = self.IsBlade and tMatDecalTypesBlade[tTrace.MatType] or tMat
 
 
 
@@ -664,7 +711,7 @@ if SERVER then
 
 					elseif bCanTakeDamage ~= 1 then -- Fallback
 
-						self.Owner:EmitSound("weapons/blades/slash.mp3")
+						self.Owner:EmitSound(self.IsBlade and "weapons/blades/slash.mp3" or "physics/flesh/flesh_impact_bullet" .. math.random(5) .. ".wav")
 
 					end
 
@@ -680,17 +727,20 @@ if SERVER then
 						aPunch:SetUnpacked(aPunch.p,aPunch.y,0)
 
 					self.Owner:ViewPunch(aPunch)
+
 				end
 			end)
-		end
 
 
-		if self.PrimaryAttackHooked then
-			self:PrimaryAttackHooked()
+			if self.PrimaryAttackHooked then
+				self:PrimaryAttackHooked(tTrace)
+			end
+
 		end
 
 
 		self:AttackAnimation()
+
 	end
 
 
@@ -732,13 +782,14 @@ if SERVER then
 
 					eThrow:SetModel(self.sProjectileModel)
 					eThrow:SetPos(eOwner:GetPos() + (eOwner:Crouching() and eOwner:GetViewOffsetDucked() or eOwner:GetViewOffset()) + (aEye:Forward() * 8) + (aEye:Right() * 10))
-					eThrow:SetAngles(aEye)
+					eThrow:SetAngles(aEye + self.aProjectileOffset)
 					eThrow:SetCollisionGroup(COLLISION_GROUP_NONE)
 					eThrow:SetGravity(0.4)
 					eThrow:SetFriction(0.2)
 					eThrow:SetElasticity(0.45)
 
 					eThrow.M9kr_CreatedByWeapon = true
+					eThrow:SetNWBool("M9kR_Created",true) -- Mark it for Clients.
 
 					eThrow:Spawn()
 					eThrow:PhysWake()
@@ -979,8 +1030,8 @@ if CLIENT then
 		if not IsValid(self.Owner) then return end
 
 
-		vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.75,vPos.y + (vEye.y - vPos.y) * 0.75,vPos.z + (vEye.z - vPos.z) * 0.75)
-		aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.75,aAng.y + (aEye.y - aAng.y) * 0.75,aAng.r + aEye.r * 0.75)
+		vPos:SetUnpacked(vPos.x + (vEye.x - vPos.x) * 0.55,vPos.y + (vEye.y - vPos.y) * 0.55,vPos.z + (vEye.z - vPos.z) * 0.55)
+		aAng:SetUnpacked(aAng.p + (aEye.p - aAng.p) * 0.55,aAng.y + (aEye.y - aAng.y) * 0.55,aAng.r + aEye.r * 0.55)
 
 
 		-- Add a bit of swaying to the viewmodel, this simulates an idle animation!
@@ -998,7 +1049,7 @@ if CLIENT then
 		end
 
 
-		self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination)
+		self.ViewAngIdleRead = LerpAngle(iCur - self.LastViewAngTick,self.ViewAngIdleRead,self.ViewAngDestination) + (AngleRand() * 0.00001) + (AngleRand() * 0.00001)
 
 		self.LastViewAngTick = iCur
 
