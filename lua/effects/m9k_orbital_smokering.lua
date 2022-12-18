@@ -9,6 +9,7 @@ function EFFECT:Init(obj_Data)
 
 
 	local eParticleEmitter = ParticleEmitter(vPos)
+	if not IsValid(eParticleEmitter) then return end
 
 	if obj_Data:GetScale() == 1 then
 

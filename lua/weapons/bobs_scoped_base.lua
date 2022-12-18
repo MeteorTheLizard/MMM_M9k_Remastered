@@ -16,6 +16,7 @@
 
 
 	SWEP.InitializeHooked2 - A function can be assigned to this that will run on SWEP:InitializeHooked. (CLIENT ONLY)
+	SWEP.ResetInternalVarsHooked2 -- Hook for ResetInternalVarsHooked (CLIENT ONLY)
 
 	SWEP.PrimaryAttackHooked2 - Hook for PrimaryAttackHooked (SERVER)
 	SWEP.DeployHooked2 - Hook for DeployHooked (SERVER)
@@ -254,20 +255,17 @@ if SERVER then
 
 		if self.NextReloadTime and CurTime() > self.NextReloadTime then -- If we are still holding the reload key then reload!
 
-			self.NextReloadTime = nil
-
-
-			self.ScopeRestore = nil
-			self.ScopeRestoreWhen = nil
+			self:ResetInternalVarsHooked() -- Reset everything before continuing to prevent bugs
 
 
 			self:Reload()
+
 
 			return false
 		end
 
 
-		self.ScopeRestore = nil
+		self.ScopeRestore = nil -- The scope was canceled so there is no need for these anymore
 		self.ScopeRestoreWhen = nil
 
 
@@ -586,9 +584,15 @@ if CLIENT then
 			self.Owner:DrawViewModel(true) -- Draw the Viewmodel again!
 		end
 
+
 		self.IsScoping = false
 		self.ScopeStage = 0
 		self.DoBolt = nil
+
+
+		if self.ResetInternalVarsHooked2 then
+			self:ResetInternalVarsHooked2()
+		end
 	end
 
 

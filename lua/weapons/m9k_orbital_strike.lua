@@ -266,7 +266,7 @@ if CLIENT then
 	end
 
 
-	function SWEP:ResetInternalVarsHooked() -- Remove the entities if the Weapon is reset!
+	function SWEP:ResetInternalVarsHooked2() -- Remove the entities if the Weapon is reset!
 		if IsValid(self.ViewEnt) then
 			self.ViewEnt:Remove()
 		end

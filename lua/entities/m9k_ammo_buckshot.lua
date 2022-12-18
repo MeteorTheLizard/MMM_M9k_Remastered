@@ -5,7 +5,7 @@ ENT.Category = "M9kR: Ammunition"
 ENT.PrintName = "[B] Shotgun Ammo"
 ENT.Spawnable = true
 
-ENT.AmmoClass		= "ar2"
+ENT.AmmoClass		= "buckshot"
 ENT.AmmoModel		= "models/items/boxbuckshot.mdl"
 ENT.AmmoCount		= 30
 ENT.ImpactSound		= "Default.ImpactSoft"

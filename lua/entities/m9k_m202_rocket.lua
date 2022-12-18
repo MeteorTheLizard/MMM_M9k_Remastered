@@ -145,6 +145,8 @@ if CLIENT then
 
 
 	function ENT:OnRemove()
+		if not IsValid(self.eParticleEmitter) then return end
+
 		self.eParticleEmitter:Finish()
 	end
 

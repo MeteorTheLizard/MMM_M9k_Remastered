@@ -43,6 +43,7 @@ function EFFECT:Think()
 
 
 			local eParticleEmitter = ParticleEmitter(self.vPos)
+			if not IsValid(eParticleEmitter) then return end
 
 			for i = 1,mathceil(70 / iIntensity) do
 

@@ -63,6 +63,7 @@ function EFFECT:Init(obj_Data)
 
 
 	local eParticleEmitter = ParticleEmitter(vPos)
+	if not IsValid(eParticleEmitter) then return end
 
 	for i = 1,150 do
 

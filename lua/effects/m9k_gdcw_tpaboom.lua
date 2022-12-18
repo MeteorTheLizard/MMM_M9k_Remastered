@@ -60,6 +60,7 @@ function EFFECT:Init(obj_Data)
 
 
 	self.eParticleEmitter = ParticleEmitter(self.Pos)
+	if not IsValid(self.eParticleEmitter) then return end
 
 	if tMaterials[self.Mat][2] == 1 then
 		self:obj_Particle()
