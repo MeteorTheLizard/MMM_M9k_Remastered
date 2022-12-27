@@ -34,6 +34,10 @@ hook.Add("PreGamemodeLoaded",sTag,function()
 |__ m9k_balancemode		Disable/Enable Remastered Balance.	0 = Legacy | 1 = Remastered
 |
 |__ m9k_spawn_with_ammo		Disable/Enable Ammo in Magazine.	0 = No Ammo | 1 = Full Magazine on Equip
+]])
+
+	-- This has to be split up into two parts for srcds to print it properly.
+	MsgC(Color(255,128,128),[[
 |
 |__ m9k_spawn_with_reserve	Disable/Enable Giving Ammo on pickup.	0 = No Ammo | 1 = 3 Magazines on Equip
 |
