@@ -1262,7 +1262,7 @@ if CLIENT then
 		if self.bBlockMuzzleFlash then return end
 
 
-		if IsValid(self.Owner) then
+		if IsValid(self.Owner) and IsFirstTimePredicted() then
 
 
 			-- Recoil logic
