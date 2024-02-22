@@ -243,7 +243,7 @@ if SERVER then
 
 					utilEffect("m9k_nuke_disintegrate",obj_EffectData)
 
-					utilBlastDamage(self,self.Owner,vPos,256,512)
+					utilBlastDamage(self,IsValid(self.Owner) and self.Owner or self,vPos,256,512)
 
 				end
 			end

@@ -47,7 +47,7 @@ if SERVER then
 
 			util.Decal("Scorch",tTrace.HitPos + tTrace.HitNormal,tTrace.HitPos - tTrace.HitNormal)
 
-			util.BlastDamage(self,self.Owner,tTrace.HitPos,600,150)
+			util.BlastDamage(self,IsValid(self.Owner) and self.Owner or self,tTrace.HitPos,600,150)
 
 
 			self:Remove()

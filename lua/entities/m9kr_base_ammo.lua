@@ -44,10 +44,15 @@ if SERVER then
 
 		if not self.bSploded and self.iHealth <= 0 then
 
+			SafeRemoveEntityDelayed(self,1) -- Prevent error spam
+
 			self.bSploded = true -- Safeguard since BlastDamage causes an infinite loop otherwise
 
 
 			timer.Simple(math.Rand(0,0.1),function() -- Makes it lag less when there's multiple boxes exploding at once
+
+				if not IsValid(self) then return end
+
 
 				local vPos = self:GetPos()
 
@@ -94,7 +99,9 @@ if SERVER then
 
 				elseif self.bExplOnDestroy then
 
-					util.BlastDamage(self,self.Owner,vPos,600,150)
+					if IsValid(self.Owner) then
+						util.BlastDamage(self,self.Owner,vPos,600,150)
+					end
 
 
 					local obj_EffectData = EffectData()

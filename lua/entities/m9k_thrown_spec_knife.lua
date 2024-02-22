@@ -49,6 +49,8 @@ if SERVER then
 
 
 		self:SetOwner(nil)
+		self.Owner = nil
+		self.tFilters = {self}
 
 	end
 
@@ -68,7 +70,9 @@ if SERVER then
 		self:EmitSound("physics/flesh/flesh_impact_bullet" .. math.random(5) .. ".wav")
 
 
-		eEnt:TakeDamage(80,self.Owner,self)
+		if IsValid(self.Owner) then
+			eEnt:TakeDamage(80,self.Owner,self)
+		end
 
 
 		if (eEnt:Health() - 80) <= 0 then -- They died so we drop to the floor
@@ -101,7 +105,7 @@ if SERVER then
 
 	function ENT:Initialize()
 
-		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+		if not self.M9kr_CreatedByWeapon or not IsValid(self.Owner) then -- Prevents exploiting it
 			self:Remove()
 
 			return
@@ -121,6 +125,7 @@ if SERVER then
 	function ENT:Use(eActivator) -- We may pick the Knife back up
 		if eActivator:IsPlayer() and eActivator:GetWeapon("m9k_knife") == NULL then
 			eActivator:Give("m9k_knife")
+			eActivator:SelectWeapon("m9k_knife")
 
 			self:Remove()
 		end
@@ -128,6 +133,12 @@ if SERVER then
 
 
 	function ENT:Think()
+
+		if not IsValid(self.Owner) then
+			self:Remove()
+
+			return
+		end
 
 
 		local vPos = self:GetPos()
@@ -200,6 +211,13 @@ if SERVER then
 
 
 	function ENT:PhysicsCollide(obj_Data)
+
+		if not IsValid(self.Owner) then
+			self:Remove()
+
+			return
+		end
+
 
 		if self.iNextSound < CurTime() then
 			self:EmitSound("physics/metal/metal_grenade_impact_hard" .. math.random(3) .. ".wav",65)

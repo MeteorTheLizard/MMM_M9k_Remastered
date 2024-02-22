@@ -28,7 +28,7 @@ if SERVER then
 
 	function ENT:Initialize()
 
-		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+		if not self.M9kr_CreatedByWeapon or not IsValid(self.Owner) then -- Prevents exploiting it
 			self:Remove()
 
 			return
@@ -47,6 +47,8 @@ if SERVER then
 
 			return
 		end
+
+		SafeRemoveEntityDelayed(self,1) -- Prevent error spam
 
 
 		local vPos = self:GetPos()

@@ -271,6 +271,7 @@ if SERVER then
 		ent_Projectile:SetNWBool("M9kR_Created",true) -- Mark it for Clients.
 
 		ent_Projectile:SetOwner(eOwner) -- Blocks collision with the thrower and IS required to fix a few bugs. (BEFORE SPAWN)
+		ent_Projectile.Owner = eOwner -- Required for self.Owner
 		ent_Projectile:Spawn()
 
 

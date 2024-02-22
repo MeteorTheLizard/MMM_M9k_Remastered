@@ -16,7 +16,7 @@ if SERVER then
 
 	function ENT:Initialize()
 
-		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+		if not self.M9kr_CreatedByWeapon or not IsValid(self.Owner) then -- Prevents exploiting it
 			self:Remove()
 
 			return
@@ -36,6 +36,7 @@ if SERVER then
 	function ENT:Use(eActivator) -- We may pick the Harpoon back up
 		if eActivator:IsPlayer() and eActivator:GetWeapon("m9k_harpoon") == NULL then
 			eActivator:Give("m9k_harpoon")
+			eActivator:SelectWeapon("m9k_harpoon")
 
 			self:Remove()
 		end

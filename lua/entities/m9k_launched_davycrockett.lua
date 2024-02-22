@@ -34,14 +34,13 @@ if SERVER then
 
 	local fCreateExplosion = function(self)
 
-		if not IsValid(self) or not IsValid(self.Owner) then
-
-			if IsValid(self) then
-				self:Remove()
-			end
+		if not IsValid(self) then
+			self:Remove()
 
 			return
 		end
+
+		SafeRemoveEntityDelayed(self,1) -- Prevent error spam
 
 
 		local eExplosion = ents.Create("m9k_davy_crockett_explo")

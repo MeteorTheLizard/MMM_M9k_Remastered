@@ -45,6 +45,9 @@ if SERVER then
 
 	local fSmallExplosion = function(self,vPos)
 
+		if not IsValid(self.Owner) then return end
+
+
 		util.BlastDamage(self,self.Owner,vPos,1000,150)
 
 
@@ -66,6 +69,12 @@ if SERVER then
 
 
 	function ENT:Initialize()
+
+		if not self.bWasFiredWithWeapon or not IsValid(self.Owner) then -- Prevents exploiting
+			self:Remove()
+
+			return
+		end
 
 		SafeRemoveEntityDelayed(self,10)
 
@@ -260,7 +269,7 @@ if SERVER then
 							end
 
 
-							timer.Simple(1.5,function()
+							timer.Simple(1.5,function() -- Sound
 
 								if not IsValid(self) then return end
 
@@ -272,9 +281,17 @@ if SERVER then
 							end)
 
 
-							timer.Simple(2.25,function()
+							timer.Simple(2.25,function() -- Explosion
 
 								if not IsValid(self) then return end
+
+								if not IsValid(self.Owner) then
+									self:Remove()
+
+									return
+								end
+
+								SafeRemoveEntityDelayed(self,1) -- Prevent error spam
 
 
 								do

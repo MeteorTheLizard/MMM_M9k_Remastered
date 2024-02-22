@@ -24,7 +24,7 @@ if SERVER then
 
 	function ENT:Initialize()
 
-		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+		if not self.M9kr_CreatedByWeapon or not IsValid(self.Owner) then -- Prevents exploiting it
 			self:Remove()
 
 			return
@@ -37,6 +37,13 @@ if SERVER then
 
 
 	function ENT:PhysicsCollide(obj_Data)
+
+		if not IsValid(self.Owner) then
+			self:Remove()
+
+			return
+		end
+
 
 		if obj_Data.Speed > 50 and obj_Data.DeltaTime > 0.1 then
 

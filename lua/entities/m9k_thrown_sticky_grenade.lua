@@ -31,7 +31,7 @@ if SERVER then
 
 	function ENT:Initialize()
 
-		if not self.M9kr_CreatedByWeapon then -- Prevents exploiting it
+		if not self.M9kr_CreatedByWeapon or not IsValid(self.Owner) then -- Prevents exploiting it
 			self:Remove()
 
 			return
@@ -53,7 +53,17 @@ if SERVER then
 
 	function ENT:Think()
 
+		if not IsValid(self.Owner) then
+			self:Remove()
+
+			return
+		end
+
+
 		if self.iLifeTime < CurTime() then
+
+			SafeRemoveEntityDelayed(self,1) -- Prevent error spam
+
 
 			local vPos = self:GetPos()
 
@@ -98,7 +108,15 @@ if SERVER then
 
 
 	function ENT:StartTouch(eEnt) -- Stick to object (Better than using PhysicsCollide)
+
+		if not IsValid(self.Owner) then
+			self:Remove()
+
+			return
+		end
+
 		if eEnt == self.Owner then return end
+
 
 		self.StartTouch = nil -- We be sticking.
 
@@ -117,6 +135,13 @@ if SERVER then
 
 
 	function ENT:PhysicsCollide(obj_Data)
+
+		if not IsValid(self.Owner) then
+			self:Remove()
+
+			return
+		end
+
 
 		if self.iNextSound < CurTime() and obj_Data.Speed > 100 and obj_Data.DeltaTime > 0.1 then
 

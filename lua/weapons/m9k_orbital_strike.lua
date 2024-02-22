@@ -104,6 +104,8 @@ if SERVER then
 					eStrike.Sky = vPos
 					eStrike.Owner = self.Owner
 
+					eStrike.bWasFiredWithWeapon = true
+
 					eStrike:SetPos(vPos)
 					eStrike:Spawn()
 

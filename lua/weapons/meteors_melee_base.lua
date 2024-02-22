@@ -791,6 +791,7 @@ if SERVER then
 					eThrow.M9kr_CreatedByWeapon = true
 					eThrow:SetNWBool("M9kR_Created",true) -- Mark it for Clients.
 
+					eThrow.Owner = eOwner -- Required for self.Owner
 					eThrow:Spawn()
 					eThrow:PhysWake()
 
