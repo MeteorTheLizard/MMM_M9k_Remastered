@@ -43,7 +43,7 @@ if SERVER then
 		self.iLifeTime = CurTime() + 3
 
 
-		SafeRemoveEntityDelayed(self,3.1) -- Just in case
+		SafeRemoveEntityDelayed(self,5) -- Just in case -- Increased to prevent tick-rate shenanigans
 
 	end
 
